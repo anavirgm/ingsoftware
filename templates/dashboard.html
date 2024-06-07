@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Dashboard</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='css/dashboard.css') }}"
@@ -31,16 +31,18 @@
       </div>
       <div class="boton">
         <button class="switch" id="switch">
-          <span
-            ><img
+          <span>
+            <img
               src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
               alt=""
-          /></span>
-          <span
-            ><img
+            />
+          </span>
+          <span>
+            <img
               src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
               alt=""
-          /></span>
+            />
+          </span>
         </button>
       </div>
     </header>
@@ -130,46 +132,41 @@
       </div>
     </div>
 
-
     <main class="container">
-      
       <div class="grid cards-section">
-          
-          <div class="card">
-              <h2>Card 1</h2>
-              <p>Contenido de la tarjeta 1.</p>
-          </div>
+        <div class="card">
+          <h2>Productos</h2>
+          <p>Almacen: {{ total_productos }}</p>
+        </div>
 
-          <div class="card">
-              <h2>Card 2</h2>
-              <p>Contenido de la tarjeta 2.</p>
-          </div>
+        <div class="card">
+          <h2>Clientes</h2>
+          <p>Registrados: {{ total_clientes }}</p>
+        </div>
 
-          <div class="card">
-              <h2>Card 3</h2>
-              <p>Contenido de la tarjeta 3.</p>
-          </div>
+        <div class="card">
+          <h2>Proveedores</h2>
+          <p>Registrados: {{ total_proveedores }}</p>
+        </div>
 
-          <div class="card">
-              <h2>Card 4</h2>
-              <p>Contenido de la tarjeta 4.</p>
-          </div>
+        <div class="card">
+          <h2>Card 4</h2>
+          <p>Contenido de la tarjeta 4.</p>
+        </div>
       </div>
 
       <div class="grid large-cards-section">
-         
-          <div class="large-card">
-              <h2>Large Card 1</h2>
-              <p>Grafico de ventas</p>
-          </div>
+        <div class="large-card">
+          <h2>Large Card 1</h2>
+          <p>Grafico de ventas</p>
+        </div>
 
-          
-          <div class="large-card">
-              <h2>Large Card 2</h2>
-              <p>Grafico de Ganancias de la semana</p>
-          </div>
+        <div class="large-card">
+          <h2>Large Card 2</h2>
+          <p>Grafico de Ganancias de la semana</p>
+        </div>
       </div>
-  </main>
+    </main>
 
     <script src="{{ url_for('static', filename='js/component.js') }}"></script>
   </body>

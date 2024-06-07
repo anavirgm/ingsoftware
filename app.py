@@ -44,10 +44,32 @@ def login():
 @app.route("/dashboard")
 def dashboard():
     if "loggedin" in session:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+        # Obtener la cantidad de productos
+        cursor.execute("SELECT COUNT(*) AS total_productos FROM productos")
+        total_productos = cursor.fetchone()["total_productos"]
+
+        # Obtener la cantidad de clientes
+        cursor.execute("SELECT COUNT(*) AS total_clientes FROM clientes")
+        total_clientes = cursor.fetchone()["total_clientes"]
+
+        # Obtener la cantidad de proveedores
+        cursor.execute("SELECT COUNT(*) AS total_proveedores FROM proveedores")
+        total_proveedores = cursor.fetchone()["total_proveedores"]
+
+        cursor.close()
+
         return render_template(
-            "dashboard.html", username=session["username"], rol=session["rol"]
+            "dashboard.html",
+            username=session["username"],
+            rol=session["rol"],
+            total_productos=total_productos,
+            total_clientes=total_clientes,
+            total_proveedores=total_proveedores
         )
     return redirect(url_for("login"))
+
 
 
 @app.route("/productos")

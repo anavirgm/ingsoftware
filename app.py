@@ -113,6 +113,31 @@ def cliente(id):
         return redirect(url_for("clientes"))
 
 
+@app.route("/proveedores", methods=["GET", "POST"])
+def proveedores():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        direccion = request.form["direccion"]
+        rif = request.form["rif"]
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("INSERT INTO proveedores (nombre, direccion, rif) VALUES (%s, %s, %s)",
+                       (nombre, direccion, rif))
+        mysql.connection.commit()
+        cursor.close()
+        flash("Proveedor agregado correctamente")
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM proveedores")
+    proveedores = cursor.fetchall()
+    cursor.close()
+
+    return render_template("proveedores.html", proveedores=proveedores)
+
+
 @app.route("/recuperar_contrasena", methods=["GET", "POST"])
 def recuperar_contrasena():
     if request.method == "POST" and "username" in request.form:

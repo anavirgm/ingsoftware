@@ -66,10 +66,9 @@ def dashboard():
             rol=session["rol"],
             total_productos=total_productos,
             total_clientes=total_clientes,
-            total_proveedores=total_proveedores
+            total_proveedores=total_proveedores,
         )
     return redirect(url_for("login"))
-
 
 
 @app.route("/productos")
@@ -146,8 +145,10 @@ def proveedores():
         rif = request.form["rif"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("INSERT INTO proveedores (nombre, direccion, rif) VALUES (%s, %s, %s)",
-                       (nombre, direccion, rif))
+        cursor.execute(
+            "INSERT INTO proveedores (nombre, direccion, rif) VALUES (%s, %s, %s)",
+            (nombre, direccion, rif),
+        )
         mysql.connection.commit()
         cursor.close()
         flash("Proveedor agregado correctamente")

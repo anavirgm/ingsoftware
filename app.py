@@ -234,6 +234,33 @@ def cambiar_contrasena():
     return render_template("cambiar_contrasena.html")
 
 
+@app.route("/transacciones", methods=["GET", "POST"])
+def transacciones():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM transacciones;")
+    transacciones = cursor.fetchall()
+    for transaccion in transacciones:
+        usuario = transaccion["usuarios_id"]
+        cursor.execute("SELECT nombre FROM usuarios WHERE id = %s", (usuario,))
+        transaccion["usuario"] = cursor.fetchone()["nombre"]
+
+        if transaccion["clientes_id"]:
+            cliente = transaccion["clientes_id"]
+            cursor.execute("SELECT nombre FROM clientes WHERE id = %s", (cliente,))
+            transaccion["cliente"] = cursor.fetchone()["nombre"]
+        else:
+            proveedor = transaccion["proveedores_id"]
+            cursor.execute("SELECT nombre FROM proveedores WHERE id = %s", (proveedor,))
+            transaccion["proveedor"] = cursor.fetchone()["nombre"]
+
+    cursor.close()
+
+    return render_template("transacciones.html", transacciones=transacciones)
+
+
 @app.route("/logout")
 def logout():
     session.pop("loggedin", None)

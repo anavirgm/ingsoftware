@@ -61,7 +61,6 @@ def dashboard():
         cursor.execute("SELECT COUNT(*) AS total_transacciones FROM transacciones")
         total_transacciones = cursor.fetchone()["total_transacciones"]
 
-
         cursor.close()
 
         return render_template(
@@ -85,10 +84,8 @@ def productos():
     return redirect(url_for("login"))
 
 
-
-
-
 #################################### CLIENTES ################################################
+
 
 @app.route("/clientes", methods=["GET", "POST"])
 def clientes():
@@ -112,13 +109,13 @@ def clientes():
         flash("Cliente agregado correctamente")
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM clientes WHERE status = 1")  # Solo mostrar clientes activos
+    cursor.execute(
+        "SELECT * FROM clientes WHERE status = 1"
+    )  # Solo mostrar clientes activos
     clientes = cursor.fetchall()
     cursor.close()
 
     return render_template("clientes.html", clientes=clientes)
-
-
 
 
 @app.route("/clientes/<id>", methods=["GET", "PUT"])
@@ -145,6 +142,7 @@ def cliente(id):
         # en el caso de que no exista un usuario con ese id, mantenerse en la lista de clientes
         return redirect(url_for("clientes"))
 
+
 @app.route("/eliminar_clientes", methods=["POST"])
 def eliminar_clientes():
     if "loggedin" not in session:
@@ -153,12 +151,15 @@ def eliminar_clientes():
     cliente_ids = request.form.getlist("cliente_ids")
     cursor = mysql.connection.cursor()
     for cliente_id in cliente_ids:
-        cursor.execute("UPDATE clientes SET status = %s WHERE id = %s", (False, cliente_id))
+        cursor.execute(
+            "UPDATE clientes SET status = %s WHERE id = %s", (False, cliente_id)
+        )
     mysql.connection.commit()
     cursor.close()
     flash("Clientes eliminados correctamente")
 
     return redirect(url_for("clientes"))
+
 
 @app.route("/obtener_cliente/<int:id>", methods=["GET"])
 def obtener_cliente(id):
@@ -171,6 +172,7 @@ def obtener_cliente(id):
     cursor.close()
 
     return cliente
+
 
 @app.route("/actualizar_cliente", methods=["POST"])
 def actualizar_cliente():
@@ -186,7 +188,7 @@ def actualizar_cliente():
     cursor = mysql.connection.cursor()
     cursor.execute(
         "UPDATE clientes SET nombre = %s, direccion = %s, telefono = %s, cedula = %s WHERE id = %s",
-        (nombre, direccion, telefono, cedula, id)
+        (nombre, direccion, telefono, cedula, id),
     )
     mysql.connection.commit()
     cursor.close()
@@ -196,6 +198,7 @@ def actualizar_cliente():
 
 
 ################################## PROVEEDORES ########################################
+
 
 @app.route("/proveedores", methods=["GET", "POST"])
 def proveedores():
@@ -223,6 +226,7 @@ def proveedores():
 
     return render_template("proveedores.html", proveedores=proveedores)
 
+
 @app.route("/eliminar_proveedores", methods=["POST"])
 def eliminar_proveedores():
     if "loggedin" not in session:
@@ -239,10 +243,8 @@ def eliminar_proveedores():
     return redirect(url_for("proveedores"))
 
 
-
-
-
 ##################### OLVIDASTE TU CONTRASEÑA ##########################################
+
 
 @app.route("/recuperar_contrasena", methods=["GET", "POST"])
 def recuperar_contrasena():
@@ -317,9 +319,8 @@ def cambiar_contrasena():
     return render_template("cambiar_contrasena.html")
 
 
-
-
 ################################### TRANSACCIONES #####################################################
+
 
 @app.route("/transacciones", methods=["GET", "POST"])
 def transacciones():

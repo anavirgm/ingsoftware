@@ -219,17 +219,15 @@ a.selector {
 
 .table_de_clientes td input[type="checkbox"] {
   margin: 0 auto;
-  display: block; 
-  margin-top: 5px; 
-  margin-bottom: 5px; 
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 
 .table_de_clientes th:nth-child(1),
 .table_de_clientes td:nth-child(1) {
   text-align: center;
 }
-
-
 
 /* Clases para usar en JavaScript */
 
@@ -296,7 +294,7 @@ body.dark * {
 body.dark button,
 body.dark input {
   background: #000;
- 
+
   color: white;
 }
 

@@ -22,7 +22,7 @@
       </div>
       <div class="icon__configuracion">
         <img
-          src="{{ url_for('static', filename='imagenes/icons/config.png') }}"
+          src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
           alt=""
         />
       </div>
@@ -88,7 +88,7 @@
             <h4>Proveedores</h4>
           </div>
         </a>
-        <a href="#">
+        <a href="{{ url_for('transacciones') }}">
           <div class="option">
             <img
               src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"

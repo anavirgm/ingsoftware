@@ -1,298 +1,403 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CamiCandy - Clientes</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/Clientes.css') }}"
+    />
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CamiCandy - Clientes</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/Clientes.css') }}" />
-</head>
-
-<body id="body">
-  <header>
-    <div class="icon__menu">
-      <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="Menu" id="btn_open" />
-    </div>
-    <div class="icon__configuracion">
-      <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" alt="Configuración" />
-    </div>
-    <div class="boton">
-      <button class="switch" id="switch">
-        <span><img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="Sol" /></span>
-        <span><img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="Luna" /></span>
-      </button>
-    </div>
-  </header>
-
-  <div class="menu__side" id="menu_side">
-    <div class="name_page">
-      <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="Logo" />
-      <h4>CamiCandy</h4>
-    </div>
-
-    <div class="options__menu">
-      <a href="{{ url_for('dashboard') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard" />
-          <h4>Dashboard</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('productos') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="Productos" />
-          <h4>Productos</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('clientes') }}" class="selector">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Clientes" />
-          <h4>Clientes</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('proveedores') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}" title="Proveedores" />
-          <h4>Proveedores</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('transacciones') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-            title="Transacciones" />
-          <h4>Transacciones</h4>
-        </div>
-      </a>
-      <a href="#">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes" />
-          <h4>Reportes</h4>
-        </div>
-      </a>
-      <a href="#">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" title="Herramientas" />
-          <h4>Herramientas</h4>
-        </div>
-      </a>
-      <a href="#">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}" title="Ayuda" />
-          <h4>Ayuda</h4>
-        </div>
-      </a>
-    </div>
-  </div>
-
-  <main>
-    <div class="container_clientes">
-      <h1>Clientes</h1>
-      <div class="container_clientes_buscar">
-        <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Buscar por ID, nombre o cédula..." />
-        <button onclick="mostrarFormulario()">Añadir clientes</button>
-        <button class="Realizar_venta" onclick="realizarVenta()">Realizar venta</button>
-        <button class="Actualizar" onclick="abrirModalActualizar()">Actualizar</button>
-        <button class="Eliminar" onclick="eliminarClientes()">Eliminar</button>
+  <body id="body">
+    <header>
+      <div class="icon__menu">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
+          alt="Menu"
+          id="btn_open"
+        />
       </div>
-      <div class="clientes">
-        <table class="table_de_clientes">
-          <thead>
-            <tr>
-              <th><input type="checkbox" id="select-all" /></th>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Dirección</th>
-              <th>Teléfono</th>
-              <th>Cédula</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for cliente in clientes %}
-            <tr>
-              <td>
-                <input type="checkbox" class="cliente-checkbox" data-id="{{ cliente.id }}" />
-              </td>
-              <td>{{ cliente.id }}</td>
-              <td>{{ cliente.nombre }}</td>
-              <td>{{ cliente.direccion }}</td>
-              <td>{{ cliente.telefono }}</td>
-              <td>{{ cliente.cedula }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <div class="icon__configuracion">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+          alt="Configuración"
+        />
+      </div>
+      <div class="boton">
+        <button class="switch" id="switch">
+          <span
+            ><img
+              src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
+              alt="Sol"
+          /></span>
+          <span
+            ><img
+              src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
+              alt="Luna"
+          /></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="menu__side" id="menu_side">
+      <div class="name_page">
+        <img
+          src="{{ url_for('static', filename='imagenes/logo.png') }}"
+          alt="Logo"
+        />
+        <h4>CamiCandy</h4>
+      </div>
+
+      <div class="options__menu">
+        <a href="{{ url_for('dashboard') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
+              title="Dashboard"
+            />
+            <h4>Dashboard</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('productos') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
+              title="Productos"
+            />
+            <h4>Productos</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('clientes') }}" class="selector">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
+              title="Clientes"
+            />
+            <h4>Clientes</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('proveedores') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}"
+              title="Proveedores"
+            />
+            <h4>Proveedores</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('transacciones') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
+              title="Transacciones"
+            />
+            <h4>Transacciones</h4>
+          </div>
+        </a>
+        <a href="#">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}"
+              title="Reportes"
+            />
+            <h4>Reportes</h4>
+          </div>
+        </a>
+        <a href="#">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+              title="Herramientas"
+            />
+            <h4>Herramientas</h4>
+          </div>
+        </a>
+        <a href="#">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
+              title="Ayuda"
+            />
+            <h4>Ayuda</h4>
+          </div>
+        </a>
       </div>
     </div>
-  </main>
 
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="cerrarFormulario()">&times;</span>
-      <h2>Agregar Nuevo Cliente</h2>
-      <form id="formulario" action="{{ url_for('clientes') }}" method="POST">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required /><br />
-        <label for="direccion">Dirección:</label>
-        <input type="text" id="direccion" name="direccion" required /><br />
-        <label for="telefono">Teléfono:</label>
-        <input type="text" id="telefono" name="telefono" required onkeydown="return validarNumero(event)" /><br />
-        <label for="cedula">Cédula:</label>
-        <input type="text" id="cedula" name="cedula" required onkeydown="return validarNumero(event)" /><br />
-        <input type="submit" value="Agregar" />
-      </form>
+    <main>
+      <div class="container_clientes">
+        <h1>Clientes</h1>
+        <div class="container_clientes_buscar">
+          <input
+            type="text"
+            id="searchInput"
+            onkeyup="searchTable()"
+            placeholder="Buscar por ID, nombre o cédula..."
+          />
+          <button onclick="mostrarFormulario()">Añadir clientes</button>
+          <button class="Realizar_venta" onclick="realizarVenta()">
+            Realizar venta
+          </button>
+          <button class="Actualizar" onclick="abrirModalActualizar()">
+            Actualizar
+          </button>
+          <button class="Eliminar" onclick="eliminarClientes()">
+            Eliminar
+          </button>
+        </div>
+        <div class="clientes">
+          <table class="table_de_clientes">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="select-all" /></th>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Dirección</th>
+                <th>Teléfono</th>
+                <th>Cédula</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for cliente in clientes %}
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    class="cliente-checkbox"
+                    data-id="{{ cliente.id }}"
+                  />
+                </td>
+                <td>{{ cliente.id }}</td>
+                <td>{{ cliente.nombre }}</td>
+                <td>{{ cliente.direccion }}</td>
+                <td>{{ cliente.telefono }}</td>
+                <td>{{ cliente.cedula }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarFormulario()">&times;</span>
+        <h2>Agregar Nuevo Cliente</h2>
+        <form id="formulario" action="{{ url_for('clientes') }}" method="POST">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" required /><br />
+          <label for="direccion">Dirección:</label>
+          <input type="text" id="direccion" name="direccion" required /><br />
+          <label for="telefono">Teléfono:</label>
+          <input
+            type="text"
+            id="telefono"
+            name="telefono"
+            required
+            onkeydown="return validarNumero(event)"
+          /><br />
+          <label for="cedula">Cédula:</label>
+          <input
+            type="text"
+            id="cedula"
+            name="cedula"
+            required
+            onkeydown="return validarNumero(event)"
+          /><br />
+          <input type="submit" value="Agregar" />
+        </form>
+      </div>
     </div>
-  </div>
 
-  <div id="modal-actualizar" class="modal" style="display: none">
-    <div class="modal-content">
-      <span class="close" onclick="cerrarModalActualizar()">&times;</span>
-      <h2>Actualizar Cliente</h2>
-      <form id="formulario-actualizar" method="POST" action="{{ url_for('actualizar_cliente') }}">
-        <input type="hidden        type=" hidden" id="cliente_id_actualizar" name="cliente_id_actualizar" />
-        <label for="nombre_actualizar">Nombre:</label>
-        <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
-        <label for="direccion_actualizar">Dirección:</label>
-        <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
-        <label for="telefono_actualizar">Teléfono:</label>
-        <input type="text" id="telefono_actualizar" name="telefono_actualizar" required /><br />
-        <label for="cedula_actualizar">Cédula:</label>
-        <input type="text" id="cedula_actualizar" name="cedula_actualizar" required /><br />
-        <button type="submit">Actualizar</button>
-      </form>
+    <div id="modal-actualizar" class="modal" style="display: none">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarModalActualizar()">&times;</span>
+        <h2>Actualizar Cliente</h2>
+        <form
+          id="formulario-actualizar"
+          method="POST"
+          action="{{ url_for('actualizar_cliente') }}"
+        >
+          <input
+            type="hidden"
+            id="cliente_id_actualizar"
+            name="cliente_id_actualizar"
+          />
+          <label for="nombre_actualizar">Nombre:</label>
+          <input
+            type="text"
+            id="nombre_actualizar"
+            name="nombre_actualizar"
+            required
+          /><br />
+          <label for="direccion_actualizar">Dirección:</label>
+          <input
+            type="text"
+            id="direccion_actualizar"
+            name="direccion_actualizar"
+            required
+          /><br />
+          <label for="telefono_actualizar">Teléfono:</label>
+          <input
+            type="text"
+            id="telefono_actualizar"
+            name="telefono_actualizar"
+            required
+          /><br />
+          <label for="cedula_actualizar">Cédula:</label>
+          <input
+            type="text"
+            id="cedula_actualizar"
+            name="cedula_actualizar"
+            required
+          /><br />
+          <button type="submit">Actualizar</button>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-  <script>
-    function validarNumero(event) {
-      // Permitir: backspace, delete, tab, escape, enter y .
-      if (
-        ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
-          event.key,
-        ) !== -1 ||
-        ((event.ctrlKey || event.metaKey) &&
-          ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
-        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(
-          event.key,
-        ) !== -1
-      ) {
+    <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+    <script>
+      function validarNumero(event) {
+        // Permitir: backspace, delete, tab, escape, enter y .
+        if (
+          ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
+            event.key,
+          ) !== -1 ||
+          ((event.ctrlKey || event.metaKey) &&
+            ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+          ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(
+            event.key,
+          ) !== -1
+        ) {
+          return true;
+        }
+        // Asegurarse de que es un número
+        if (!/^[0-9]$/.test(event.key)) {
+          event.preventDefault();
+          return false;
+        }
         return true;
       }
-      // Asegurarse de que es un número
-      if (!/^[0-9]$/.test(event.key)) {
-        event.preventDefault();
-        return false;
-      }
-      return true;
-    }
 
-    function mostrarFormulario() {
-      document.getElementById("modal").style.display = "block";
-    }
-
-    function cerrarFormulario() {
-      document.getElementById("modal").style.display = "none";
-      limpiarCampos();
-    }
-
-    function limpiarCampos() {
-      document.getElementById("formulario").reset();
-    }
-
-    function obtenerClientesSeleccionados() {
-      const checkboxes = document.querySelectorAll(".cliente-checkbox:checked");
-      const ids = Array.from(checkboxes).map((checkbox) => checkbox.getAttribute("data-id"));
-      return ids;
-    }
-
-    function eliminarClientes() {
-      const ids = obtenerClientesSeleccionados();
-      if (ids.length === 0) {
-        alert("Seleccione al menos un cliente para eliminar.");
-        return;
+      function mostrarFormulario() {
+        document.getElementById("modal").style.display = "block";
       }
 
-      const confirmacion = confirm("¿Está seguro de que desea eliminar los clientes seleccionados?");
-      if (!confirmacion) {
-        return;
+      function cerrarFormulario() {
+        document.getElementById("modal").style.display = "none";
+        limpiarCampos();
       }
 
-      // Crear un formulario y enviarlo para eliminar los clientes
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = "{{ url_for('eliminar_clientes') }}";
+      function limpiarCampos() {
+        document.getElementById("formulario").reset();
+      }
 
-      ids.forEach((id) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "cliente_ids";
-        input.value = id;
-        form.appendChild(input);
+      function obtenerClientesSeleccionados() {
+        const checkboxes = document.querySelectorAll(
+          ".cliente-checkbox:checked",
+        );
+        const ids = Array.from(checkboxes).map((checkbox) =>
+          checkbox.getAttribute("data-id"),
+        );
+        return ids;
+      }
+
+      function eliminarClientes() {
+        const ids = obtenerClientesSeleccionados();
+        if (ids.length === 0) {
+          alert("Seleccione al menos un cliente para eliminar.");
+          return;
+        }
+
+        const confirmacion = confirm(
+          "¿Está seguro de que desea eliminar los clientes seleccionados?",
+        );
+        if (!confirmacion) {
+          return;
+        }
+
+        // Crear un formulario y enviarlo para eliminar los clientes
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "{{ url_for('eliminar_clientes') }}";
+
+        ids.forEach((id) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "cliente_ids";
+          input.value = id;
+          form.appendChild(input);
+        });
+
+        document.body.appendChild(form);
+        form.submit();
+      }
+
+      const selectAllCheckbox = document.getElementById("select-all");
+      const checkboxes = document.querySelectorAll(".cliente-checkbox");
+
+      selectAllCheckbox.addEventListener("change", function () {
+        checkboxes.forEach(function (checkbox) {
+          checkbox.checked = selectAllCheckbox.checked;
+        });
       });
 
-      document.body.appendChild(form);
-      form.submit();
-    }
+      function abrirModalActualizar() {
+        // Obtener la fila de la tabla que contiene el cliente seleccionado
+        const filaSeleccionada = document
+          .querySelector("input.cliente-checkbox:checked")
+          .closest("tr");
 
-    const selectAllCheckbox = document.getElementById("select-all");
-    const checkboxes = document.querySelectorAll(".cliente-checkbox");
+        const clienteId = filaSeleccionada.cells[1].textContent; // suponemos que la columna ID es la segunda (índice 1)
 
-    selectAllCheckbox.addEventListener("change", function () {
-      checkboxes.forEach(function (checkbox) {
-        checkbox.checked = selectAllCheckbox.checked;
-      });
-    });
+        document.getElementById("cliente_id_actualizar").value = clienteId;
 
-    function abrirModalActualizar() {
-      // Obtener la fila de la tabla que contiene el cliente seleccionado
-      const filaSeleccionada = document.querySelector("input.cliente-checkbox:checked").closest("tr");
+        // obtenemos los datos del cliente de la fila seleccionada
+        const nombre = filaSeleccionada.cells[2].textContent;
+        const direccion = filaSeleccionada.cells[3].textContent;
+        const telefono = filaSeleccionada.cells[4].textContent;
+        const cedula = filaSeleccionada.cells[5].textContent;
 
-      const clienteId = filaSeleccionada.cells[1].textContent; // suponemos que la columna ID es la segunda (índice 1)
+        // completar los campos del formulario con los datos del cliente seleccionado
+        document.getElementById("nombre_actualizar").value = nombre;
+        document.getElementById("direccion_actualizar").value = direccion;
+        document.getElementById("telefono_actualizar").value = telefono;
+        document.getElementById("cedula_actualizar").value = cedula;
 
-      document.getElementById("cliente_id_actualizar").value = clienteId;
+        document.getElementById("modal-actualizar").style.display = "block";
+      }
 
-      // obtenemos los datos del cliente de la fila seleccionada
-      const nombre = filaSeleccionada.cells[2].textContent;
-      const direccion = filaSeleccionada.cells[3].textContent;
-      const telefono = filaSeleccionada.cells[4].textContent;
-      const cedula = filaSeleccionada.cells[5].textContent;
+      function cerrarModalActualizar() {
+        document.getElementById("modal-actualizar").style.display = "none";
+      }
 
-      // completar los campos del formulario con los datos del cliente seleccionado
-      document.getElementById("nombre_actualizar").value = nombre;
-      document.getElementById("direccion_actualizar").value = direccion;
-      document.getElementById("telefono_actualizar").value = telefono;
-      document.getElementById("cedula_actualizar").value = cedula;
-
-      document.getElementById("modal-actualizar").style.display = "block";
-    }
-
-    function cerrarModalActualizar() {
-      document.getElementById("modal-actualizar").style.display = "none";
-    }
-
-    function searchTable() {
-      let input, filter, table, tr, td, i, txtValue;
-      input = document.getElementById("searchInput");
-      filter = input.value.toUpperCase();
-      table = document.querySelector(".table_de_clientes");
-      tr = table.getElementsByTagName("tr");
-      for (i = 0; i < tr.length; i++) {
-        td = tr[i].getElementsByTagName("td");
-        for (let j = 1; j < td.length; j++) {
-          // comparamos cada celda de la tabla
-          let cell = td[j];
-          if (cell) {
-            txtValue = cell.textContent || cell.innerText;
-            if (txtValue.toUpperCase().indexOf(filter) > -1) {
-              tr[i].style.display = "";
-              break; // si se encuentra una coincidencia, mostramos la fila y salimos del bucle
-            } else {
-              tr[i].style.display = "none"; // si no hay coincidencia, ocultamos la fila
+      function searchTable() {
+        let input, filter, table, tr, td, i, txtValue;
+        input = document.getElementById("searchInput");
+        filter = input.value.toUpperCase();
+        table = document.querySelector(".table_de_clientes");
+        tr = table.getElementsByTagName("tr");
+        for (i = 0; i < tr.length; i++) {
+          td = tr[i].getElementsByTagName("td");
+          for (let j = 1; j < td.length; j++) {
+            // comparamos cada celda de la tabla
+            let cell = td[j];
+            if (cell) {
+              txtValue = cell.textContent || cell.innerText;
+              if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                tr[i].style.display = "";
+                break; // si se encuentra una coincidencia, mostramos la fila y salimos del bucle
+              } else {
+                tr[i].style.display = "none"; // si no hay coincidencia, ocultamos la fila
+              }
             }
           }
         }
       }
-    }
-  </script>
-</body>
-
+    </script>
+  </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 import MySQLdb.cursors
@@ -61,7 +61,6 @@ def dashboard():
         cursor.execute("SELECT COUNT(*) AS total_transacciones FROM transacciones")
         total_transacciones = cursor.fetchone()["total_transacciones"]
 
-
         cursor.close()
 
         return render_template(
@@ -85,39 +84,7 @@ def productos():
     return redirect(url_for("login"))
 
 
-
-
-
 #################################### CLIENTES ################################################
-
-@app.route("/clientes", methods=["GET", "POST"])
-def clientes():
-    if "loggedin" not in session:
-        return redirect(url_for("login"))
-
-    if request.method == "POST":
-        # Formulario para agregar un nuevo cliente
-        nombre = request.form["nombre"]
-        direccion = request.form["direccion"]
-        telefono = request.form["telefono"]
-        cedula = request.form["cedula"]
-
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            "INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
-            (nombre, direccion, telefono, cedula),
-        )
-        mysql.connection.commit()
-        cursor.close()
-        flash("Cliente agregado correctamente")
-
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM clientes WHERE status = 1")  # Solo mostrar clientes activos
-    clientes = cursor.fetchall()
-    cursor.close()
-
-    return render_template("clientes.html", clientes=clientes)
-
 
 
 
@@ -145,6 +112,56 @@ def cliente(id):
         # en el caso de que no exista un usuario con ese id, mantenerse en la lista de clientes
         return redirect(url_for("clientes"))
 
+
+@app.route("/clientes", methods=["GET", "POST"])
+def clientes():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        nombre = request.form["nombre"]
+        direccion = request.form["direccion"]
+        telefono = request.form["telefono"]
+        cedula = request.form["cedula"]
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
+                       (nombre, direccion, telefono, cedula))
+        mysql.connection.commit()
+        cursor.close()
+        flash("Cliente agregado correctamente")
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM clientes WHERE status = 1")
+    clientes = cursor.fetchall()
+    cursor.close()
+
+    return render_template("clientes.html", clientes=clientes, username=session["username"], rol=session["rol"])
+
+@app.route("/actualizar_cliente", methods=["POST"])
+def actualizar_cliente():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    cliente_id = request.form["cliente_id_actualizar"]
+    nombre = request.form["nombre_actualizar"]
+    direccion = request.form["direccion_actualizar"]
+    telefono = request.form["telefono_actualizar"]
+    cedula = request.form["cedula_actualizar"]
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("""
+        UPDATE clientes
+        SET nombre = %s, direccion = %s, telefono = %s, cedula = %s
+        WHERE id = %s
+    """, (nombre, direccion, telefono, cedula, cliente_id))
+    mysql.connection.commit()
+    cursor.close()
+
+    flash("Cliente actualizado correctamente")
+    return redirect(url_for("clientes"))
+
+
 @app.route("/eliminar_clientes", methods=["POST"])
 def eliminar_clientes():
     if "loggedin" not in session:
@@ -153,49 +170,18 @@ def eliminar_clientes():
     cliente_ids = request.form.getlist("cliente_ids")
     cursor = mysql.connection.cursor()
     for cliente_id in cliente_ids:
-        cursor.execute("UPDATE clientes SET status = %s WHERE id = %s", (False, cliente_id))
+        cursor.execute(
+            "UPDATE clientes SET status = %s WHERE id = %s", (False, cliente_id)
+        )
     mysql.connection.commit()
     cursor.close()
     flash("Clientes eliminados correctamente")
 
     return redirect(url_for("clientes"))
 
-@app.route("/obtener_cliente/<int:id>", methods=["GET"])
-def obtener_cliente(id):
-    if "loggedin" not in session:
-        return redirect(url_for("login"))
-
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM clientes WHERE id = %s", (id,))
-    cliente = cursor.fetchone()
-    cursor.close()
-
-    return cliente
-
-@app.route("/actualizar_cliente", methods=["POST"])
-def actualizar_cliente():
-    if "loggedin" not in session:
-        return redirect(url_for("login"))
-
-    id = request.form["id"]
-    nombre = request.form["nombre"]
-    direccion = request.form["direccion"]
-    telefono = request.form["telefono"]
-    cedula = request.form["cedula"]
-
-    cursor = mysql.connection.cursor()
-    cursor.execute(
-        "UPDATE clientes SET nombre = %s, direccion = %s, telefono = %s, cedula = %s WHERE id = %s",
-        (nombre, direccion, telefono, cedula, id)
-    )
-    mysql.connection.commit()
-    cursor.close()
-    flash("Cliente actualizado correctamente")
-
-    return redirect(url_for("clientes"))
-
 
 ################################## PROVEEDORES ########################################
+
 
 @app.route("/proveedores", methods=["GET", "POST"])
 def proveedores():
@@ -209,7 +195,7 @@ def proveedores():
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute(
-            "INSERT INTO proveedores (nombre, direccion, rif) VALUES (%s, %s, %s)",
+            "INSERT INTO proveedores (nombre, direccion, rif, status) VALUES (%s, %s, %s, 1)",
             (nombre, direccion, rif),
         )
         mysql.connection.commit()
@@ -217,32 +203,65 @@ def proveedores():
         flash("Proveedor agregado correctamente")
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM proveedores")
+    cursor.execute("SELECT * FROM proveedores WHERE status = 1")
     proveedores = cursor.fetchall()
     cursor.close()
 
-    return render_template("proveedores.html", proveedores=proveedores)
+    return render_template("proveedores.html", proveedores=proveedores, username=session["username"], rol=session["rol"])
 
-@app.route("/eliminar_proveedores", methods=["POST"])
-def eliminar_proveedores():
+
+@app.route("/actualizar_proveedor", methods=["POST"])
+def actualizar_proveedor():
+    # Verificar si el usuario está logueado
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
-    proveedor_ids = request.form.getlist("proveedor_ids")
-    cursor = mysql.connection.cursor()
-    for proveedor_id in proveedor_ids:
-        cursor.execute("DELETE FROM proveedores WHERE id = %s", (proveedor_id,))
+    # Obtener los datos del formulario
+    proveedor_id = request.form["proveedor_id_actualizar"]
+    nombre = request.form["nombre_actualizar"]
+    direccion = request.form["direccion_actualizar"]
+    rif = request.form["rif_actualizar"]
+
+    # Actualizar la información en la base de datos
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("""
+        UPDATE proveedores
+        SET nombre = %s, direccion = %s, rif = %s
+        WHERE id = %s
+    """, (nombre, direccion, rif, proveedor_id))
     mysql.connection.commit()
     cursor.close()
-    flash("Proveedores eliminados correctamente")
 
+    # Redirigir a la página de proveedores con un mensaje flash
+    flash("Proveedor actualizado correctamente")
     return redirect(url_for("proveedores"))
 
 
+@app.route("/eliminar_proveedores", methods=["POST"])
+def eliminar_proveedores():
+    # Verificar si el usuario está logueado
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
 
+    # Obtener los IDs de los proveedores a eliminar del formulario
+    proveedor_ids = request.form.getlist("proveedor_ids")
+
+    # Iterar sobre los IDs de los proveedores y marcarlos como inactivos en la base de datos
+    cursor = mysql.connection.cursor()
+    for proveedor_id in proveedor_ids:
+        cursor.execute(
+            "UPDATE proveedores SET status = %s WHERE id = %s", (False, proveedor_id)
+        )
+    mysql.connection.commit()
+    cursor.close()
+
+    # Redirigir a la página de proveedores con un mensaje flash
+    flash("Proveedores eliminados correctamente")
+    return redirect(url_for("proveedores"))
 
 
 ##################### OLVIDASTE TU CONTRASEÑA ##########################################
+
 
 @app.route("/recuperar_contrasena", methods=["GET", "POST"])
 def recuperar_contrasena():
@@ -317,9 +336,8 @@ def cambiar_contrasena():
     return render_template("cambiar_contrasena.html")
 
 
-
-
 ################################### TRANSACCIONES #####################################################
+
 
 @app.route("/transacciones", methods=["GET", "POST"])
 def transacciones():

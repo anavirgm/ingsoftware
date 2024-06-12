@@ -10,6 +10,7 @@ body {
   margin-left: 100px;
   transition: margin-left 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
   margin-top: 80px;
+  margin-bottom: 20px;
 }
 
 header {
@@ -146,6 +147,7 @@ header {
 a.selector {
   color: #fff;
 }
+
 .selector:before {
   content: "";
   width: 3px;
@@ -156,15 +158,15 @@ a.selector {
   left: -30px;
 }
 
-/*estilos de las cards clientes*/
-
-.container_clientes_buscar {
+/* Estilos para el formulario de búsqueda de clientes */
+.container_productos_buscar {
   padding-top: 10px;
   padding-left: 10px;
   padding-bottom: 10px;
+  margin-bottom: 20px;
 }
 
-.container_clientes_buscar input {
+.container_productos_buscar input {
   padding: 10px;
   padding-right: 35px;
   border-radius: 5px;
@@ -172,46 +174,64 @@ a.selector {
   margin-right: 540px;
 }
 
-.container_clientes_buscar button {
+.container_productos_buscar button {
   padding: 10px;
-  padding-right: 35px;
+  padding-right: 25px;
   border-radius: 5px;
   outline: none;
   background-color: #c3bcbc;
 }
 
-.container_clientes_buscar button.Realizar_venta {
-  background-color: #fcfc3c;
-}
-
-.container_clientes_buscar button.Actualizar {
+.container_productos_buscar button.Actualizar {
   background-color: #bd93e4;
 }
 
-.container_clientes_buscar button.Eliminar {
+.container_productos_buscar button.Eliminar {
   background-color: #f08f35;
 }
 
-.table_de_clientes {
-  border-collapse: collapse;
-  margin: 25px 0;
-  font-size: 1em;
-  font-family: Arial, Helvetica, sans-serif;
-  min-width: 500px;
-  box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+/* Estilos para el contenedor de clientes */
+.container_productos {
+  margin: 20px;
 }
 
-.table_de_clientes thead tr {
-  background-color: #d4c9c9;
+/* Estilos para la tabla de clientes */
+.table_de_productos {
+  width: 100%;
+  border-spacing: 0;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-.table_de_clientes th,
-.table_de_clientes td {
-  padding: 12px 95px;
+.table_de_productos th,
+.table_de_productos td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
 }
 
-/*clases para usar en java script*/
+.table_de_productos thead th {
+  background-color: #75777a;
+  color: white;
+}
 
+.table_de_productos tbody tr:hover {
+  background-color: #ddd;
+}
+
+.table_de_productos td input[type="checkbox"] {
+  margin: 0 auto;
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.table_de_productos th:nth-child(1),
+.table_de_productos td:nth-child(1) {
+  text-align: center;
+}
+
+/* Clases para usar en JavaScript */
 .body_move {
   margin-left: 250px;
 }
@@ -220,8 +240,7 @@ a.selector {
   width: 250px;
 }
 
-/*estetica del boton de tema*/
-
+/* Estética del botón de tema */
 .switch {
   background: #343d5b;
   border-radius: 1000px;
@@ -266,8 +285,7 @@ a.selector {
   left: unset;
 }
 
-/*clases para tema oscuro*/
-
+/* Clases para tema oscuro */
 body.dark * {
   color: white;
 }
@@ -303,4 +321,71 @@ body.dark .menu__side {
   overflow: hidden;
   border-right: 40px solid#152937;
   transition: 0.3s ease all;
+}
+
+/* Estilos para el modal */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+  background-color: #fefefe;
+  margin: 15% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 500px;
+  border-radius: 5px;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.modal h2 {
+  margin-top: 0;
+}
+
+.modal label {
+  display: block;
+  margin: 10px 0 5px;
+}
+
+.modal input[type="text"] {
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.modal input[type="submit"] {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.modal input[type="submit"]:hover {
+  background-color: #45a049;
 }

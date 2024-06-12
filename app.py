@@ -75,13 +75,92 @@ def dashboard():
     return redirect(url_for("login"))
 
 
+
+############################# PRODUCTOS ################################
 @app.route("/productos")
 def productos():
     if "loggedin" in session:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM productos")
+        all_products = cursor.fetchall()
+        cursor.close()
         return render_template(
-            "productos.html", username=session["username"], rol=session["rol"]
+            "productos.html", username=session["username"], rol=session["rol"], productos=all_products
         )
     return redirect(url_for("login"))
+
+@app.route("/insertar_producto", methods=["POST"])
+def insertar_producto():
+    if "loggedin" in session:
+        if request.method == "POST":
+            nombre = request.form["nombre"]
+            fecha_vencimiento = request.form["fecha_vencimiento"]
+            cantidad_disponible = request.form["cantidad_disponible"]
+            precio_en_dolares = request.form["precio_en_dolares"]
+            unidad_de_medicion = request.form["unidad_de_medicion"]
+
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute("INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, unidad_de_medicion) VALUES (%s, %s, %s, %s, %s)",
+                            (nombre, fecha_vencimiento, cantidad_disponible, precio_en_dolares, unidad_de_medicion))
+            mysql.connection.commit()
+            cursor.close()
+            flash("Producto agregado correctamente")
+            return redirect(url_for("productos"))
+    return redirect(url_for("login"))
+
+
+
+@app.route("/actualizar_producto", methods=["POST"])
+def actualizar_producto():
+    # Verificar si el usuario está logueado
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    # Obtener los datos del formulario
+    producto_id = request.form["producto_id_actualizar"]
+    nombre = request.form["nombre_actualizar"]
+    fecha_de_vencimiento = request.form["fecha_de_vencimiento_actualizar"]
+    cantidad_disponible = request.form["cantidad_disponible_actualizar"]
+    precio_en_dolares = request.form["precio_en_dolares_actualizar"]
+    unidad_de_medicion = request.form["unidad_de_medicion_actualizar"]
+
+    # Actualizar la información en la base de datos
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("""
+        UPDATE productos
+        SET nombre = %s, fecha_de_vencimiento = %s, cantidad_disponible = %s,
+            precio_en_dolares = %s, unidad_de_medicion = %s
+        WHERE id = %s
+    """, (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, unidad_de_medicion, producto_id))
+    mysql.connection.commit()
+    cursor.close()
+
+    # Redirigir a la página de productos con un mensaje flash
+    flash("Producto actualizado correctamente")
+    return redirect(url_for("productos"))
+
+
+@app.route("/eliminar_productos", methods=["POST"])
+def eliminar_productos():
+    # Verificar si el usuario está logueado
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    # Obtener los IDs de los productos a eliminar del formulario
+    producto_ids = request.form.getlist("producto_ids")
+
+    # Iterar sobre los IDs de los productos y marcarlos como inactivos en la base de datos
+    cursor = mysql.connection.cursor()
+    for producto_id in producto_ids:
+        cursor.execute(
+            "UPDATE productos SET status = %s WHERE id = %s", (False, producto_id)
+        )
+    mysql.connection.commit()
+    cursor.close()
+
+    # Redirigir a la página de productos con un mensaje flash
+    flash("Productos eliminados correctamente")
+    return redirect(url_for("productos"))
 
 
 #################################### CLIENTES ################################################

@@ -85,11 +85,10 @@
     <div class="container_clientes">
       <h1>Proveedores</h1>
       <div class="container_clientes_buscar">
-        <input type="text" placeholder="Buscar" />
+        <input type="text" placeholder="Buscar" oninput="filtrarProveedores(this.value)" />
         <button onclick="mostrarFormulario()">Añadir proveedor</button>
         <button class="Realizar_venta" onclick="realizarVenta()">Realizar venta</button>
         <button class="Actualizar" onclick="abrirModalActualizar()">Actualizar</button>
-
         <button class="Eliminar" onclick="eliminarProveedores()">Eliminar</button>
       </div>
       <div class="clientes">
@@ -103,7 +102,7 @@
               <th>RIF</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody id="proveedores-table-body">
             <!-- Aquí se mostrarán los datos de los proveedores -->
             {% for proveedor in proveedores %}
             <tr>
@@ -210,7 +209,6 @@
     }
 
     function eliminarProveedores() {
-
       const ids = obtenerProveedoresSeleccionados();
       if (ids.length === 0) {
         alert("Seleccione al menos un proveedor para eliminar.");
@@ -274,6 +272,19 @@
 
     function cerrarModalActualizar() {
       document.getElementById("modal-actualizar").style.display = "none";
+    }
+
+    function filtrarProveedores(texto) {
+      const filas = document.querySelectorAll(".table_de_clientes tbody tr");
+
+      filas.forEach((fila) => {
+        const contenido = fila.textContent.toLowerCase();
+        if (contenido.includes(texto.toLowerCase())) {
+          fila.style.display = "table-row";
+        } else {
+          fila.style.display = "none";
+        }
+      });
     }
   </script>
 </body>

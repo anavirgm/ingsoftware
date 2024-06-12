@@ -55,6 +55,7 @@ def dashboard():
     if "loggedin" in session:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
+        ############### GRÁFICOS
         # Obtener la cantidad de ventas realizadas la última semana
         cursor.execute(
             "SELECT COUNT(*) AS cantidad, DATE(marca_de_tiempo) AS fecha FROM transacciones WHERE (marca_de_tiempo BETWEEN DATE_SUB(NOW(), INTERVAL 1 WEEK) AND NOW()) AND clientes_id IS NOT NULL GROUP BY DATE(marca_de_tiempo) ORDER BY DATE(marca_de_tiempo) ASC;"
@@ -63,6 +64,15 @@ def dashboard():
         # Formatear las fechas
         for venta in ventas_semana:
             venta["fecha"] = venta["fecha"].strftime("%Y-%m-%d")
+
+        # Obtener el monto total de las transacciones de la última semana
+        cursor.execute(
+            "SELECT SUM(importe_en_dolares) AS importe_en_dolares, DATE(marca_de_tiempo) AS fecha FROM transacciones WHERE (marca_de_tiempo BETWEEN DATE_SUB(NOW(), INTERVAL 1 WEEK) AND NOW()) AND clientes_id IS NOT NULL GROUP BY DATE(marca_de_tiempo) ORDER BY DATE(marca_de_tiempo) ASC;"
+        )
+        ingreso_semana = cursor.fetchall()
+        for ingreso in ingreso_semana:
+            ingreso["fecha"] = ingreso["fecha"].strftime("%Y-%m-%d")
+        ########################
 
         # Obtener la cantidad de productos
         cursor.execute("SELECT COUNT(*) AS total_productos FROM productos")
@@ -90,6 +100,7 @@ def dashboard():
             total_proveedores=total_proveedores,
             total_transacciones=total_transacciones,
             ventas_semana=ventas_semana,
+            ingreso_semana=ingreso_semana,
         )
     return redirect(url_for("login"))
 

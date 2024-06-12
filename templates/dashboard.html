@@ -136,7 +136,7 @@
       <div class="grid cards-section">
         <div class="card">
           <h2>Productos</h2>
-          <p>Almacen: {{ total_productos }}</p>
+          <p>Almacén: {{ total_productos }}</p>
         </div>
 
         <div class="card">
@@ -161,8 +161,7 @@
         </div>
 
         <div class="large-card">
-          <h2>Large Card 2</h2>
-          <p>Grafico de Ganancias de la semana</p>
+          <canvas id="grafico-ingreso"></canvas>
         </div>
       </div>
     </main>
@@ -175,6 +174,7 @@
       referrerpolicy="no-referrer"
     ></script>
     <script>
+      // gráfico de cantidad de ventas de la última semana
       (async function(data) {
         new Chart(
           document.getElementById('grafico-ventas').getContext('2d'),
@@ -184,7 +184,7 @@
               labels: data.map(row => row.fecha),
               datasets: [
                 {
-                  label: 'Ventas por día',
+                  label: 'Ventas por día (unidades)',
                   data: data.map(row => row.cantidad)
                 }
               ]
@@ -200,6 +200,25 @@
           }
         );
       })({{ ventas_semana | tojson }});
+
+      // gráfico de monto total de ingreso de la útlima semana
+      (async function(data) {
+        new Chart(
+          document.getElementById('grafico-ingreso').getContext('2d'),
+          {
+            type: 'bar',
+            data: {
+              labels: data.map(row => row.fecha),
+              datasets: [
+                {
+                  label: 'Ingreso por día ($)',
+                  data: data.map(row => row.importe_en_dolares)
+                }
+              ]
+            },
+          }
+        );
+      })({{ ingreso_semana | tojson }});
     </script>
   </body>
 </html>

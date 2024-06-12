@@ -1,269 +1,398 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CamiCandy - Productos</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/Productos.css') }}" />
-</head>
-<body id="body">
-  <header>
-    <div class="icon__menu">
-      <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="" id="btn_open" />
-    </div>
-    <div class="icon__configuracion">
-      <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" alt="" />
-    </div>
-    <div class="boton">
-      <button class="switch" id="switch">
-        <span><img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="" /></span>
-        <span><img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="" /></span>
-      </button>
-    </div>
-  </header>
-
-  <div class="menu__side" id="menu_side">
-    <div class="name_page">
-      <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="" />
-      <h4>CamiCandy</h4>
-    </div>
-
-    <div class="options__menu">
-      <a href="{{ url_for('dashboard') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard" />
-          <h4>Dashboard</h4>
-        </div>
-      </a>
-      <a href="#" class="selector">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="productos" />
-          <h4>Productos</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('clientes') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Cliente" />
-          <h4>Clientes</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('proveedores') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}" title="Proveedores" />
-          <h4>Proveedores</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('transacciones') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}" title="Transacciones" />
-          <h4>Transacciones</h4>
-        </div>
-      </a>
-      <a href="#">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes" />
-          <h4>Reportes</h4>
-        </div>
-      </a>
-      <a href="#">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" title="Herramientas" />
-          <h4>Herramientas</h4>
-        </div>
-      </a>
-      <a href="#">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}" title="Ayuda" />
-          <h4>Ayuda</h4>
-        </div>
-      </a>
-    </div>
-  </div>
-
-  <main>
-    <div class="container_productos">
-      <h1>Productos</h1>
-      <div class="container_productos_buscar">
-        <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
-        <button onclick="mostrarFormulario()">Añadir producto</button>
-        <button class="Actualizar" onclick="abrirModalActualizar()">Actualizar</button>
-        <button class="Eliminar" onclick="eliminarProductos()">Eliminar</button>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CamiCandy - Productos</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/Productos.css') }}"
+    />
+  </head>
+  <body id="body">
+    <header>
+      <div class="icon__menu">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
+          alt=""
+          id="btn_open"
+        />
       </div>
-      <div class="productos">
-        <table class="table_de_productos">
-          <thead>
-            <tr>
-              <th><input type="checkbox" id="select-all" /></th>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Fecha de Vencimiento</th>
-              <th>Cantidad Disponible</th>
-              <th>Precio ($)</th>
-              <th>Unidad de Medición</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-productos-body">
-            <!-- Aquí se mostrarán los datos de los productos -->
-            {% for producto in productos %}
-            <tr>
-              <td>
-                <input type="checkbox" class="producto-checkbox" data-id="{{ producto.id }}" />
-              </td>
-              <td>{{ producto.id }}</td>
-              <td>{{ producto.nombre }}</td>
-              <td>{{ producto.fecha_de_vencimiento }}</td>
-              <td>{{ producto.cantidad_disponible }}</td>
-              <td>{{ producto.precio_en_dolares }}</td>
-              <td>{{ producto.unidad_de_medicion }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
+      <div class="icon__configuracion">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+          alt=""
+        />
+      </div>
+      <div class="boton">
+        <button class="switch" id="switch">
+          <span
+            ><img
+              src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
+              alt=""
+          /></span>
+          <span
+            ><img
+              src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
+              alt=""
+          /></span>
+        </button>
+      </div>
+    </header>
+
+    <div class="menu__side" id="menu_side">
+      <div class="name_page">
+        <img
+          src="{{ url_for('static', filename='imagenes/logo.png') }}"
+          alt=""
+        />
+        <h4>CamiCandy</h4>
+      </div>
+
+      <div class="options__menu">
+        <a href="{{ url_for('dashboard') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
+              title="Dashboard"
+            />
+            <h4>Dashboard</h4>
+          </div>
+        </a>
+        <a href="#" class="selector">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
+              title="productos"
+            />
+            <h4>Productos</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('clientes') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
+              title="Cliente"
+            />
+            <h4>Clientes</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('proveedores') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}"
+              title="Proveedores"
+            />
+            <h4>Proveedores</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('transacciones') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
+              title="Transacciones"
+            />
+            <h4>Transacciones</h4>
+          </div>
+        </a>
+        <a href="#">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}"
+              title="Reportes"
+            />
+            <h4>Reportes</h4>
+          </div>
+        </a>
+        <a href="#">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+              title="Herramientas"
+            />
+            <h4>Herramientas</h4>
+          </div>
+        </a>
+        <a href="#">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
+              title="Ayuda"
+            />
+            <h4>Ayuda</h4>
+          </div>
+        </a>
       </div>
     </div>
-  </main>
 
-  <!-- Ventana emergente para agregar un nuevo producto -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="cerrarFormulario()">&times;</span>
-      <h2>Agregar Nuevo Producto</h2>
-      <form id="formulario" action="{{ url_for('productos') }}" method="POST">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required /><br />
-        <label for="fecha_de_vencimiento">Fecha de Vencimiento:</label>
-        <input type="date" id="fecha_de_vencimiento" name="fecha_de_vencimiento" required /><br />
-        <label for="cantidad_disponible">Cantidad Disponible:</label>
-        <input type="number" id="cantidad_disponible" name="cantidad_disponible" required /><br />
-        <label for="precio_en_dolares">Precio ($):</label>
-        <input type="text" id="precio_en_dolares" name="precio_en_dolares" required /><br />
-        <label for="unidad_de_medicion">Unidad de Medición:</label>
-        <input type="text" id="unidad_de_medicion" name="unidad_de_medicion" required /><br />
-        <input type="submit" value="Agregar" />
-      </form>
+    <main>
+      <div class="container_productos">
+        <h1>Productos</h1>
+        <div class="container_productos_buscar">
+          <input
+            type="text"
+            placeholder="Buscar"
+            id="buscar-producto"
+            onkeyup="buscarProducto()"
+          />
+          <button onclick="mostrarFormulario()">Añadir producto</button>
+          <button class="Actualizar" onclick="abrirModalActualizar()">
+            Actualizar
+          </button>
+          <button class="Eliminar" onclick="eliminarProductos()">
+            Eliminar
+          </button>
+        </div>
+        <div class="productos">
+          <table class="table_de_productos">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="select-all" /></th>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Fecha de Vencimiento</th>
+                <th>Cantidad Disponible</th>
+                <th>Precio ($)</th>
+                <th>Unidad de Medición</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-productos-body">
+              <!-- Aquí se mostrarán los datos de los productos -->
+              {% for producto in productos %}
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    class="producto-checkbox"
+                    data-id="{{ producto.id }}"
+                  />
+                </td>
+                <td>{{ producto.id }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.fecha_de_vencimiento }}</td>
+                <td>{{ producto.cantidad_disponible }}</td>
+                <td>{{ producto.precio_en_dolares }}</td>
+                <td>{{ producto.unidad_de_medicion }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+
+    <!-- Ventana emergente para agregar un nuevo producto -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarFormulario()">&times;</span>
+        <h2>Agregar Nuevo Producto</h2>
+        <form id="formulario" action="{{ url_for('productos') }}" method="POST">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" required /><br />
+          <label for="fecha_de_vencimiento">Fecha de Vencimiento:</label>
+          <input
+            type="date"
+            id="fecha_de_vencimiento"
+            name="fecha_de_vencimiento"
+            required
+          /><br />
+          <label for="cantidad_disponible">Cantidad Disponible:</label>
+          <input
+            type="number"
+            id="cantidad_disponible"
+            name="cantidad_disponible"
+            required
+          /><br />
+          <label for="precio_en_dolares">Precio ($):</label>
+          <input
+            type="text"
+            id="precio_en_dolares"
+            name="precio_en_dolares"
+            required
+          /><br />
+          <label for="unidad_de_medicion">Unidad de Medición:</label>
+          <input
+            type="text"
+            id="unidad_de_medicion"
+            name="unidad_de_medicion"
+            required
+          /><br />
+          <input type="submit" value="Agregar" />
+        </form>
+      </div>
     </div>
-  </div>
 
-  <!-- Ventana emergente para actualizar un producto -->
-  <div id="modal-actualizar" class="modal" style="display: none">
-    <div class="modal-content">
-      <span class="close" onclick="cerrarModalActualizar()">&times;</span>
-      <h2>Actualizar Producto</h2>
-      <form id="formulario-actualizar" action="{{ url_for('actualizar_producto') }}" method="POST">
-        <input type="hidden" id="producto_id_actualizar" name="producto_id_actualizar" />
-        <label for="nombre_actualizar">Nombre:</label>
-        <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
-        <label for="fecha_de_vencimiento_actualizar">Fecha de Vencimiento:</label>
-        <input type="date" id="fecha_de_vencimiento_actualizar" name="fecha_de_vencimiento_actualizar" required /><br />
-        <label for="cantidad_disponible_actualizar">Cantidad Disponible:</label>
-        <input type="number" id="cantidad_disponible_actualizar" name="cantidad_disponible_actualizar" required /><br />
-        <label for="precio_en_dolares_actualizar">Precio ($):</label>
-        <input type="text" id="precio_en_dolares_actualizar" name="precio_en_dolares_actualizar" required /><br />
-        <label for="unidad_de_medicion_actualizar">Unidad de Medición:</label>
-        <input type="text" id="unidad_de_medicion_actualizar" name="unidad_de_medicion_actualizar" required /><br />
-        <button type="submit">Actualizar</button>
-      </form>
+    <!-- Ventana emergente para actualizar un producto -->
+    <div id="modal-actualizar" class="modal" style="display: none">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarModalActualizar()">&times;</span>
+        <h2>Actualizar Producto</h2>
+        <form
+          id="formulario-actualizar"
+          action="{{ url_for('actualizar_producto') }}"
+          method="POST"
+        >
+          <input
+            type="hidden"
+            id="producto_id_actualizar"
+            name="producto_id_actualizar"
+          />
+          <label for="nombre_actualizar">Nombre:</label>
+          <input
+            type="text"
+            id="nombre_actualizar"
+            name="nombre_actualizar"
+            required
+          /><br />
+          <label for="fecha_de_vencimiento_actualizar"
+            >Fecha de Vencimiento:</label
+          >
+          <input
+            type="date"
+            id="fecha_de_vencimiento_actualizar"
+            name="fecha_de_vencimiento_actualizar"
+            required
+          /><br />
+          <label for="cantidad_disponible_actualizar"
+            >Cantidad Disponible:</label
+          >
+          <input
+            type="number"
+            id="cantidad_disponible_actualizar"
+            name="cantidad_disponible_actualizar"
+            required
+          /><br />
+          <label for="precio_en_dolares_actualizar">Precio ($):</label>
+          <input
+            type="text"
+            id="precio_en_dolares_actualizar"
+            name="precio_en_dolares_actualizar"
+            required
+          /><br />
+          <label for="unidad_de_medicion_actualizar">Unidad de Medición:</label>
+          <input
+            type="text"
+            id="unidad_de_medicion_actualizar"
+            name="unidad_de_medicion_actualizar"
+            required
+          /><br />
+          <button type="submit">Actualizar</button>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-  <script>
-    function mostrarFormulario() {
-      document.getElementById("modal").style.display = "block";
-    }
-
-    function cerrarFormulario() {
-      document.getElementById("modal").style.display = "none";
-      limpiarCampos();
-    }
-
-    function limpiarCampos() {
-      document.getElementById("formulario").reset();
-    }
-
-    function eliminarProductos() {
-      const ids = obtenerProductosSeleccionados();
-      if (ids.length === 0) {
-        alert("Seleccione al menos un producto para eliminar.");
-        return;
+    <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+    <script>
+      function mostrarFormulario() {
+        document.getElementById("modal").style.display = "block";
       }
-      const confirmacion = confirm("¿Está seguro de que desea eliminar los productos seleccionados?");
-      if (!confirmacion) {
-        return;
+
+      function cerrarFormulario() {
+        document.getElementById("modal").style.display = "none";
+        limpiarCampos();
       }
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = "{{ url_for('eliminar_productos') }}";
-      ids.forEach(id => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "producto_ids";
-        input.value = id;
-        form.appendChild(input);
+
+      function limpiarCampos() {
+        document.getElementById("formulario").reset();
+      }
+
+      function eliminarProductos() {
+        const ids = obtenerProductosSeleccionados();
+        if (ids.length === 0) {
+          alert("Seleccione al menos un producto para eliminar.");
+          return;
+        }
+        const confirmacion = confirm(
+          "¿Está seguro de que desea eliminar los productos seleccionados?",
+        );
+        if (!confirmacion) {
+          return;
+        }
+        const form = document.createElement("form");
+        form.method = "POST";
+        form.action = "{{ url_for('eliminar_productos') }}";
+        ids.forEach((id) => {
+          const input = document.createElement("input");
+          input.type = "hidden";
+          input.name = "producto_ids";
+          input.value = id;
+          form.appendChild(input);
+        });
+        document.body.appendChild(form);
+        form.submit();
+      }
+
+      const selectAllCheckbox = document.getElementById("select-all");
+      const checkboxes = document.querySelectorAll(".producto-checkbox");
+      selectAllCheckbox.addEventListener("change", function () {
+        checkboxes.forEach(function (checkbox) {
+          checkbox.checked = selectAllCheckbox.checked;
+        });
       });
-      document.body.appendChild(form);
-      form.submit();
-    }
 
-    const selectAllCheckbox = document.getElementById("select-all");
-    const checkboxes = document.querySelectorAll(".producto-checkbox");
-    selectAllCheckbox.addEventListener("change", function () {
-      checkboxes.forEach(function (checkbox) {
-        checkbox.checked = selectAllCheckbox.checked;
-      });
-    });
+      function obtenerProductosSeleccionados() {
+        const checkboxes = document.querySelectorAll(
+          ".producto-checkbox:checked",
+        );
+        const ids = Array.from(checkboxes).map((checkbox) =>
+          checkbox.getAttribute("data-id"),
+        );
+        return ids;
+      }
 
-    function obtenerProductosSeleccionados() {
-      const checkboxes = document.querySelectorAll(".producto-checkbox:checked");
-      const ids = Array.from(checkboxes).map(checkbox => checkbox.getAttribute("data-id"));
-      return ids;
-    }
+      function abrirModalActualizar() {
+        const filaSeleccionada = document
+          .querySelector("input.producto-checkbox:checked")
+          .closest("tr");
+        const productoId = filaSeleccionada.cells[1].textContent;
+        document.getElementById("producto_id_actualizar").value = productoId;
+        const nombre = filaSeleccionada.cells[2].textContent;
+        const fechaDeVencimiento = filaSeleccionada.cells[3].textContent;
+        const cantidadDisponible = filaSeleccionada.cells[4].textContent;
+        const precioEnDolares = filaSeleccionada.cells[5].textContent;
+        const unidadDeMedicion = filaSeleccionada.cells[6].textContent;
+        document.getElementById("nombre_actualizar").value = nombre;
+        document.getElementById("fecha_de_vencimiento_actualizar").value =
+          fechaDeVencimiento;
+        document.getElementById("cantidad_disponible_actualizar").value =
+          cantidadDisponible;
+        document.getElementById("precio_en_dolares_actualizar").value =
+          precioEnDolares;
+        document.getElementById("unidad_de_medicion_actualizar").value =
+          unidadDeMedicion;
+        document.getElementById("modal-actualizar").style.display = "block";
+      }
 
-    function abrirModalActualizar() {
-      const filaSeleccionada = document.querySelector("input.producto-checkbox:checked").closest("tr");
-      const productoId = filaSeleccionada.cells[1].textContent;
-      document.getElementById("producto_id_actualizar").value = productoId;
-      const nombre = filaSeleccionada.cells[2].textContent;
-      const fechaDeVencimiento = filaSeleccionada.cells[3].textContent;
-      const cantidadDisponible = filaSeleccionada.cells[4].textContent;
-      const precioEnDolares = filaSeleccionada.cells[5].textContent;
-      const unidadDeMedicion = filaSeleccionada.cells[6].textContent;
-      document.getElementById("nombre_actualizar").value = nombre;
-      document.getElementById("fecha_de_vencimiento_actualizar").value = fechaDeVencimiento;
-      document.getElementById("cantidad_disponible_actualizar").value = cantidadDisponible;
-      document.getElementById("precio_en_dolares_actualizar").value = precioEnDolares;
-      document.getElementById("unidad_de_medicion_actualizar").value = unidadDeMedicion;
-      document.getElementById("modal-actualizar").style.display = "block";
-    }
+      function cerrarModalActualizar() {
+        document.getElementById("modal-actualizar").style.display = "none";
+      }
 
-    function cerrarModalActualizar() {
-      document.getElementById("modal-actualizar").style.display = "none";
-    }
+      function buscarProducto() {
+        var input, filter, table, tbody, tr, td, i, txtValue;
+        input = document.getElementById("buscar-producto");
+        filter = input.value.toUpperCase();
+        table = document.querySelector(".table_de_productos");
+        tbody = document.getElementById("tabla-productos-body");
+        tr = tbody.getElementsByTagName("tr");
 
-
-    function buscarProducto() {
-      var input, filter, table, tbody, tr, td, i, txtValue;
-      input = document.getElementById("buscar-producto");
-      filter = input.value.toUpperCase();
-      table = document.querySelector(".table_de_productos");
-      tbody = document.getElementById("tabla-productos-body");
-      tr = tbody.getElementsByTagName("tr");
-
-      // Recorrer todas las filas de la tabla y ocultar las que no coincidan con la búsqueda
-      for (i = 0; i < tr.length; i++) {
-        td_id = tr[i].getElementsByTagName("td")[1]; // Columna de ID
-        td_nombre = tr[i].getElementsByTagName("td")[2]; // Columna de nombre
-        if (td_id || td_nombre) {
-          txtValue_id = td_id.textContent || td_id.innerText;
-          txtValue_nombre = td_nombre.textContent || td_nombre.innerText;
-          if (txtValue_id.toUpperCase().indexOf(filter) > -1 || txtValue_nombre.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
+        // Recorrer todas las filas de la tabla y ocultar las que no coincidan con la búsqueda
+        for (i = 0; i < tr.length; i++) {
+          td_id = tr[i].getElementsByTagName("td")[1]; // Columna de ID
+          td_nombre = tr[i].getElementsByTagName("td")[2]; // Columna de nombre
+          if (td_id || td_nombre) {
+            txtValue_id = td_id.textContent || td_id.innerText;
+            txtValue_nombre = td_nombre.textContent || td_nombre.innerText;
+            if (
+              txtValue_id.toUpperCase().indexOf(filter) > -1 ||
+              txtValue_nombre.toUpperCase().indexOf(filter) > -1
+            ) {
+              tr[i].style.display = "";
+            } else {
+              tr[i].style.display = "none";
+            }
           }
         }
       }
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>

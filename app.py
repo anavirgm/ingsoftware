@@ -1,4 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
+from flask import (
+    Flask,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    session,
+    jsonify,
+)
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 import MySQLdb.cursors
@@ -46,6 +55,25 @@ def dashboard():
     if "loggedin" in session:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
+        ############### GRÁFICOS
+        # Obtener la cantidad de ventas realizadas la última semana
+        cursor.execute(
+            "SELECT COUNT(*) AS cantidad, DATE(marca_de_tiempo) AS fecha FROM transacciones WHERE (marca_de_tiempo BETWEEN DATE_SUB(NOW(), INTERVAL 1 WEEK) AND NOW()) AND clientes_id IS NOT NULL GROUP BY DATE(marca_de_tiempo) ORDER BY DATE(marca_de_tiempo) ASC;"
+        )
+        ventas_semana = cursor.fetchall()
+        # Formatear las fechas
+        for venta in ventas_semana:
+            venta["fecha"] = venta["fecha"].strftime("%Y-%m-%d")
+
+        # Obtener el monto total de las transacciones de la última semana
+        cursor.execute(
+            "SELECT SUM(importe_en_dolares) AS importe_en_dolares, DATE(marca_de_tiempo) AS fecha FROM transacciones WHERE (marca_de_tiempo BETWEEN DATE_SUB(NOW(), INTERVAL 1 WEEK) AND NOW()) AND clientes_id IS NOT NULL GROUP BY DATE(marca_de_tiempo) ORDER BY DATE(marca_de_tiempo) ASC;"
+        )
+        ingreso_semana = cursor.fetchall()
+        for ingreso in ingreso_semana:
+            ingreso["fecha"] = ingreso["fecha"].strftime("%Y-%m-%d")
+        ########################
+
         # Obtener la cantidad de productos
         cursor.execute("SELECT COUNT(*) AS total_productos FROM productos")
         total_productos = cursor.fetchone()["total_productos"]
@@ -71,9 +99,10 @@ def dashboard():
             total_clientes=total_clientes,
             total_proveedores=total_proveedores,
             total_transacciones=total_transacciones,
+            ventas_semana=ventas_semana,
+            ingreso_semana=ingreso_semana,
         )
     return redirect(url_for("login"))
-
 
 
 ############################# PRODUCTOS ################################
@@ -85,9 +114,13 @@ def productos():
         all_products = cursor.fetchall()
         cursor.close()
         return render_template(
-            "productos.html", username=session["username"], rol=session["rol"], productos=all_products
+            "productos.html",
+            username=session["username"],
+            rol=session["rol"],
+            productos=all_products,
         )
     return redirect(url_for("login"))
+
 
 @app.route("/insertar_producto", methods=["POST"])
 def insertar_producto():
@@ -100,14 +133,21 @@ def insertar_producto():
             unidad_de_medicion = request.form["unidad_de_medicion"]
 
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute("INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, unidad_de_medicion) VALUES (%s, %s, %s, %s, %s)",
-                            (nombre, fecha_vencimiento, cantidad_disponible, precio_en_dolares, unidad_de_medicion))
+            cursor.execute(
+                "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, unidad_de_medicion) VALUES (%s, %s, %s, %s, %s)",
+                (
+                    nombre,
+                    fecha_vencimiento,
+                    cantidad_disponible,
+                    precio_en_dolares,
+                    unidad_de_medicion,
+                ),
+            )
             mysql.connection.commit()
             cursor.close()
             flash("Producto agregado correctamente")
             return redirect(url_for("productos"))
     return redirect(url_for("login"))
-
 
 
 @app.route("/actualizar_producto", methods=["POST"])
@@ -126,12 +166,22 @@ def actualizar_producto():
 
     # Actualizar la información en la base de datos
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("""
+    cursor.execute(
+        """
         UPDATE productos
         SET nombre = %s, fecha_de_vencimiento = %s, cantidad_disponible = %s,
             precio_en_dolares = %s, unidad_de_medicion = %s
         WHERE id = %s
-    """, (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, unidad_de_medicion, producto_id))
+    """,
+        (
+            nombre,
+            fecha_de_vencimiento,
+            cantidad_disponible,
+            precio_en_dolares,
+            unidad_de_medicion,
+            producto_id,
+        ),
+    )
     mysql.connection.commit()
     cursor.close()
 
@@ -164,7 +214,6 @@ def eliminar_productos():
 
 
 #################################### CLIENTES ################################################
-
 
 
 @app.route("/clientes/<id>", methods=["GET", "PUT"])
@@ -204,8 +253,10 @@ def clientes():
         cedula = request.form["cedula"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
-                       (nombre, direccion, telefono, cedula))
+        cursor.execute(
+            "INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
+            (nombre, direccion, telefono, cedula),
+        )
         mysql.connection.commit()
         cursor.close()
         flash("Cliente agregado correctamente")
@@ -215,7 +266,13 @@ def clientes():
     clientes = cursor.fetchall()
     cursor.close()
 
-    return render_template("clientes.html", clientes=clientes, username=session["username"], rol=session["rol"])
+    return render_template(
+        "clientes.html",
+        clientes=clientes,
+        username=session["username"],
+        rol=session["rol"],
+    )
+
 
 @app.route("/actualizar_cliente", methods=["POST"])
 def actualizar_cliente():
@@ -229,11 +286,14 @@ def actualizar_cliente():
     cedula = request.form["cedula_actualizar"]
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("""
+    cursor.execute(
+        """
         UPDATE clientes
         SET nombre = %s, direccion = %s, telefono = %s, cedula = %s
         WHERE id = %s
-    """, (nombre, direccion, telefono, cedula, cliente_id))
+    """,
+        (nombre, direccion, telefono, cedula, cliente_id),
+    )
     mysql.connection.commit()
     cursor.close()
 
@@ -286,7 +346,12 @@ def proveedores():
     proveedores = cursor.fetchall()
     cursor.close()
 
-    return render_template("proveedores.html", proveedores=proveedores, username=session["username"], rol=session["rol"])
+    return render_template(
+        "proveedores.html",
+        proveedores=proveedores,
+        username=session["username"],
+        rol=session["rol"],
+    )
 
 
 @app.route("/actualizar_proveedor", methods=["POST"])
@@ -303,11 +368,14 @@ def actualizar_proveedor():
 
     # Actualizar la información en la base de datos
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("""
+    cursor.execute(
+        """
         UPDATE proveedores
         SET nombre = %s, direccion = %s, rif = %s
         WHERE id = %s
-    """, (nombre, direccion, rif, proveedor_id))
+    """,
+        (nombre, direccion, rif, proveedor_id),
+    )
     mysql.connection.commit()
     cursor.close()
 

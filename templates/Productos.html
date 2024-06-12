@@ -3,11 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CamiCandy - Transacciones</title>
+    <title>CamiCandy - Productos</title>
 
     <link
       rel="stylesheet"
-      href="{{ url_for('static', filename='css/transacciones.css') }}"
+      href="{{ url_for('static', filename='css/Productos.css') }}"
     />
   </head>
 
@@ -61,11 +61,11 @@
             <h4>Dashboard</h4>
           </div>
         </a>
-        <a href="{{ url_for('productos') }}">
+        <a href="#" class="selector">
           <div class="option">
             <img
               src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
-              title="Productos"
+              title="productos"
             />
             <h4>Productos</h4>
           </div>
@@ -74,7 +74,7 @@
           <div class="option">
             <img
               src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
-              title="Clientes"
+              title="Cliente"
             />
             <h4>Clientes</h4>
           </div>
@@ -88,7 +88,7 @@
             <h4>Proveedores</h4>
           </div>
         </a>
-        <a href="{{ url_for('transacciones') }}" class="selector">
+        <a href="{{ url_for('transacciones') }}">
           <div class="option">
             <img
               src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
@@ -127,92 +127,8 @@
       </div>
     </div>
 
-    <main>
-      <div class="container_proveedores">
-        <h1>Transacciones</h1>
-        <div class="container_proveedores_buscar">
-          <input type="text" placeholder="Buscar" />
-          <button onclick="mostrarFormulario()">Añadir proveedor</button>
-          <button class="Actualizar">Actualizar</button>
-          <button class="Eliminar">Eliminar</button>
-        </div>
-        <div class="proveedores">
-          <table class="table_de_proveedores">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Marca de tiempo</th>
-                <th>Importe ($)</th>
-                <th>Tasa BCV</th>
-                <th>Importe (Bs)</th>
-                <th>Cliente</th>
-                <th>Proveedor</th>
-                <th>Realizada por</th>
-              </tr>
-            </thead>
-            <tbody>
-              <!-- Aquí se mostrarán los datos de los proveedores -->
-              {% for transaccion in transacciones %}
-              <tr>
-                <td>{{ transaccion.id }}</td>
-                <td>{{ transaccion.marca_de_tiempo }}</td>
-                <td>{{ transaccion.importe_en_dolares }}</td>
-                <td>{{ transaccion.tasa_bcv }}</td>
-                <td>
-                  {{ transaccion.importe_en_dolares * transaccion.tasa_bcv |
-                  round }}
-                </td>
-                {% if transaccion.clientes_id %}
-                <td>{{ transaccion.cliente }}</td>
-                <td>N/A</td>
-                {% else %}
-                <td>N/A</td>
-                <td>{{ transaccion.proveedor }}</td>
-                {% endif %}
-                <td>{{ transaccion.usuario }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </main>
-
-    <!-- Ventana emergente para agregar un nuevo proveedor -->
-    <div id="modal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="cerrarFormulario()">&times;</span>
-        <h2>Agregar Nuevo Proveedor</h2>
-        <form
-          id="formulario"
-          action="{{ url_for('proveedores') }}"
-          method="POST"
-        >
-          <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre" required /><br />
-          <label for="direccion">Dirección:</label>
-          <input type="text" id="direccion" name="direccion" required /><br />
-          <label for="rif">RIF:</label>
-          <input type="text" id="rif" name="rif" required /><br />
-          <input type="submit" value="Agregar" />
-        </form>
-      </div>
-    </div>
+    <main></main>
 
     <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-    <script>
-      function mostrarFormulario() {
-        document.getElementById("modal").style.display = "block";
-      }
-
-      function cerrarFormulario() {
-        document.getElementById("modal").style.display = "none";
-        limpiarCampos();
-      }
-
-      function limpiarCampos() {
-        document.getElementById("formulario").reset();
-      }
-    </script>
   </body>
 </html>

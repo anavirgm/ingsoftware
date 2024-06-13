@@ -294,3 +294,39 @@ body.dark .container_clientes h1 {
   width: 100%;
   box-sizing: border-box;
 }
+
+.container_clientes input[type="text"],
+.container_clientes input[type="submit"],
+.container_clientes button {
+  margin-top: 5px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.container_clientes input[type="text"]:focus {
+  border-color: #66afe9;
+  outline: none;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+.container_clientes input[type="text"],
+  .container_clientes input[type="password"],
+  .container_clientes select {
+    margin-top: 5px;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .container_clientes input[type="text"]:focus,
+  .container_clientes input[type="password"]:focus,
+  .container_clientes select:focus {
+    border-color: #66afe9;
+    outline: none;
+    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+  }

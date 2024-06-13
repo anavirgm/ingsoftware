@@ -18,6 +18,7 @@ import os
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.secret_key = "your_secret_key"
+bcrypt = Bcrypt(app)
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -559,6 +560,96 @@ def herramientas():
             herramientas=herramientas,
         )
     return redirect(url_for("login"))
+
+
+@app.route('/agregar_empleado', methods=['GET', 'POST'])
+def agregar_empleado():
+    if request.method == 'POST':
+
+        cedula = request.form["cedula"]
+        nombre = request.form['nombre']
+        rol = request.form["rol"]
+        hash_de_contrasena = bcrypt.generate_password_hash(request.form["hash_contrasena"]).decode('utf-8')  # Hashear la contraseña
+        pregunta_seguridad = request.form["pregunta_seguridad"]
+        respuesta_seguridad = bcrypt.generate_password_hash(request.form["respuesta_seguridad"]).decode('utf-8')
+        
+        # agregar el empleado a la base
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute('INSERT INTO usuarios (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad) VALUES (%s, %s, %s, %s, %s, %s)', (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad))
+        mysql.connection.commit()
+        cursor.close()
+
+        flash('Empleado agregado correctamente')
+        return redirect(url_for('herramientas'))
+
+    return render_template('herramientas.html')
+
+@app.route("/actualizar_empleado", methods=["POST"])
+def actualizar_empleado():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    empleado_id = request.form.get("id_empleado")  # Asumiendo que el ID del empleado está en el formulario
+    cedula = request.form["cedula"]
+    nombre = request.form['nombre']
+    rol = request.form["rol"]
+    hash_contrasena = bcrypt.generate_password_hash(request.form["hash_contrasena"]).decode('utf-8')  # Hashear la contraseña
+    pregunta_seguridad = request.form["pregunta_seguridad"]
+    respuesta_seguridad = bcrypt.generate_password_hash(request.form["respuesta_seguridad"]).decode('utf-8')
+    
+    # Conectar a la base de datos y ejecutar la actualización
+    try:
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            """
+            UPDATE usuarios
+            SET cedula = %s, nombre = %s, rol = %s, hash_de_contrasena = %s, pregunta_seguridad = %s, respuesta_seguridad = %s
+            WHERE id = %s
+            """,
+            (cedula, nombre, rol, hash_contrasena, pregunta_seguridad, respuesta_seguridad, empleado_id)
+        )
+        mysql.connection.commit()
+        cursor.close()
+
+        flash("Empleado actualizado correctamente", "success")
+        return redirect(url_for("herramientas"))
+
+    except MySQLdb.Error as e:
+        flash(f"Error al actualizar empleado: {str(e)}", "error")
+        return redirect(url_for("herramientas"))  # Puedes redirigir a donde sea necesario en caso de error
+
+    finally:
+        cursor.close()
+
+
+@app.route("/listar_empleados", methods=["GET", "POST"])
+def listar_empleados():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "POST" and "buscar_empleado" in request.form:
+        # Filtrar empleados por nombre o cualquier otro criterio de búsqueda
+        termino_busqueda = request.form["buscar_empleado"]
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            "SELECT * FROM usuarios WHERE rol = 'empleado'",
+            ('%' + termino_busqueda + '%',),
+        )
+    else:
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM usuarios WHERE rol = 'empleado'")
+
+    empleados = cursor.fetchall()
+    cursor.close()
+
+    return render_template(
+        "herramientas.html",
+        username=session["username"],
+        rol=session["rol"],
+        empleados=empleados,
+    )
+
+
 
 
 @app.route('/respaldar_base', methods=['POST'])

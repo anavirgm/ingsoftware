@@ -10,6 +10,7 @@ body {
   margin-left: 100px;
   transition: margin-left 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
   margin-top: 80px;
+  background: #ECECEE;
 }
 
 header {
@@ -221,7 +222,7 @@ body.dark {
 
 body.dark .card,
 body.dark .large-card {
-  background-color: #2d2d2d;
+  background-color: #313131;
   color: #bbb;
 }
 
@@ -231,7 +232,7 @@ body.dark .large-card p {
 }
 
 .large-card {
-  height: 256px; /* Equivalent to h-64 in Tailwind CSS */
+  height: 256px;
 }
 
 /* estilos de las cards clientes */

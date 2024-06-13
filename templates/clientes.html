@@ -9,49 +9,53 @@
       href="{{ url_for('static', filename='css/Clientes.css') }}"
     />
   </head>
+  
+  {% if rol == "administrador" %}
 
   <body id="body">
     <header>
       <div class="icon__menu">
         <img
           src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
-          alt="Menu"
+          alt=""
           id="btn_open"
         />
       </div>
       <div class="icon__configuracion">
         <img
           src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-          alt="Configuración"
+          alt=""
         />
       </div>
       <div class="boton">
         <button class="switch" id="switch">
-          <span
-            ><img
+          <span>
+            <img
               src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
-              alt="Sol"
-          /></span>
-          <span
-            ><img
+              alt=""
+            />
+          </span>
+          <span>
+            <img
               src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
-              alt="Luna"
-          /></span>
+              alt=""
+            />
+          </span>
         </button>
       </div>
     </header>
-
+  
     <div class="menu__side" id="menu_side">
       <div class="name_page">
         <img
           src="{{ url_for('static', filename='imagenes/logo.png') }}"
-          alt="Logo"
+          alt=""
         />
         <h4>CamiCandy</h4>
       </div>
-
+  
       <div class="options__menu">
-        <a href="{{ url_for('dashboard') }}">
+        <a href="{{ url_for('dashboard') }}" >
           <div class="option">
             <img
               src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
@@ -60,22 +64,22 @@
             <h4>Dashboard</h4>
           </div>
         </a>
-        <a href="{{ url_for('productos') }}">
+        <a href="{{ url_for('productos') }}" >
           <div class="option">
             <img
               src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
-              title="Productos"
+              title="productos"
             />
             <h4>Productos</h4>
           </div>
         </a>
-        <a href="{{ url_for('clientes') }}" class="selector">
+        <a href="{{ url_for('clientes') }} " class="selector">
           <div class="option">
             <img
               src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
-              title="Clientes"
+              title="Cliente"
             />
-            <h4>Clientes</h4>
+            <h4>clientes</h4>
           </div>
         </a>
         <a href="{{ url_for('proveedores') }}">
@@ -105,7 +109,7 @@
             <h4>Reportes</h4>
           </div>
         </a>
-        <a href="#">
+        <a href="{{ url_for('herramientas') }}">
           <div class="option">
             <img
               src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
@@ -125,7 +129,95 @@
         </a>
       </div>
     </div>
-
+    {% else %}
+  
+  
+      
+    <body id="body">
+      <header>
+        <div class="icon__menu">
+          <img
+            src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
+            alt=""
+            id="btn_open"
+          />
+        </div>
+        <div class="icon__configuracion">
+          <img
+            src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+            alt=""
+          />
+        </div>
+        <div class="boton">
+          <button class="switch" id="switch">
+            <span>
+              <img
+                src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
+                alt=""
+              />
+            </span>
+            <span>
+              <img
+                src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
+                alt=""
+              />
+            </span>
+          </button>
+        </div>
+      </header>
+  
+      <div class="menu__side" id="menu_side">
+        <div class="name_page">
+          <img
+            src="{{ url_for('static', filename='imagenes/logo.png') }}"
+            alt=""
+          />
+          <h4>CamiCandy</h4>
+        </div>
+  
+        <div class="options__menu">
+          <a href="{{ url_for('dashboard') }}">
+            <div class="option">
+              <img
+                src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
+                title="Dashboard"
+              />
+              <h4>Dashboard</h4>
+            </div>
+          </a>
+          
+          <a href="{{ url_for('clientes') }}" class="selector">
+            <div class="option">
+              <img
+                src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
+                title="Cliente"
+              />
+              <h4>clientes</h4>
+            </div>
+          </a>
+          
+          <a href="{{ url_for('transacciones') }}">
+            <div class="option">
+              <img
+                src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
+                title="Transacciones"
+              />
+              <h4>Transacciones</h4>
+            </div>
+          </a>
+          <a href="#">
+            <div class="option">
+              <img
+                src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
+                title="Ayuda"
+              />
+              <h4>Ayuda</h4>
+            </div>
+          </a>
+        </div>
+      </div>
+      
+      {% endif %}
     <main>
       <div class="container_clientes">
         <h1>Clientes</h1>
@@ -136,6 +228,7 @@
             onkeyup="searchTable()"
             placeholder="Buscar por ID, nombre o cédula..."
           />
+
           <button onclick="mostrarFormulario()">Añadir clientes</button>
           <button class="Realizar_venta" onclick="realizarVenta()">
             Realizar venta

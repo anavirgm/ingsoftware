@@ -26,8 +26,38 @@ header {
   transition: 0.3s ease all;
 }
 
-.icon__menu,
-.icon__configuracion,
+.icon__menu {
+  width: 50px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(10px);
+}
+
+.icon__menu img {
+  cursor: pointer;
+  position: absolute;
+}
+
+.icon__configuracion {
+  width: 50px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(10px);
+}
+
+.icon__configuracion img {
+  cursor: pointer;
+  position: absolute;
+}
+
+.boton {
+  padding-left: 100px;
+}
+
 .icon__notificacion {
   width: 50px;
   height: 100%;
@@ -37,24 +67,13 @@ header {
   transform: translateX(10px);
 }
 
-.icon__menu img,
-.icon__configuracion img,
 .icon__notificacion img {
   cursor: pointer;
   position: absolute;
-}
-
-.boton {
-  padding-left: 100px;
-}
-
-.icon__notificacion img {
   width: 40px;
   margin-right: 10px;
 }
 
-
-/* Sidebar */
 .menu__side {
   width: 100px;
   height: 100%;
@@ -140,70 +159,9 @@ a.selector {
   left: -30px;
 }
 
-.container_proveedores {
-  margin: 20px;
-  padding: 20px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
-.container_proveedores_buscar {
-  display: flex;
-  align-items: center;
-  padding: 20px;
-  margin-bottom: 20px;
-  background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
 
-.container_proveedores_buscar input {
-  flex: 1;
-  padding: 10px 15px;
-  border-radius: 25px;
-  border: 1px solid #ddd;
-  outline: none;
-  margin-right: 10px;
-  transition: border-color 0.3s;
-}
 
-.container_proveedores_buscar input:focus {
-  border-color: #007bff;
-}
-
-.table_de_proveedores {
-  width: 100%;
-  border-spacing: 0;
-  margin-top: 20px;
-  margin-bottom: 20px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-.table_de_proveedores th,
-.table_de_proveedores td {
-  padding: 15px;
-  text-align: left;
-  border-bottom: 1px solid #ddd;
-}
-
-.table_de_proveedores thead th {
-  background-color: #007bff;
-  color: white;
-  font-weight: bold;
-}
-
-.table_de_proveedores tbody tr:hover {
-  background-color: #f1f1f1;
-}
-
-.table_de_proveedores td:first-child {
-  text-align: center;
-}
-
-/* Clases para usar en JavaScript */
 .body_move {
   margin-left: 250px;
 }
@@ -212,7 +170,6 @@ a.selector {
   width: 250px;
 }
 
-/* Estética del botón de tema */
 .switch {
   background: #343d5b;
   border-radius: 1000px;
@@ -257,7 +214,6 @@ a.selector {
   left: unset;
 }
 
-/* Clases para tema oscuro */
 body.dark {
   background: #2c2c2c;
   color: white;
@@ -265,7 +221,7 @@ body.dark {
 }
 
 body.dark header {
-  background:  #152937;
+  background: #152937;
   color: w;
 
 }
@@ -285,65 +241,56 @@ body.dark .menu__side {
   transition: 0.3s ease all;
 }
 
-body.dark .container_proveedores_buscar {
+body.dark .container_clientes {
   background-color: #3a3a3a;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
 }
 
-body.dark .container_proveedores_buscar input {
-  background-color: #555;
-  border: 1px solid #444;
+body.dark .container_clientes h1 {
   color: white;
 }
 
-body.dark .container_proveedores_buscar input:focus {
-  border-color: #ff9800;
+.container_clientes {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  margin: 50px auto;
 }
 
-body.dark .container_proveedores_buscar button.Actualizar {
-  background-color: #8e63dd;
+.container_clientes h1 {
+  text-align: center;
+  color: #333;
 }
 
-body.dark .container_proveedores_buscar button.Actualizar:hover {
-  background-color: #7352b6;
+.container_clientes form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-body.dark .container_proveedores_buscar button.Eliminar {
-  background-color: #ff6f61;
+.container_clientes button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 10px 0;
 }
 
-body.dark .container_proveedores_buscar button.Eliminar:hover {
-  background-color: #e55a4f;
+.container_clientes button:hover {
+  background-color: #0056b3;
 }
 
-body.dark .container_proveedores {
-  background-color: #3a3a3a;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-}
-
-body.dark .table_de_proveedores thead th {
-  background-color: #4a90e2;
-}
-
-body.dark .table_de_proveedores tbody tr:hover {
-  background-color: #555;
-}
-
-body.dark .switch {
-  background: #1c1c1c;
-}
-
-body.dark .switch.active {
-  background: #ffa500;
-}
-
-
-@media screen and (max-width: 768px) {
-  .menu__side {
-    width: 100px;
-  }
-  
-  main {
-    margin-left: 100px;
-  }
+.container_clientes input[type="file"] {
+  margin: 10px 0;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
 }

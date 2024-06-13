@@ -7,13 +7,20 @@ from flask import (
     flash,
     session,
     jsonify,
+    send_file
 )
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 import MySQLdb.cursors
+import subprocess
+import os
 
 app = Flask(__name__)
+app.config['UPLOAD_FOLDER'] = 'uploads'
 app.secret_key = "your_secret_key"
+
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
@@ -106,21 +113,42 @@ def dashboard():
 
 
 ############################# PRODUCTOS ################################
-@app.route("/productos")
+@app.route("/productos", methods=["GET", "POST"])
 def productos():
-    if "loggedin" in session:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM productos")
-        all_products = cursor.fetchall()
-        cursor.close()
-        return render_template(
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+    
+    if request.method == "POST":
+            nombre = request.form["nombre"]
+            fecha_de_vencimiento = request.form["fecha_de_vencimiento"]
+            cantidad_disponible = request.form["cantidad_disponible"]
+            precio_en_dolares = request.form["precio_en_dolares"]
+
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute(
+                "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares) VALUES (%s, %s, %s, %s)",
+                (
+                    nombre,
+                    fecha_de_vencimiento,
+                    cantidad_disponible,
+                    precio_en_dolares,
+                ),
+            )
+            mysql.connection.commit()
+            cursor.close()
+            flash("Producto agregado correctamente")
+    
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM productos")
+    all_products = cursor.fetchall()
+    cursor.close()
+    
+    return render_template(
             "productos.html",
             username=session["username"],
             rol=session["rol"],
             productos=all_products,
         )
-    return redirect(url_for("login"))
-
 
 @app.route("/insertar_producto", methods=["POST"])
 def insertar_producto():
@@ -510,8 +538,65 @@ def transacciones():
 
     cursor.close()
 
-    return render_template("transacciones.html", transacciones=transacciones)
+    return render_template("transacciones.html", 
+                           username=session["username"],
+            rol=session["rol"],
+            transacciones=transacciones)
 
+
+
+################################### HERRAMIENTAS ######################################
+
+@app.route("/herramientas")
+def herramientas():
+    if "loggedin" in session:
+        
+        print(session)
+        return render_template(
+            "herramientas.html",
+            username=session["username"],
+            rol=session["rol"],
+            herramientas=herramientas,
+        )
+    return redirect(url_for("login"))
+
+
+@app.route('/respaldar_base', methods=['POST'])
+def respaldar_base():
+    NOMBRE = 'camicandy.sql'
+
+    base = subprocess.run(['C:\\xampp\\mysql\\bin\\mysqldump.exe', "camicandy", '-u', 'root'], capture_output=True, text=True).stdout
+
+    with open(NOMBRE, mode="w") as f:
+        f.write(base)
+    
+    return send_file(NOMBRE, as_attachment=True)
+
+###### TODAVIA NO HACER NADA ###### solo lo guarda en la carpeta uploads
+@app.route('/recuperar_base', methods=['POST'])
+def recuperar_base():
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    
+    file = request.files['file']
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+
+    if file and file.filename.endswith('.sql'):
+        filepath = os.path.join('uploads', file.filename)
+        file.save(filepath)
+        
+        # Importar el archivo SQL
+        command = ['C:\\xampp\\mysql\\bin\\mysql.exe', 'camicandy', '-u', 'root', '-e', f'source {filepath}']
+        subprocess.run(command, shell=True)
+        
+        flash('Database restored successfully')
+        return redirect(url_for('herramientas'))
+    else:
+        flash('Invalid file type')
+        return redirect(request.url)
 
 @app.route("/logout")
 def logout():

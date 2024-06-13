@@ -1,3 +1,6 @@
+
+{% if rol == "administrador" %}
+
 <!doctype html>
 <html lang="en">
   <head>
@@ -104,7 +107,7 @@
             <h4>Reportes</h4>
           </div>
         </a>
-        <a href="#">
+        <a href="{{ url_for('herramientas') }}">
           <div class="option">
             <img
               src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
@@ -136,12 +139,14 @@
             onkeyup="buscarProducto()"
           />
           <button onclick="mostrarFormulario()">Añadir producto</button>
-          <button class="Actualizar" onclick="abrirModalActualizar()">
+            <button class="Actualizar" onclick="abrirModalActualizar()">
             Actualizar
           </button>
           <button class="Eliminar" onclick="eliminarProductos()">
             Eliminar
           </button>
+
+
         </div>
         <div class="productos">
           <table class="table_de_productos">
@@ -153,7 +158,6 @@
                 <th>Fecha de Vencimiento</th>
                 <th>Cantidad Disponible</th>
                 <th>Precio ($)</th>
-                <th>Unidad de Medición</th>
               </tr>
             </thead>
             <tbody id="tabla-productos-body">
@@ -172,7 +176,6 @@
                 <td>{{ producto.fecha_de_vencimiento }}</td>
                 <td>{{ producto.cantidad_disponible }}</td>
                 <td>{{ producto.precio_en_dolares }}</td>
-                <td>{{ producto.unidad_de_medicion }}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -210,13 +213,7 @@
             name="precio_en_dolares"
             required
           /><br />
-          <label for="unidad_de_medicion">Unidad de Medición:</label>
-          <input
-            type="text"
-            id="unidad_de_medicion"
-            name="unidad_de_medicion"
-            required
-          /><br />
+          
           <input type="submit" value="Agregar" />
         </form>
       </div>
@@ -269,13 +266,7 @@
             name="precio_en_dolares_actualizar"
             required
           /><br />
-          <label for="unidad_de_medicion_actualizar">Unidad de Medición:</label>
-          <input
-            type="text"
-            id="unidad_de_medicion_actualizar"
-            name="unidad_de_medicion_actualizar"
-            required
-          /><br />
+          
           <button type="submit">Actualizar</button>
         </form>
       </div>
@@ -350,7 +341,7 @@
         const fechaDeVencimiento = filaSeleccionada.cells[3].textContent;
         const cantidadDisponible = filaSeleccionada.cells[4].textContent;
         const precioEnDolares = filaSeleccionada.cells[5].textContent;
-        const unidadDeMedicion = filaSeleccionada.cells[6].textContent;
+
         document.getElementById("nombre_actualizar").value = nombre;
         document.getElementById("fecha_de_vencimiento_actualizar").value =
           fechaDeVencimiento;
@@ -358,8 +349,6 @@
           cantidadDisponible;
         document.getElementById("precio_en_dolares_actualizar").value =
           precioEnDolares;
-        document.getElementById("unidad_de_medicion_actualizar").value =
-          unidadDeMedicion;
         document.getElementById("modal-actualizar").style.display = "block";
       }
 
@@ -396,3 +385,6 @@
     </script>
   </body>
 </html>
+{% else %}
+<p> </p>
+{% endif %}

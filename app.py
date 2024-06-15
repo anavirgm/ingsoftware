@@ -6,9 +6,9 @@ from flask import (
     url_for,
     flash,
     session,
-    jsonify,
     send_file
 )
+from werkzeug.utils import secure_filename
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
 import MySQLdb.cursors
@@ -113,6 +113,7 @@ def dashboard():
     return redirect(url_for("login"))
 
 
+
 ############################# PRODUCTOS ################################
 @app.route("/productos", methods=["GET", "POST"])
 def productos():
@@ -140,7 +141,7 @@ def productos():
             flash("Producto agregado correctamente")
     
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM productos")
+    cursor.execute("SELECT * FROM productos WHERE status = %s", (True,))
     all_products = cursor.fetchall()
     cursor.close()
     
@@ -159,17 +160,15 @@ def insertar_producto():
             fecha_vencimiento = request.form["fecha_vencimiento"]
             cantidad_disponible = request.form["cantidad_disponible"]
             precio_en_dolares = request.form["precio_en_dolares"]
-            unidad_de_medicion = request.form["unidad_de_medicion"]
 
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute(
-                "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, unidad_de_medicion) VALUES (%s, %s, %s, %s, %s)",
+                "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares) VALUES (%s, %s, %s, %s)",
                 (
                     nombre,
                     fecha_vencimiento,
                     cantidad_disponible,
                     precio_en_dolares,
-                    unidad_de_medicion,
                 ),
             )
             mysql.connection.commit()
@@ -191,7 +190,6 @@ def actualizar_producto():
     fecha_de_vencimiento = request.form["fecha_de_vencimiento_actualizar"]
     cantidad_disponible = request.form["cantidad_disponible_actualizar"]
     precio_en_dolares = request.form["precio_en_dolares_actualizar"]
-    unidad_de_medicion = request.form["unidad_de_medicion_actualizar"]
 
     # Actualizar la información en la base de datos
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -199,7 +197,7 @@ def actualizar_producto():
         """
         UPDATE productos
         SET nombre = %s, fecha_de_vencimiento = %s, cantidad_disponible = %s,
-            precio_en_dolares = %s, unidad_de_medicion = %s
+            precio_en_dolares = %s
         WHERE id = %s
     """,
         (
@@ -207,7 +205,6 @@ def actualizar_producto():
             fecha_de_vencimiento,
             cantidad_disponible,
             precio_en_dolares,
-            unidad_de_medicion,
             producto_id,
         ),
     )
@@ -251,8 +248,7 @@ def cliente(id):
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
-    # vista de cliente detallada donde se podrá editar la información del usuario
-    if request.method == "GET":
+    # vista de cliente detallada donde se podrá editar la información del usuario if request.method == "GET":
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         # hacer la consulta
         cursor.execute(
@@ -650,44 +646,47 @@ def listar_empleados():
     )
 
 
-
-
 @app.route('/respaldar_base', methods=['POST'])
 def respaldar_base():
     NOMBRE = 'camicandy.sql'
 
     base = subprocess.run(['C:\\xampp\\mysql\\bin\\mysqldump.exe', "camicandy", '-u', 'root'], capture_output=True, text=True).stdout
 
-    with open(NOMBRE, mode="w") as f:
-        f.write(base)
+    # with open(NOMBRE, mode="w") as f:
+    #    f.write(base)
     
     return send_file(NOMBRE, as_attachment=True)
 
-###### TODAVIA NO HACER NADA ###### solo lo guarda en la carpeta uploads
+
 @app.route('/recuperar_base', methods=['POST'])
 def recuperar_base():
-    if 'file' not in request.files:
-        flash('No file part')
-        return redirect(request.url)
-    
-    file = request.files['file']
-    if file.filename == '':
-        flash('No selected file')
-        return redirect(request.url)
-
-    if file and file.filename.endswith('.sql'):
-        filepath = os.path.join('uploads', file.filename)
-        file.save(filepath)
-        
-        # Importar el archivo SQL
-        command = ['C:\\xampp\\mysql\\bin\\mysql.exe', 'camicandy', '-u', 'root', '-e', f'source {filepath}']
-        subprocess.run(command, shell=True)
-        
-        flash('Database restored successfully')
-        return redirect(url_for('herramientas'))
+    if request.method == 'GET':
+        return redirect(url_for("herramientas"))
     else:
-        flash('Invalid file type')
+        if 'file' not in request.files:
+            flash("No file part")
+            return redirect(url_for('herramientas'))
+        file = request.files["file"]
+    if file.filename == "":
+        flash("No selected file")
         return redirect(request.url)
+    if file and file.filename.rsplit('.', 1)[1].lower() == "sql":
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file.save(filepath)
+        flash("file uploaded")
+        # dropear db vieja
+        subprocess.run(['C:\\xampp\\mysql\\bin\\mysqladmin.exe', "-f", "-u", "root", "drop", "camicandy"])
+        # crear db de nuevo
+        subprocess.run(['C:\\xampp\\mysql\\bin\\mysqladmin.exe', "-u", "root", "create", "camicandy"])
+        # restaurar db 
+
+        abs_filepath = os.path.abspath(filepath)
+        with open(abs_filepath, 'r') as file:
+            subprocess.run(['C:\\xampp\\mysql\\bin\\mysql.exe', "-u", "root", "camicandy"], stdin=file)
+            
+        # mantenerse en la seccion de herramientas
+        return redirect(url_for('herramientas'))
 
 @app.route("/logout")
 def logout():
@@ -696,7 +695,6 @@ def logout():
     session.pop("username", None)
     session.pop("rol", None)
     return redirect(url_for("login"))
-
 
 if __name__ == "__main__":
     app.run(debug=True)

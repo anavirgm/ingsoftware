@@ -1,238 +1,164 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CamiCandy - Clientes</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/Clientes.css') }}"
-    />
-  </head>
-  
-  {% if rol == "administrador" %}
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CamiCandy - Clientes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/Clientes.css') }}" />
+</head>
+
+{% if rol == "administrador" %}
+
+<body id="body">
+  <header>
+    <div class="icon__menu">
+      <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="" id="btn_open" />
+    </div>
+    <div class="icon__configuracion">
+      <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" alt="" />
+    </div>
+    <div class="boton">
+      <button class="switch" id="switch">
+        <span>
+          <img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="" />
+        </span>
+        <span>
+          <img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="" />
+        </span>
+      </button>
+    </div>
+  </header>
+
+  <div class="menu__side" id="menu_side">
+    <div class="name_page">
+      <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="" />
+      <h4>CamiCandy</h4>
+    </div>
+
+    <div class="options__menu">
+      <a href="{{ url_for('dashboard') }}">
+        <div class="option">
+          <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard" />
+          <h4>Dashboard</h4>
+        </div>
+      </a>
+      <a href="{{ url_for('productos') }}">
+        <div class="option">
+          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="productos" />
+          <h4>Productos</h4>
+        </div>
+      </a>
+      <a href="{{ url_for('clientes') }} " class="selector">
+        <div class="option">
+          <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Cliente" />
+          <h4>clientes</h4>
+        </div>
+      </a>
+      <a href="{{ url_for('proveedores') }}">
+        <div class="option">
+          <img src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}" title="Proveedores" />
+          <h4>Proveedores</h4>
+        </div>
+      </a>
+      <a href="{{ url_for('transacciones') }}">
+        <div class="option">
+          <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
+            title="Transacciones" />
+          <h4>Transacciones</h4>
+        </div>
+      </a>
+      <a href="#">
+        <div class="option">
+          <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes" />
+          <h4>Reportes</h4>
+        </div>
+      </a>
+      <a href="{{ url_for('herramientas') }}">
+        <div class="option">
+          <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" title="Herramientas" />
+          <h4>Herramientas</h4>
+        </div>
+      </a>
+      <a href="#">
+        <div class="option">
+          <img src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}" title="Ayuda" />
+          <h4>Ayuda</h4>
+        </div>
+      </a>
+    </div>
+  </div>
+  {% else %}
+
+
 
   <body id="body">
     <header>
       <div class="icon__menu">
-        <img
-          src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
-          alt=""
-          id="btn_open"
-        />
+        <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="" id="btn_open" />
       </div>
       <div class="icon__configuracion">
-        <img
-          src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-          alt=""
-        />
+        <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" alt="" />
       </div>
       <div class="boton">
         <button class="switch" id="switch">
           <span>
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
-              alt=""
-            />
+            <img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="" />
           </span>
           <span>
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
-              alt=""
-            />
+            <img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="" />
           </span>
         </button>
       </div>
     </header>
-  
+
     <div class="menu__side" id="menu_side">
       <div class="name_page">
-        <img
-          src="{{ url_for('static', filename='imagenes/logo.png') }}"
-          alt=""
-        />
+        <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="" />
         <h4>CamiCandy</h4>
       </div>
-  
+
       <div class="options__menu">
-        <a href="{{ url_for('dashboard') }}" >
+        <a href="{{ url_for('dashboard') }}">
           <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
-              title="Dashboard"
-            />
+            <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard" />
             <h4>Dashboard</h4>
           </div>
         </a>
-        <a href="{{ url_for('productos') }}" >
+
+        <a href="{{ url_for('clientes') }}" class="selector">
           <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
-              title="productos"
-            />
-            <h4>Productos</h4>
+            <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Cliente" />
+            <h4>Clientes</h4>
           </div>
         </a>
-        <a href="{{ url_for('clientes') }} " class="selector">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
-              title="Cliente"
-            />
-            <h4>clientes</h4>
-          </div>
-        </a>
-        <a href="{{ url_for('proveedores') }}">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}"
-              title="Proveedores"
-            />
-            <h4>Proveedores</h4>
-          </div>
-        </a>
+
         <a href="{{ url_for('transacciones') }}">
           <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-              title="Transacciones"
-            />
+            <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
+              title="Transacciones" />
             <h4>Transacciones</h4>
           </div>
         </a>
         <a href="#">
           <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}"
-              title="Reportes"
-            />
-            <h4>Reportes</h4>
-          </div>
-        </a>
-        <a href="{{ url_for('herramientas') }}">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-              title="Herramientas"
-            />
-            <h4>Herramientas</h4>
-          </div>
-        </a>
-        <a href="#">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
-              title="Ayuda"
-            />
+            <img src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}" title="Ayuda" />
             <h4>Ayuda</h4>
           </div>
         </a>
       </div>
     </div>
-    {% else %}
-  
-  
-      
-    <body id="body">
-      <header>
-        <div class="icon__menu">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
-            alt=""
-            id="btn_open"
-          />
-        </div>
-        <div class="icon__configuracion">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-            alt=""
-          />
-        </div>
-        <div class="boton">
-          <button class="switch" id="switch">
-            <span>
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
-                alt=""
-              />
-            </span>
-            <span>
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
-                alt=""
-              />
-            </span>
-          </button>
-        </div>
-      </header>
-  
-      <div class="menu__side" id="menu_side">
-        <div class="name_page">
-          <img
-            src="{{ url_for('static', filename='imagenes/logo.png') }}"
-            alt=""
-          />
-          <h4>CamiCandy</h4>
-        </div>
-  
-        <div class="options__menu">
-          <a href="{{ url_for('dashboard') }}">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
-                title="Dashboard"
-              />
-              <h4>Dashboard</h4>
-            </div>
-          </a>
-          
-          <a href="{{ url_for('clientes') }}" class="selector">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
-                title="Cliente"
-              />
-              <h4>Clientes</h4>
-            </div>
-          </a>
-          
-          <a href="{{ url_for('transacciones') }}">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-                title="Transacciones"
-              />
-              <h4>Transacciones</h4>
-            </div>
-          </a>
-          <a href="#">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
-                title="Ayuda"
-              />
-              <h4>Ayuda</h4>
-            </div>
-          </a>
-        </div>
-      </div>
-      
-      {% endif %}
+
+    {% endif %}
     <main>
       <div class="container_clientes">
         <h1>Clientes</h1>
         <div class="container_clientes_buscar">
-          <input
-            type="text"
-            id="searchInput"
-            onkeyup="searchTable()"
-            placeholder="Buscar por ID, nombre o cédula..."
-          />
+          <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Buscar por ID, nombre o cédula..." />
 
           <button onclick="mostrarFormulario()">Añadir clientes</button>
-          <button class="Realizar_venta" onclick="realizarVenta()">
-            Realizar venta
-          </button>
+          <button class="Realizar_venta" onclick="realizarVenta()">Realizar venta</button>
+
           <button class="Actualizar" onclick="abrirModalActualizar()">
             Actualizar
           </button>
@@ -256,11 +182,7 @@
               {% for cliente in clientes %}
               <tr>
                 <td>
-                  <input
-                    type="checkbox"
-                    class="cliente-checkbox"
-                    data-id="{{ cliente.id }}"
-                  />
+                  <input type="checkbox" class="cliente-checkbox" data-id="{{ cliente.id }}" />
                 </td>
                 <td>{{ cliente.id }}</td>
                 <td>{{ cliente.nombre }}</td>
@@ -285,21 +207,9 @@
           <label for="direccion">Dirección:</label>
           <input type="text" id="direccion" name="direccion" required /><br />
           <label for="telefono">Teléfono:</label>
-          <input
-            type="text"
-            id="telefono"
-            name="telefono"
-            required
-            onkeydown="return validarNumero(event)"
-          /><br />
+          <input type="text" id="telefono" name="telefono" required onkeydown="return validarNumero(event)" /><br />
           <label for="cedula">Cédula:</label>
-          <input
-            type="text"
-            id="cedula"
-            name="cedula"
-            required
-            onkeydown="return validarNumero(event)"
-          /><br />
+          <input type="text" id="cedula" name="cedula" required onkeydown="return validarNumero(event)" /><br />
           <input type="submit" value="Agregar" />
         </form>
       </div>
@@ -309,48 +219,61 @@
       <div class="modal-content">
         <span class="close" onclick="cerrarModalActualizar()">&times;</span>
         <h2>Actualizar Cliente</h2>
-        <form
-          id="formulario-actualizar"
-          method="POST"
-          action="{{ url_for('actualizar_cliente') }}"
-        >
-          <input
-            type="hidden"
-            id="cliente_id_actualizar"
-            name="cliente_id_actualizar"
-          />
+        <form id="formulario-actualizar" method="POST" action="{{ url_for('actualizar_cliente') }}">
+          <input type="hidden" id="cliente_id_actualizar" name="cliente_id_actualizar" />
           <label for="nombre_actualizar">Nombre:</label>
-          <input
-            type="text"
-            id="nombre_actualizar"
-            name="nombre_actualizar"
-            required
-          /><br />
+          <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
           <label for="direccion_actualizar">Dirección:</label>
-          <input
-            type="text"
-            id="direccion_actualizar"
-            name="direccion_actualizar"
-            required
-          /><br />
+          <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
           <label for="telefono_actualizar">Teléfono:</label>
-          <input
-            type="text"
-            id="telefono_actualizar"
-            name="telefono_actualizar"
-            required
-          /><br />
+          <input type="text" id="telefono_actualizar" name="telefono_actualizar" required /><br />
           <label for="cedula_actualizar">Cédula:</label>
-          <input
-            type="text"
-            id="cedula_actualizar"
-            name="cedula_actualizar"
-            required
-          /><br />
+          <input type="text" id="cedula_actualizar" name="cedula_actualizar" required /><br />
           <button type="submit">Actualizar</button>
         </form>
       </div>
     </div>
+
+    <div id="modal-venta" class="modal" style="display: none;">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarModalVenta()">&times;</span>
+        <h2>Realizar Venta</h2>
+        <form id="formulario-venta" action="{{ url_for('realizar_venta') }}" method="POST">
+          <label for="marca_de_tiempo">Marca de tiempo:</label>
+          <input type="datetime-local" id="marca_de_tiempo" name="marca_de_tiempo" required /><br />
+
+          <label for="tasa_bcv">Tasa BCV:</label>
+          <input type="number" step="0.01" id="tasa_bcv" name="tasa_bcv" required /><br />
+
+          <label for="clientes_id">Cliente:</label>
+          <select id="clientes_id" name="clientes_id" required>
+            {% for cliente in clientes %}
+            <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+            {% endfor %}
+          </select><br />
+
+          <label for="usuarios_id">Usuario:</label>
+          <select id="usuarios_id" name="usuarios_id" required>
+            {% for usuario in usuarios %}
+            <option value="{{ usuario.id }}">{{ usuario.nombre }}</option>
+            {% endfor %}
+          </select><br />
+
+          <label for="productos_id">Producto:</label>
+          <select id="productos_id" name="productos_id" required>
+            {% for producto in productos %}
+            <option value="{{ producto.id }}">{{ producto.nombre }}</option>
+            {% endfor %}
+          </select><br />
+
+          <label for="cantidad">Cantidad:</label>
+          <input type="number" id="cantidad" name="cantidad" required /><br />
+
+          <input type="submit" value="Realizar Venta" />
+        </form>
+      </div>
+    </div>
+
 
     <script src="{{ url_for('static', filename='js/component.js') }}"></script>
     <script>
@@ -491,6 +414,21 @@
           }
         }
       }
+
+      function realizarVenta() {
+        document.getElementById("modal-venta").style.display = "block";
+      }
+
+      function cerrarModalVenta() {
+        document.getElementById("modal-venta").style.display = "none";
+        limpiarCamposVenta();
+      }
+
+      function limpiarCamposVenta() {
+        document.getElementById("formulario-venta").reset();
+      }
+
     </script>
   </body>
+
 </html>

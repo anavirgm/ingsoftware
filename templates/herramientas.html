@@ -87,14 +87,21 @@
     <div class="container_clientes">
       <h1>Herramientas</h1>
       <form action="{{ url_for('respaldar_base') }}" method="post">
-        <button type="submit">BACKUP</button>
+        <button type="submit" class="btn-primary">BACKUP</button>
       </form>
       <br>
       <form action="{{ url_for('recuperar_base') }}" method="post" enctype="multipart/form-data">
         <input type="file" name="file" accept=".sql">
-        <button type="submit">RESTORE DATABASE</button>
+        <button type="submit" class="btn-primary">RESTORE DATABASE</button>
       </form>
 
+      {% with messages = get_flashed_messages() %} {% if messages %}
+      <ul>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %} {% endwith %}
       <hr>
 
       <h2>Gestión de Empleados</h2>
@@ -126,17 +133,10 @@
         <label for="respuesta_seguridad">Respuesta de Seguridad:</label>
         <input type="text" id="respuesta_seguridad" name="respuesta_seguridad" required /><br />
 
-        <button type="submit">Agregar Empleado</button>
+        <button type="submit" class="btn-primary">Agregar Empleado</button>
       </form>
 
     </div>
-
-
-
-    </div>
-
-
-
   </main>
 
   <script src="{{ url_for('static', filename='js/component.js') }}"></script>
@@ -157,7 +157,6 @@
       }
       return true;
     }
-
 
     // Función para abrir el modal de agregar empleado
     function mostrarFormulario() {
@@ -205,39 +204,37 @@
 
       for (var i = 0; i < checkboxes.length; i++) {
         if (checkboxes[i].checked) {
-          empleadosAEliminar.push(checkboxes[i].getAttribute('data-id'));
+          empleadosAEliminar.push(checkboxes[i].value);
         }
       }
 
-      // Aquí puedes llamar a una función o hacer una petición al backend para eliminar los empleados
-      console.log('Empleados a eliminar:', empleadosAEliminar);
-    }
-
-    // Función para buscar empleados en la tabla
-    function buscarEmpleado() {
-      var input = document.getElementById('buscar-empleado');
-      var filter = input.value.toUpperCase();
-      var tabla = document.getElementById('tabla-empleados-body');
-      var tr = tabla.getElementsByTagName('tr');
-
-      for (var i = 0; i < tr.length; i++) {
-        var td = tr[i].getElementsByTagName('td')[1]; // Cambia el índice según la columna de nombre del empleado
-        if (td) {
-          var textValue = td.textContent || td.innerText;
-          if (textValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = '';
-          } else {
-            tr[i].style.display = 'none';
-          }
-        }
+      if (empleadosAEliminar.length > 0) {
+        // Enviar los empleados seleccionados para eliminar
+        fetch('/eliminar_empleados', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            empleados: empleadosAEliminar
+          })
+        })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              // Recargar la página después de eliminar los empleados
+              location.reload();
+            } else {
+              console.error('Error al eliminar empleados:', data.error);
+            }
+          })
+          .catch(error => {
+            console.error('Error en la solicitud de eliminación de empleados:', error);
+          });
       }
     }
-
   </script>
 </body>
 
 </html>
-
-{% else %}
-<p> </p>
 {% endif %}

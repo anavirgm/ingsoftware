@@ -299,6 +299,53 @@ def clientes():
     )
 
 
+@app.route('/realizar_venta', methods=['POST'])
+def realizar_venta():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+    
+    # Obtén los datos del formulario
+    marca_de_tiempo = request.form['marca_de_tiempo']
+    tasa_bcv = request.form['tasa_bcv']
+    clientes_id = request.form['clientes_id']
+    usuarios_id = request.form['usuarios_id']
+    productos_id = request.form['productos_id']
+    cantidad = request.form['cantidad']
+
+    # Ejecutar la primera consulta para insertar en la tabla transacciones
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute(
+        """
+        INSERT INTO transacciones
+        (marca_de_tiempo, tasa_bcv, clientes_id, usuarios_id)
+        VALUES (%s, %s, %s, %s)
+        """,
+        (marca_de_tiempo, tasa_bcv, clientes_id, usuarios_id)
+    )
+    mysql.connection.commit()
+
+    # Obtener el ID de la última transacción insertada
+    transaccion_id = cursor.lastrowid
+
+    # Ejecutar la segunda consulta para insertar en la tabla transacciones_tiene_productos
+    cursor.execute(
+        """
+        INSERT INTO transacciones_tiene_productos
+        (transacciones_id, productos_id, cantidad)
+        VALUES (%s, %s, %s)
+        """,
+        (transaccion_id, productos_id, cantidad)
+    )
+    mysql.connection.commit()
+
+    cursor.close()
+
+    # Redirige a una página de confirmación o la página principal después de realizar la venta
+    flash("Venta realizada correctamente")
+    return redirect(url_for('clientes'))
+
+
+
 @app.route("/actualizar_cliente", methods=["POST"])
 def actualizar_cliente():
     if "loggedin" not in session:
@@ -670,23 +717,35 @@ def recuperar_base():
     if file.filename == "":
         flash("No selected file")
         return redirect(request.url)
+    
     if file and file.filename.rsplit('.', 1)[1].lower() == "sql":
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        file.save(filepath)
-        flash("file uploaded")
-        # dropear db vieja
-        subprocess.run(['C:\\xampp\\mysql\\bin\\mysqladmin.exe', "-f", "-u", "root", "drop", "camicandy"])
-        # crear db de nuevo
-        subprocess.run(['C:\\xampp\\mysql\\bin\\mysqladmin.exe', "-u", "root", "create", "camicandy"])
-        # restaurar db 
-
-        abs_filepath = os.path.abspath(filepath)
-        with open(abs_filepath, 'r') as file:
-            subprocess.run(['C:\\xampp\\mysql\\bin\\mysql.exe', "-u", "root", "camicandy"], stdin=file)
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            file.save(filepath)
+            flash("File uploaded")
             
-        # mantenerse en la seccion de herramientas
-        return redirect(url_for('herramientas'))
+            try:
+                # Dropear db vieja
+                subprocess.run(['C:\\xampp\\mysql\\bin\\mysqladmin.exe', "-f", "-u", "root", "drop", "camicandy"], check=True)
+                
+                # Crear db de nuevo
+                subprocess.run(['C:\\xampp\\mysql\\bin\\mysqladmin.exe', "-u", "root", "create", "camicandy"], check=True)
+                
+                # Restaurar db 
+                abs_filepath = os.path.abspath(filepath)
+                with open(abs_filepath, 'r') as file:
+                    subprocess.run(['C:\\xampp\\mysql\\bin\\mysql.exe', "-u", "root", "camicandy"], stdin=file, check=True)
+                
+                flash("Database restored successfully")
+            except subprocess.CalledProcessError as e:
+                flash(f"An error occurred: {e}")
+                return redirect(url_for('herramientas'))
+            
+            # Mantenerse en la sección de herramientas
+            return redirect(url_for('herramientas'))
+    else:
+        flash("Invalid file type")
+        return redirect(request.url)
 
 @app.route("/logout")
 def logout():

@@ -231,6 +231,7 @@ a.selector {
 /* Dark mode styles */
 body.dark {
   background-color: #121212;
+  color: #ffffff;
 }
 
 body.dark .card,
@@ -308,6 +309,7 @@ body.dark .large-card p {
 
 .menu__side_move {
   width: 250px;
+  left:0;
 }
 
 /* estética del botón de tema */

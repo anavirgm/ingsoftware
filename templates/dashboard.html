@@ -17,6 +17,7 @@
   
 {% if rol == "administrador" %}
 
+
 <body id="body">
   <header>
     <div class="icon__menu">
@@ -130,6 +131,9 @@
       </a>
     </div>
   </div>
+
+  
+  <h1>¡Bienvenido, {{ rol }}!</h1>
   {% else %}
 
 
@@ -217,7 +221,12 @@
         </a>
       </div>
     </div>
+
+    
+    <h1>¡Bienvenido, {{ username }}!</h1>
+  
     {% endif %}
+
 
     <main class="container">
       <div class="grid cards-section">

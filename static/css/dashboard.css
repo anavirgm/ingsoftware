@@ -9,9 +9,10 @@
 body {
   margin-left: 100px;
   transition: margin-left 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
-  margin-top: 80px;
+  margin-top: 100px;
   background: #ECECEE;
   position: relative;
+  font-family: Arial, sans-serif;
 }
 
 header {
@@ -24,6 +25,23 @@ header {
   top: 0;
   z-index: 200;
   transition: 0.3s ease all;
+}
+
+h1 {
+  font-size: 32px;
+  color: #333;
+  margin-left: 30px;
+}
+
+h1 span {
+  font-weight: bold;
+  color: #007bff; /* Color azul, puedes cambiarlo según tu preferencia */
+}
+
+h5 {
+  margin-left: 30px;
+  font-size: 1.25rem;
+  font-weight: 600;
 }
 
 .icon__menu {

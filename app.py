@@ -6,7 +6,8 @@ from flask import (
     url_for,
     flash,
     session,
-    send_file
+    send_file,
+    jsonify
 )
 from werkzeug.utils import secure_filename
 from flask_mysqldb import MySQL
@@ -786,6 +787,36 @@ def recuperar_base():
     else:
         flash("Invalid file type")
         return redirect(request.url)
+    
+
+
+
+@app.route("/buscar_productos", methods=["GET", "POST"])
+def buscar_productos():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    if request.method == "POST":
+        termino_busqueda = request.form["termino_busqueda"]
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        query = """
+        SELECT * FROM productos 
+        WHERE nombre LIKE %s AND status = %s
+        """
+        cursor.execute(query, ('%' + termino_busqueda + '%', True))
+        productos = cursor.fetchall()
+        cursor.close()
+
+        return render_template(
+            "productos.html",
+            username=session["username"],
+            rol=session["rol"],
+            productos=productos,
+        )
+    
+    return render_template("venta.html")
+
 
 @app.route("/logout")
 def logout():

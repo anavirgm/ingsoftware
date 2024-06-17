@@ -4,11 +4,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CamiCandy - Clientes</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/Clientes.css') }}" />
+  <title>CamiCandy - Realizar Venta</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/Productos.css') }}" />
 </head>
-
-{% if rol == "administrador" %}
 
 <body id="body">
   <header>
@@ -35,7 +33,6 @@
       <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="" />
       <h4>CamiCandy</h4>
     </div>
-
     <div class="options__menu">
       <a href="{{ url_for('dashboard') }}">
         <div class="option">
@@ -45,14 +42,14 @@
       </a>
       <a href="{{ url_for('productos') }}">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="productos" />
+          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="Productos" />
           <h4>Productos</h4>
         </div>
       </a>
-      <a href="{{ url_for('clientes') }} " class="selector">
+      <a href="{{ url_for('clientes') }}">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Cliente" />
-          <h4>clientes</h4>
+          <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Clientes" />
+          <h4>Clientes</h4>
         </div>
       </a>
       <a href="{{ url_for('proveedores') }}">
@@ -88,129 +85,136 @@
       </a>
     </div>
   </div>
-  {% else %}
 
-
-
-  <body id="body">
-    <header>
-      <div class="icon__menu">
-        <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="" id="btn_open" />
+  <main>
+    <div class="container_productos">
+      <h1>Realizar Venta</h1>
+      <div class="container_productos_buscar">
+        <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
+        <button onclick="añadirAlCarrito()">Añadir a la compra</button>
       </div>
-      <div class="icon__configuracion">
-        <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" alt="" />
-      </div>
-      <div class="boton">
-        <button class="switch" id="switch">
-          <span>
-            <img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="" />
-          </span>
-          <span>
-            <img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="" />
-          </span>
-        </button>
-      </div>
-    </header>
+      <div class="productos">
+        <table class="table_de_productos">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Fecha de Vencimiento</th>
+              <th>Cantidad Disponible</th>
+              <th>Precio ($)</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-productos-body">
 
-    <div class="menu__side" id="menu_side">
-      <div class="name_page">
-        <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="" />
-        <h4>CamiCandy</h4>
-      </div>
 
-      <div class="options__menu">
-        <a href="{{ url_for('dashboard') }}">
-          <div class="option">
-            <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard" />
-            <h4>Dashboard</h4>
-          </div>
-        </a>
+            <!-- Aquí se mostrarán los datos de los productos filtrados -->
 
-        <a href="{{ url_for('clientes') }}" class="selector">
-          <div class="option">
-            <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Cliente" />
-            <h4>Clientes</h4>
-          </div>
-        </a>
 
-        <a href="{{ url_for('transacciones') }}">
-          <div class="option">
-            <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-              title="Transacciones" />
-            <h4>Transacciones</h4>
-          </div>
-        </a>
-        <a href="#">
-          <div class="option">
-            <img src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}" title="Ayuda" />
-            <h4>Ayuda</h4>
-          </div>
-        </a>
+          </tbody>
+        </table>
       </div>
     </div>
+    <div class="container_productos">
+      <h2>Carrito de Compras</h2>
+      <table class="table_de_productos">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Cantidad</th>
+            <th>Precio Unitario ($)</th>
+            <th>Precio Total ($)</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-carrito-body">
+          <!-- Aquí se mostrarán los productos añadidos al carrito 
 
-    {% endif %}
-    <main>
-      <div class="container_clientes">
-        <h2>Realizar Venta</h2>
-  <form action="{{ url_for('realizar_venta') }}" method="POST">
-    <label for="marca_de_tiempo">Marca de tiempo:</label>
-    <input type="datetime-local" id="marca_de_tiempo" name="marca_de_tiempo" required><br>
-
-    <label for="tasa_bcv">Tasa BCV:</label>
-    <input type="number" step="0.01" id="tasa_bcv" name="tasa_bcv" required><br>
-
-    <label for="clientes_id">Cliente:</label>
-    <select id="clientes_id" name="clientes_id" required>
-      {% for cliente in clientes %}
-      <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
-      {% endfor %}
-    </select><br>
-
-    <label for="usuarios_id">Usuario:</label>
-    <select id="usuarios_id" name="usuarios_id" required>
-      {% for usuario in usuarios %}
-      <option value="{{ usuario.id }}">{{ usuario.nombre }}</option>
-      {% endfor %}
-    </select><br>
-
-    <label for="productos_id">Producto:</label>
-    <select id="productos_id" name="productos_id" required>
-      {% for producto in productos %}
-      <option value="{{ producto.id }}">{{ producto.nombre }}</option>
-      {% endfor %}
-    </select><br>
-
-    <label for="cantidad">Cantidad:</label>
-    <input type="number" id="cantidad" name="cantidad" required><br>
-
-    <input type="submit" value="Realizar Venta">
-    
+          ejemplo
+          https://gesnet.mundocode.com/?View=Cotizacion
 
 
-    <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-    <script>
-  function actualizarPrecioUnitario() {
-    const productoSelect = document.getElementById('productos_id');
-    const selectedOption = productoSelect.options[productoSelect.selectedIndex];
-    const precioUnitario = selectedOption.getAttribute('data-precio');
-    document.getElementById('precio_unitario').value = precioUnitario;
-    calcularPrecioTotal();
-  }
+                    {% if productos %}
+        <ul>
+            {% for producto in productos %}
+                <li>{{ producto.nombre }} - {{ producto.cantidad_disponible }} unidades disponibles</li>
+            {% endfor %}
+        </ul>
+    {% endif %} 
+                    
+                    -->
+        </tbody>
+      </table>
+    </div>
+  </main>
 
-  function calcularPrecioTotal() {
-    const precioUnitario = parseFloat(document.getElementById('precio_unitario').value);
-    const cantidad = parseInt(document.getElementById('cantidad').value);
-    const precioTotal = precioUnitario * cantidad * 1.16; // 16% de IVA
+  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+  <script>
 
-    document.getElementById('precio_total').value = precioTotal.toFixed(2);
-  }
+    let carrito = [];
 
-  document.addEventListener('DOMContentLoaded', function() {
-    actualizarPrecioUnitario(); // Actualizar precio unitario al cargar la página
-  });
-</script>
+    function buscarProducto() {
+      const input = document.getElementById("buscar-producto").value.toUpperCase();
+      const tbody = document.getElementById("tabla-productos-body");
+      tbody.innerHTML = "";
 
-  </body>
+      productos.forEach(producto => {
+        if (producto.nombre.toUpperCase().includes(input)) {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+                        <td>${producto.id}</td>
+                        <td>${producto.nombre}</td>
+                        <td>${producto.fecha_de_vencimiento}</td>
+                        <td>${producto.cantidad_disponible}</td>
+                        <td>${producto.precio}</td>
+                        <td><button onclick="añadirAlCarrito(${producto.id})">Añadir</button></td>
+                    `;
+          tbody.appendChild(row);
+        }
+      });
+    }
+
+    function añadirAlCarrito(id) {
+      const producto = productos.find(p => p.id === id);
+      if (producto) {
+        const productoEnCarrito = carrito.find(p => p.id === id);
+        if (productoEnCarrito) {
+          productoEnCarrito.cantidad++;
+        } else {
+          carrito.push({ ...producto, cantidad: 1 });
+        }
+        actualizarCarrito();
+      }
+    }
+
+    function actualizarCarrito() {
+      const tbody = document.getElementById("tabla-carrito-body");
+      tbody.innerHTML = "";
+
+      carrito.forEach(producto => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+                    <td>${producto.id}</td>
+                    <td>${producto.nombre}</td>
+                    <td>${producto.cantidad}</td>
+                    <td>${producto.precio}</td>
+                    <td>${(producto.precio * producto.cantidad).toFixed(2)}</td>
+                    <td><button onclick="eliminarDelCarrito(${producto.id})">Eliminar</button></td>
+                `;
+        tbody.appendChild(row);
+      });
+    }
+
+    function eliminarDelCarrito(id) {
+      carrito = carrito.filter(p => p.id !== id);
+      actualizarCarrito();
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      buscarProducto(); // Mostrar todos los productos al cargar la página
+    });
+  </script>
+</body>
 
 </html>

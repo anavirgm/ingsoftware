@@ -46,7 +46,7 @@
           <h4>Productos</h4>
         </div>
       </a>
-      <a href="{{ url_for('clientes') }}">
+      <a href="{{ url_for('clientes') }}" class="selector">
         <div class="option">
           <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Clientes">
           <h4>Clientes</h4>
@@ -64,7 +64,7 @@
           <h4>Transacciones</h4>
         </div>
       </a>
-      <a href="#">
+      <a href="{{url_for('reportes')}}">
         <div class="option">
           <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes">
           <h4>Reportes</h4>
@@ -155,6 +155,8 @@
     </div>
   </main>
 
+  
+  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
   <script>
     let carrito = [];
     let productos = [

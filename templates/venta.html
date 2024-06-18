@@ -1,28 +1,26 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CamiCandy - Realizar Venta</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/Productos.css') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/Productos.css') }}">
 </head>
-
 <body id="body">
   <header>
     <div class="icon__menu">
-      <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="" id="btn_open" />
+      <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="" id="btn_open">
     </div>
     <div class="icon__configuracion">
-      <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" alt="" />
+      <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" alt="">
     </div>
     <div class="boton">
       <button class="switch" id="switch">
         <span>
-          <img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="" />
+          <img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="">
         </span>
         <span>
-          <img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="" />
+          <img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="">
         </span>
       </button>
     </div>
@@ -30,56 +28,55 @@
 
   <div class="menu__side" id="menu_side">
     <div class="name_page">
-      <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="" />
+      <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="">
       <h4>CamiCandy</h4>
     </div>
     <div class="options__menu">
       <a href="{{ url_for('dashboard') }}">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard" />
+          <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard">
           <h4>Dashboard</h4>
         </div>
       </a>
       <a href="{{ url_for('productos') }}">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="Productos" />
+          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="Productos">
           <h4>Productos</h4>
         </div>
       </a>
       <a href="{{ url_for('clientes') }}">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Clientes" />
+          <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Clientes">
           <h4>Clientes</h4>
         </div>
       </a>
       <a href="{{ url_for('proveedores') }}">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}" title="Proveedores" />
+          <img src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}" title="Proveedores">
           <h4>Proveedores</h4>
         </div>
       </a>
       <a href="{{ url_for('transacciones') }}">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-            title="Transacciones" />
+          <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}" title="Transacciones">
           <h4>Transacciones</h4>
         </div>
       </a>
       <a href="#">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes" />
+          <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes">
           <h4>Reportes</h4>
         </div>
       </a>
       <a href="{{ url_for('herramientas') }}">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" title="Herramientas" />
+          <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" title="Herramientas">
           <h4>Herramientas</h4>
         </div>
       </a>
       <a href="#">
         <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}" title="Ayuda" />
+          <img src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}" title="Ayuda">
           <h4>Ayuda</h4>
         </div>
       </a>
@@ -90,8 +87,12 @@
     <div class="container_productos">
       <h1>Realizar Venta</h1>
       <div class="container_productos_buscar">
-        <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
-        <button onclick="añadirAlCarrito()">Añadir a la compra</button>
+        <input
+          type="text"
+          placeholder="Buscar"
+          id="buscar-producto"
+          onkeyup="buscarProducto()"
+        />
       </div>
       <div class="productos">
         <table class="table_de_productos">
@@ -106,15 +107,22 @@
             </tr>
           </thead>
           <tbody id="tabla-productos-body">
-
-
-            <!-- Aquí se mostrarán los datos de los productos filtrados -->
-
-
+            <!-- Aquí se mostrarán los datos de los productos -->
+            {% for producto in productos %}
+              <tr>
+                <td>{{ producto.id }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.fecha_de_vencimiento }}</td>
+                <td>{{ producto.cantidad_disponible }}</td>
+                <td>{{ producto.precio_en_dolares }}</td>
+                <td><button onclick="añadirAlCarrito('{{ producto.id }}')">Añadir</button></td>
+              </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>
     </div>
+
     <div class="container_productos">
       <h2>Carrito de Compras</h2>
       <table class="table_de_productos">
@@ -129,35 +137,35 @@
           </tr>
         </thead>
         <tbody id="tabla-carrito-body">
-          <!-- Aquí se mostrarán los productos añadidos al carrito 
-
-          ejemplo
-          https://gesnet.mundocode.com/?View=Cotizacion
-
-
-                    {% if productos %}
-        <ul>
-            {% for producto in productos %}
-                <li>{{ producto.nombre }} - {{ producto.cantidad_disponible }} unidades disponibles</li>
-            {% endfor %}
-        </ul>
-    {% endif %} 
-                    
-                    -->
+          <!-- Aquí se mostrarán los productos añadidos al carrito -->
+          {% for producto in carrito %}
+            <tr>
+              <td>{{ producto.id }}</td>
+              <td>{{ producto.nombre }}</td>
+              <td>{{ producto.cantidad }}</td>
+              <td>{{ producto.precio_en_dolares }}</td>
+              <td>{{ (producto.precio_en_dolares * producto.cantidad).toFixed(2) }}</td>
+              <td><button onclick="eliminarDelCarrito('{{ producto.id }}')">Eliminar</button></td>
+            </tr>
+          {% endfor %}
         </tbody>
       </table>
     </div>
   </main>
 
-  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
   <script>
-
-    let productos = [
-                { id: 1, nombre: 'Producto 1', fecha_de_vencimiento: '2024-12-31', cantidad_disponible: 100, precio: 10 },
-                { id: 2, nombre: 'Producto 2', fecha_de_vencimiento: '2024-11-30', cantidad_disponible: 200, precio: 20 },
-                
-            ];
     let carrito = [];
+    let productos = [
+      {% for producto in productos %}
+        {
+          id: "{{ producto.id }}",
+          nombre: "{{ producto.nombre }}",
+          fecha_de_vencimiento: "{{ producto.fecha_de_vencimiento }}",
+          cantidad_disponible: "{{ producto.cantidad_disponible }}",
+          precio_en_dolares: "{{ producto.precio_en_dolares }}"
+        }{% if not loop.last %},{% endif %}
+      {% endfor %}
+    ];
 
     function buscarProducto() {
       const input = document.getElementById("buscar-producto").value.toUpperCase();
@@ -168,13 +176,13 @@
         if (producto.nombre.toUpperCase().includes(input)) {
           const row = document.createElement("tr");
           row.innerHTML = `
-                        <td>${producto.id}</td>
-                        <td>${producto.nombre}</td>
-                        <td>${producto.fecha_de_vencimiento}</td>
-                        <td>${producto.cantidad_disponible}</td>
-                        <td>${producto.precio}</td>
-                        <td><button onclick="añadirAlCarrito(${producto.id})">Añadir</button></td>
-                    `;
+            <td>${producto.id}</td>
+            <td>${producto.nombre}</td>
+            <td>${producto.fecha_de_vencimiento}</td>
+            <td>${producto.cantidad_disponible}</td>
+            <td>${producto.precio_en_dolares}</td>
+            <td><button onclick="añadirAlCarrito('${producto.id}')">Añadir</button></td>
+          `;
           tbody.appendChild(row);
         }
       });
@@ -200,13 +208,13 @@
       carrito.forEach(producto => {
         const row = document.createElement("tr");
         row.innerHTML = `
-                    <td>${producto.id}</td>
-                    <td>${producto.nombre}</td>
-                    <td>${producto.cantidad}</td>
-                    <td>${producto.precio}</td>
-                    <td>${(producto.precio * producto.cantidad).toFixed(2)}</td>
-                    <td><button onclick="eliminarDelCarrito(${producto.id})">Eliminar</button></td>
-                `;
+          <td>${producto.id}</td>
+          <td>${producto.nombre}</td>
+          <td>${producto.cantidad}</td>
+          <td>${producto.precio_en_dolares}</td>
+          <td>${(producto.precio_en_dolares * producto.cantidad).toFixed(2)}</td>
+          <td><button onclick="eliminarDelCarrito('${producto.id}')">Eliminar</button></td>
+        `;
         tbody.appendChild(row);
       });
     }
@@ -221,5 +229,4 @@
     });
   </script>
 </body>
-
 </html>

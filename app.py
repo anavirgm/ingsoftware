@@ -629,6 +629,20 @@ def transacciones():
             transacciones=transacciones)
 
 
+################################### REPORTES ##########################################
+
+@app.route("/reportes")
+def reportes():
+    if "loggedin" in session:
+        
+        print(session)
+        return render_template(
+            "reportes.html",
+            username=session["username"],
+            rol=session["rol"],
+            reportes=reportes,
+        )
+    return redirect(url_for("login"))
 
 ################################### HERRAMIENTAS ######################################
 
@@ -790,32 +804,20 @@ def recuperar_base():
     
 
 
-
-@app.route("/buscar_productos", methods=["GET", "POST"])
+@app.route('/buscar_productos', methods=['GET'])
 def buscar_productos():
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
-    if request.method == "POST":
-        termino_busqueda = request.form["termino_busqueda"]
+    criterio = request.args.get('criterio', '')
 
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        query = """
-        SELECT * FROM productos 
-        WHERE nombre LIKE %s AND status = %s
-        """
-        cursor.execute(query, ('%' + termino_busqueda + '%', True))
-        productos = cursor.fetchall()
-        cursor.close()
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM productos WHERE nombre LIKE %s AND status = %s", ('%' + criterio + '%', True))
+    productos = cursor.fetchall()
+    cursor.close()
 
-        return render_template(
-            "productos.html",
-            username=session["username"],
-            rol=session["rol"],
-            productos=productos,
-        )
-    
-    return render_template("venta.html")
+    return render_template('venta.html', productos=productos, username=session["username"], rol=session["rol"])
+
 
 
 @app.route("/logout")

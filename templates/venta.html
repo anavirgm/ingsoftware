@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CamiCandy - Realizar Venta</title>
   <link rel="stylesheet" href="{{ url_for('static', filename='css/Productos.css') }}">
 </head>
+
 <body id="body">
   <header>
     <div class="icon__menu">
@@ -87,12 +89,7 @@
     <div class="container_productos">
       <h1>Realizar Venta</h1>
       <div class="container_productos_buscar">
-        <input
-          type="text"
-          placeholder="Buscar"
-          id="buscar-producto"
-          onkeyup="buscarProducto()"
-        />
+        <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
       </div>
       <div class="productos">
         <table class="table_de_productos">
@@ -109,14 +106,14 @@
           <tbody id="tabla-productos-body">
             <!-- Aquí se mostrarán los datos de los productos -->
             {% for producto in productos %}
-              <tr>
-                <td>{{ producto.id }}</td>
-                <td>{{ producto.nombre }}</td>
-                <td>{{ producto.fecha_de_vencimiento }}</td>
-                <td>{{ producto.cantidad_disponible }}</td>
-                <td>{{ producto.precio_en_dolares }}</td>
-                <td><button onclick="añadirAlCarrito('{{ producto.id }}')">Añadir</button></td>
-              </tr>
+            <tr>
+              <td>{{ producto.id }}</td>
+              <td>{{ producto.nombre }}</td>
+              <td>{{ producto.fecha_de_vencimiento }}</td>
+              <td>{{ producto.cantidad_disponible }}</td>
+              <td>{{ producto.precio_en_dolares }}</td>
+              <td><button onclick="añadirAlCarrito('{{ producto.id }}')">Añadir</button></td>
+            </tr>
             {% endfor %}
           </tbody>
         </table>
@@ -139,14 +136,19 @@
         <tbody id="tabla-carrito-body">
           <!-- Aquí se mostrarán los productos añadidos al carrito -->
           {% for producto in carrito %}
-            <tr>
-              <td>{{ producto.id }}</td>
-              <td>{{ producto.nombre }}</td>
-              <td>{{ producto.cantidad }}</td>
-              <td>{{ producto.precio_en_dolares }}</td>
-              <td>{{ (producto.precio_en_dolares * producto.cantidad).toFixed(2) }}</td>
-              <td><button onclick="eliminarDelCarrito('{{ producto.id }}')">Eliminar</button></td>
-            </tr>
+          <tr>
+            <td>{{ producto.id }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>
+              <label for="cantidad{{ producto.id }}"></label>
+              <input type="number" id="cantidad{{ producto.id }}" name="cantidad{{ producto.id }}" min="1"
+                value="{{ producto.cantidad }}" onchange="actualizarCantidad('{{ producto.id }}', this.value)">
+            </td>
+            <td>{{ producto.precio_en_dolares }}</td>
+            <td id="precio-total{{ producto.id }}">{{ (producto.precio_en_dolares * producto.cantidad).toFixed(2) }}
+            </td>
+            <td><button onclick="eliminarDelCarrito('{{ producto.id }}')">Eliminar</button></td>
+          </tr>
           {% endfor %}
         </tbody>
       </table>
@@ -157,14 +159,14 @@
     let carrito = [];
     let productos = [
       {% for producto in productos %}
-        {
-          id: "{{ producto.id }}",
-          nombre: "{{ producto.nombre }}",
+    {
+      id: "{{ producto.id }}",
+        nombre: "{{ producto.nombre }}",
           fecha_de_vencimiento: "{{ producto.fecha_de_vencimiento }}",
-          cantidad_disponible: "{{ producto.cantidad_disponible }}",
-          precio_en_dolares: "{{ producto.precio_en_dolares }}"
-        }{% if not loop.last %},{% endif %}
-      {% endfor %}
+            cantidad_disponible: "{{ producto.cantidad_disponible }}",
+              precio_en_dolares: "{{ producto.precio_en_dolares }}"
+    } {% if not loop.last %}, {% endif %}
+    {% endfor %}
     ];
 
     function buscarProducto() {
@@ -210,11 +212,15 @@
         row.innerHTML = `
           <td>${producto.id}</td>
           <td>${producto.nombre}</td>
-          <td>${producto.cantidad}</td>
+          <td>
+            <label for="cantidad${producto.id}"></label>
+            <input type="number" id="cantidad${producto.id}" name="cantidad${producto.id}" min="1" value="${producto.cantidad}" onchange="actualizarCantidad('${producto.id}', this.value)">
+          </td>
           <td>${producto.precio_en_dolares}</td>
-          <td>${(producto.precio_en_dolares * producto.cantidad).toFixed(2)}</td>
+          <td id="precio-total${producto.id}">${(producto.precio_en_dolares * producto.cantidad).toFixed(2)}</td>
           <td><button onclick="eliminarDelCarrito('${producto.id}')">Eliminar</button></td>
         `;
+
         tbody.appendChild(row);
       });
     }
@@ -224,9 +230,18 @@
       actualizarCarrito();
     }
 
+    function actualizarCantidad(id, cantidad) {
+      const producto = carrito.find(p => p.id === id);
+      if (producto) {
+        producto.cantidad = parseInt(cantidad);
+        document.getElementById(`precio-total${id}`).textContent = (producto.precio_en_dolares * producto.cantidad).toFixed(2);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
       buscarProducto(); // Mostrar todos los productos al cargar la página
     });
   </script>
 </body>
+
 </html>

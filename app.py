@@ -7,7 +7,7 @@ from flask import (
     flash,
     session,
     send_file,
-    jsonify
+    json
 )
 from werkzeug.utils import secure_filename
 from flask_mysqldb import MySQL
@@ -125,11 +125,13 @@ def productos():
         return redirect(url_for("login"))
     
     if request.method == "POST":
-            nombre = request.form["nombre"]
-            fecha_de_vencimiento = request.form["fecha_de_vencimiento"]
-            cantidad_disponible = request.form["cantidad_disponible"]
-            precio_en_dolares = request.form["precio_en_dolares"]
+        nombre = request.form["nombre"]
+        fecha_de_vencimiento = request.form["fecha_de_vencimiento"]
+        cantidad_disponible = request.form["cantidad_disponible"]
+        precio_en_dolares = request.form["precio_en_dolares"]
 
+        # Validate that none of the values are None
+        if nombre and fecha_de_vencimiento and cantidad_disponible and precio_en_dolares:
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute(
                 "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares) VALUES (%s, %s, %s, %s)",
@@ -143,18 +145,21 @@ def productos():
             mysql.connection.commit()
             cursor.close()
             flash("Producto agregado correctamente")
-    
+        else:
+            flash("Por favor, complete todos los campos del formulario")
+
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM productos WHERE status = %s", (True,))
     all_products = cursor.fetchall()
     cursor.close()
     
     return render_template(
-            "productos.html",
-            username=session["username"],
-            rol=session["rol"],
-            productos=all_products,
-        )
+        "productos.html",
+        username=session["username"],
+        rol=session["rol"],
+        productos=all_products,
+    )
+
 
 @app.route("/insertar_producto", methods=["POST"])
 def insertar_producto():
@@ -331,29 +336,13 @@ def realizar_venta():
     if request.method == "POST":
         try:
             marca_de_tiempo = request.form["marca_de_tiempo"]
-            # tasa_bcv = request.form["tasa_bcv"]
             clientes_id = request.form["clientes_id"]
             usuarios_id = session["id"]
-            productos_id = request.form["productos_id"]
-            cantidad = request.form["cantidad"]
-
-            # Validar que el producto y el usuario estén activos
-            producto_activo = any(
-                prod["id"] == int(productos_id) for prod in productos_activos
-            )
-            usuario_activo = any(
-                user["id"] == int(usuarios_id) for user in usuarios_activos
-            )
-
-            if not producto_activo:
-                flash("El producto seleccionado no está activo")
-                return redirect(url_for("realizar_venta"))
-
-            if not usuario_activo:
-                flash("El usuario seleccionado no está activo")
-                return redirect(url_for("realizar_venta"))
+            carrito = json.loads(request.form["carrito"])
 
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+
 
             # Insertar en la tabla transacciones
             cursor.execute(
@@ -369,15 +358,16 @@ def realizar_venta():
             transaccion_id = cursor.lastrowid
 
             # Insertar en la tabla transacciones_tiene_productos
-            cursor.execute(
-                """
-                INSERT INTO transacciones_tiene_productos
-                (transacciones_id, productos_id, cantidad)
-                VALUES (%s, %s, %s)
-                """,
-                (transaccion_id, productos_id, cantidad),
-            )
-            mysql.connection.commit()
+            for producto in carrito:
+                cursor.execute(
+                    """
+                    INSERT INTO transacciones_tiene_productos
+                    (transacciones_id, productos_id, cantidad)
+                    VALUES (%s, %s, %s)
+                    """,
+                    (transaccion_id, producto["id"], producto["cantidad"]),
+                )
+                mysql.connection.commit()
 
             cursor.close()
             flash("Venta realizada correctamente")
@@ -398,6 +388,7 @@ def realizar_venta():
         today=today,
         usuario=session["username"],
     )
+
 
 
 

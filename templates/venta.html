@@ -92,7 +92,7 @@
         <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
       </div>
 
-      <form action="{{ url_for('realizar_venta') }}" method="POST">
+      <form id="venta-form" action="{{ url_for('realizar_venta') }}" method="POST">
         <label for="marca_de_tiempo">Marca de tiempo:</label>
         <input type="datetime-local" id="marca_de_tiempo" name="marca_de_tiempo" required><br>
 
@@ -166,7 +166,9 @@
           {% endfor %}
         </tbody>
       </table>
+      <button type="submit">Realizar Venta</button>
     </div>
+    </form>
   </main>
 
   <script src="{{ url_for('static', filename='js/component.js') }}"></script>
@@ -272,6 +274,19 @@
         document.getElementById(`precio-total${id}`).textContent = (producto.precio_en_dolares * producto.cantidad).toFixed(2);
       }
     }
+
+    document.getElementById("venta-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+      
+      const form = e.target;
+      const carritoInput = document.createElement("input");
+      carritoInput.type = "hidden";
+      carritoInput.name = "carrito";
+      carritoInput.value = JSON.stringify(carrito);
+      form.appendChild(carritoInput);
+      
+      form.submit();
+    });
 
     document.addEventListener('DOMContentLoaded', function () {
       buscarProducto(); // Mostrar todos los productos y clientes al cargar la página

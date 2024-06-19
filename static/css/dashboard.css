@@ -72,10 +72,6 @@ h5 {
   position: absolute;
 }
 
-.boton {
-  padding-left: 100px;
-}
-
 .icon__notificacion {
   width: 50px;
   height: 100%;
@@ -395,7 +391,6 @@ body.dark {
 
 body.dark header {
   background: #152937;
-  color: w;
 }
 
 body.dark .menu__side {
@@ -411,4 +406,16 @@ body.dark .menu__side {
   overflow: hidden;
   border-right: 40px solid#152937;
   transition: 0.3s ease all;
+}
+
+.separator {
+  flex: 1;
+}
+
+.logout {
+  padding-right: 100px;
+}
+
+body.body_move .logout {
+  padding-right: 250px;
 }

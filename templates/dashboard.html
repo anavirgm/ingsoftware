@@ -1,320 +1,100 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard</title>
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/dashboard.css') }}"
-    />
-    <link
-      rel="shortcut icon"
-      href="{{ url_for('static', filename='favicon.ico') }}"
-    />
-  </head>
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block head
+%} {{ super() }}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/dashboard.css') }}"
+/>
+{% endblock %} {% block content %} {% include "header.html" %} {% include
+"sidebar.html" %}
+<h1>¡Bienvenido, {{ username or rol }}!</h1>
 
-  
-{% if rol == "administrador" %}
-
-
-<body id="body">
-  <header>
-    <div class="icon__menu">
-      <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="" id="btn_open" />
-    </div>
-    <div class="icon__configuracion">
-      <img
-        src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-        alt=""
-      />
-    </div>
-    <div class="boton">
-      <button class="switch" id="switch">
-        <span>
-          <img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="" />
-        </span>
-        <span>
-          <img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="" />
-        </span>
-      </button>
-    </div>
-    <div class="logout">
-      <a href="{{ url_for('logout') }}">
-        <img src="{{ url_for('static', filename='imagenes/icons/salida.png') }}" alt="Logout" />
-      </a>
-    </div>
-    
-  </header>
-
-  <div class="menu__side" id="menu_side">
-    <div class="name_page">
-      <img
-        src="{{ url_for('static', filename='imagenes/logo.png') }}"
-        alt=""
-      />
-      <h4>CamiCandy</h4>
+<main class="container">
+  <div class="grid cards-section">
+    <div class="card">
+      <h2>Productos</h2>
+      <p>Almacén: {{ total_productos }}</p>
     </div>
 
-    <div class="options__menu">
-      <a href="{{ url_for('dashboard') }}" class="selector">
-        <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
-            title="Dashboard"
-          />
-          <h4>Dashboard</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('productos') }}">
-        <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
-            title="productos"
-          />
-          <h4>Productos</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('clientes') }}">
-        <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
-            title="Cliente"
-          />
-          <h4>clientes</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('proveedores') }}">
-        <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}"
-            title="Proveedores"
-          />
-          <h4>Proveedores</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('transacciones') }}">
-        <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-            title="Transacciones"
-          />
-          <h4>Transacciones</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('reportes') }}">
-        <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}"
-            title="Reportes"
-          />
-          <h4>Reportes</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('herramientas') }}">
-        <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-            title="Herramientas"
-          />
-          <h4>Herramientas</h4>
-        </div>
-      </a>
-      <a href="#">
-        <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
-            title="Ayuda"
-          />
-          <h4>Ayuda</h4>
-        </div>
-      </a>
+    <div class="card">
+      <h2>Clientes</h2>
+      <p>Registrados: {{ total_clientes }}</p>
+    </div>
+
+    <div class="card">
+      <h2>Proveedores</h2>
+      <p>Registrados: {{ total_proveedores }}</p>
+    </div>
+
+    <div class="card">
+      <h2>Transacciones</h2>
+      <p>Movimientos: {{ total_transacciones }}</p>
     </div>
   </div>
 
-  
-  <h1>¡Bienvenido, {{ rol }}!</h1>
-  {% else %}
-
-
-    
-  <body id="body">
-    <header>
-      <div class="icon__menu">
-        <img
-          src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
-          alt=""
-          id="btn_open"
-        />
-      </div>
-      <div class="icon__configuracion">
-        <img
-          src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-          alt=""
-        />
-      </div>
-      <div class="boton">
-        <button class="switch" id="switch">
-          <span>
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
-              alt=""
-            />
-          </span>
-          <span>
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
-              alt=""
-            />
-          </span>
-        </button>
-      </div>
-    </header>
-
-    <div class="menu__side" id="menu_side">
-      <div class="name_page">
-        <img
-          src="{{ url_for('static', filename='imagenes/logo.png') }}"
-          alt=""
-        />
-        <h4>CamiCandy</h4>
-      </div>
-
-      <div class="options__menu">
-        <a href="{{ url_for('dashboard') }}" class="selector">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
-              title="Dashboard"
-            />
-            <h4>Dashboard</h4>
-          </div>
-        </a>
-        
-        <a href="{{ url_for('clientes') }}">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
-              title="Cliente"
-            />
-            <h4>clientes</h4>
-          </div>
-        </a>
-        
-        <a href="{{ url_for('transacciones') }}">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-              title="Transacciones"
-            />
-            <h4>Transacciones</h4>
-          </div>
-        </a>
-        <a href="#">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
-              title="Ayuda"
-            />
-            <h4>Ayuda</h4>
-          </div>
-        </a>
-      </div>
+  <div class="grid large-cards-section">
+    <div class="large-card">
+      <canvas id="grafico-ventas"></canvas>
     </div>
 
-    
-    <h1>¡Bienvenido, {{ username }}!</h1>
-  
-    {% endif %}
+    <div class="large-card">
+      <canvas id="grafico-ingreso"></canvas>
+    </div>
+  </div>
+</main>
 
-
-    <main class="container">
-      <div class="grid cards-section">
-        <div class="card">
-          <h2>Productos</h2>
-          <p>Almacén: {{ total_productos }}</p>
-        </div>
-
-        <div class="card">
-          <h2>Clientes</h2>
-          <p>Registrados: {{ total_clientes }}</p>
-        </div>
-
-        <div class="card">
-          <h2>Proveedores</h2>
-          <p>Registrados: {{ total_proveedores }}</p>
-        </div>
-
-        <div class="card">
-          <h2>Transacciones</h2>
-          <p>Movimientos: {{ total_transacciones }}</p>
-        </div>
-      </div>
-
-      <div class="grid large-cards-section">
-        <div class="large-card">
-          <canvas id="grafico-ventas"></canvas>
-        </div>
-
-        <div class="large-card">
-          <canvas id="grafico-ingreso"></canvas>
-        </div>
-      </div>
-    </main>
-
-    <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-    <script
-      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
-      integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
-    ></script>
-    <script>
-      // gráfico de cantidad de ventas de la última semana
-      (async function(data) {
-        new Chart(
-          document.getElementById('grafico-ventas').getContext('2d'),
-          {
-            type: 'bar',
-            data: {
-              labels: data.map(row => row.fecha),
-              datasets: [
-                {
-                  label: 'Ventas por día (unidades)',
-                  data: data.map(row => row.cantidad)
-                }
-              ]
-            },
-            options: {
-              // no mostrar ventas decimales
-              scales: {
-                y: {
-                  ticks: { precision: 0 },
-                },
-              }
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='js/component.js') }}"></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
+  integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  // gráfico de cantidad de ventas de la última semana
+  (async function(data) {
+    new Chart(
+      document.getElementById('grafico-ventas').getContext('2d'),
+      {
+        type: 'bar',
+        data: {
+          labels: data.map(row => row.fecha),
+          datasets: [
+            {
+              label: 'Ventas por día (unidades)',
+              data: data.map(row => row.cantidad)
             }
-          }
-        );
-      })({{ ventas_semana | tojson }});
-
-      // gráfico de monto total de ingreso de la útlima semana
-      (async function(data) {
-        new Chart(
-          document.getElementById('grafico-ingreso').getContext('2d'),
-          {
-            type: 'bar',
-            data: {
-              labels: data.map(row => row.fecha),
-              datasets: [
-                {
-                  label: 'Ingreso por día ($)',
-                  data: data.map(row => row.importe_en_dolares)
-                }
-              ]
+          ]
+        },
+        options: {
+          // no mostrar ventas decimales
+          scales: {
+            y: {
+              ticks: { precision: 0 },
             },
           }
-        );
-      })({{ ingreso_semana | tojson }});
-    </script>
-  </body>
-</html>
+        }
+      }
+    );
+  })({{ ventas_semana | tojson }});
+
+  // gráfico de monto total de ingreso de la útlima semana
+  (async function(data) {
+    new Chart(
+      document.getElementById('grafico-ingreso').getContext('2d'),
+      {
+        type: 'bar',
+        data: {
+          labels: data.map(row => row.fecha),
+          datasets: [
+            {
+              label: 'Ingreso por día ($)',
+              data: data.map(row => row.importe_en_dolares)
+            }
+          ]
+        },
+      }
+    );
+  })({{ ingreso_semana | tojson }});
+</script>
+{% endblock %}

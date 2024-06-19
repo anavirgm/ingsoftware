@@ -627,7 +627,9 @@ def transacciones():
             cursor.execute("SELECT nombre FROM proveedores WHERE id = %s", (proveedor,))
             transaccion["proveedor"] = cursor.fetchone()["nombre"]
 
-    transacciones = sorted(transacciones, key=lambda x: x["marca_de_tiempo"], reverse=True)
+    transacciones = sorted(
+        transacciones, key=lambda x: x["marca_de_tiempo"], reverse=True
+    )
     cursor.close()
 
     return render_template(

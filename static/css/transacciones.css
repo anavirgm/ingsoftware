@@ -11,7 +11,7 @@ body {
   transition: margin-left 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
   margin-top: 100px;
   margin-bottom: 20px;
-  background: #ECECEE;
+  background: #ececee;
 }
 
 header {
@@ -52,7 +52,6 @@ header {
   width: 40px;
   margin-right: 10px;
 }
-
 
 /* Sidebar */
 .menu__side {
@@ -261,13 +260,14 @@ a.selector {
 body.dark {
   background: #2c2c2c;
   color: white;
-  transition: background 0.3s, color 0.3s;
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 
 body.dark header {
-  background:  #152937;
+  background: #152937;
   color: w;
-
 }
 
 body.dark .menu__side {
@@ -337,12 +337,11 @@ body.dark .switch.active {
   background: #ffa500;
 }
 
-
 @media screen and (max-width: 768px) {
   .menu__side {
     width: 100px;
   }
-  
+
   main {
     margin-left: 100px;
   }

@@ -7,7 +7,7 @@ from flask import (
     flash,
     session,
     send_file,
-    json
+    json,
 )
 from werkzeug.utils import secure_filename
 from flask_mysqldb import MySQL
@@ -20,12 +20,12 @@ import requests
 
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = 'uploads'
+app.config["UPLOAD_FOLDER"] = "uploads"
 app.secret_key = "your_secret_key"
 bcrypt = Bcrypt(app)
 
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+if not os.path.exists(app.config["UPLOAD_FOLDER"]):
+    os.makedirs(app.config["UPLOAD_FOLDER"])
 
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
@@ -117,13 +117,12 @@ def dashboard():
     return redirect(url_for("login"))
 
 
-
 ############################# PRODUCTOS ################################
 @app.route("/productos", methods=["GET", "POST"])
 def productos():
     if "loggedin" not in session:
         return redirect(url_for("login"))
-    
+
     if request.method == "POST":
         nombre = request.form["nombre"]
         fecha_de_vencimiento = request.form["fecha_de_vencimiento"]
@@ -131,7 +130,12 @@ def productos():
         precio_en_dolares = request.form["precio_en_dolares"]
 
         # Validate that none of the values are None
-        if nombre and fecha_de_vencimiento and cantidad_disponible and precio_en_dolares:
+        if (
+            nombre
+            and fecha_de_vencimiento
+            and cantidad_disponible
+            and precio_en_dolares
+        ):
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute(
                 "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares) VALUES (%s, %s, %s, %s)",
@@ -152,7 +156,7 @@ def productos():
     cursor.execute("SELECT * FROM productos WHERE status = %s", (True,))
     all_products = cursor.fetchall()
     cursor.close()
-    
+
     return render_template(
         "productos.html",
         username=session["username"],
@@ -257,7 +261,7 @@ def cliente(id):
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
-    # vista de cliente detallada donde se podrá editar la información del usuario if request.method == "GET":
+        # vista de cliente detallada donde se podrá editar la información del usuario if request.method == "GET":
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         # hacer la consulta
         cursor.execute(
@@ -307,6 +311,7 @@ def clientes():
         rol=session["rol"],
     )
 
+
 @app.route("/realizar_venta", methods=["GET", "POST"])
 def realizar_venta():
     if "loggedin" not in session:
@@ -341,8 +346,6 @@ def realizar_venta():
             carrito = json.loads(request.form["carrito"])
 
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
-
 
             # Insertar en la tabla transacciones
             cursor.execute(
@@ -388,8 +391,6 @@ def realizar_venta():
         today=today,
         usuario=session["username"],
     )
-
-
 
 
 @app.route("/actualizar_cliente", methods=["POST"])
@@ -628,18 +629,21 @@ def transacciones():
 
     cursor.close()
 
-    return render_template("transacciones.html", 
-                           username=session["username"],
-            rol=session["rol"],
-            transacciones=transacciones)
+    return render_template(
+        "transacciones.html",
+        username=session["username"],
+        rol=session["rol"],
+        transacciones=transacciones,
+    )
 
 
 ################################### REPORTES ##########################################
 
+
 @app.route("/reportes")
 def reportes():
     if "loggedin" in session:
-        
+
         print(session)
         return render_template(
             "reportes.html",
@@ -649,12 +653,14 @@ def reportes():
         )
     return redirect(url_for("login"))
 
+
 ################################### HERRAMIENTAS ######################################
+
 
 @app.route("/herramientas")
 def herramientas():
     if "loggedin" in session:
-        
+
         print(session)
         return render_template(
             "herramientas.html",
@@ -665,41 +671,66 @@ def herramientas():
     return redirect(url_for("login"))
 
 
-@app.route('/agregar_empleado', methods=['GET', 'POST'])
+@app.route("/agregar_empleado", methods=["GET", "POST"])
 def agregar_empleado():
-    if request.method == 'POST':
+    if request.method == "POST":
 
         cedula = request.form["cedula"]
-        nombre = request.form['nombre']
+        nombre = request.form["nombre"]
         rol = request.form["rol"]
-        hash_de_contrasena = bcrypt.generate_password_hash(request.form["hash_contrasena"]).decode('utf-8')  # Hashear la contraseña
+        hash_de_contrasena = bcrypt.generate_password_hash(
+            request.form["hash_contrasena"]
+        ).decode(
+            "utf-8"
+        )  # Hashear la contraseña
         pregunta_seguridad = request.form["pregunta_seguridad"]
-        respuesta_seguridad = bcrypt.generate_password_hash(request.form["respuesta_seguridad"]).decode('utf-8')
-        
+        respuesta_seguridad = bcrypt.generate_password_hash(
+            request.form["respuesta_seguridad"]
+        ).decode("utf-8")
+
         # agregar el empleado a la base
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute('INSERT INTO usuarios (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad) VALUES (%s, %s, %s, %s, %s, %s)', (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad))
+        cursor.execute(
+            "INSERT INTO usuarios (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad) VALUES (%s, %s, %s, %s, %s, %s)",
+            (
+                cedula,
+                nombre,
+                rol,
+                hash_de_contrasena,
+                pregunta_seguridad,
+                respuesta_seguridad,
+            ),
+        )
         mysql.connection.commit()
         cursor.close()
 
-        flash('Empleado agregado correctamente')
-        return redirect(url_for('herramientas'))
+        flash("Empleado agregado correctamente")
+        return redirect(url_for("herramientas"))
 
-    return render_template('herramientas.html')
+    return render_template("herramientas.html")
+
 
 @app.route("/actualizar_empleado", methods=["POST"])
 def actualizar_empleado():
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
-    empleado_id = request.form.get("id_empleado")  # Asumiendo que el ID del empleado está en el formulario
+    empleado_id = request.form.get(
+        "id_empleado"
+    )  # Asumiendo que el ID del empleado está en el formulario
     cedula = request.form["cedula"]
-    nombre = request.form['nombre']
+    nombre = request.form["nombre"]
     rol = request.form["rol"]
-    hash_contrasena = bcrypt.generate_password_hash(request.form["hash_contrasena"]).decode('utf-8')  # Hashear la contraseña
+    hash_contrasena = bcrypt.generate_password_hash(
+        request.form["hash_contrasena"]
+    ).decode(
+        "utf-8"
+    )  # Hashear la contraseña
     pregunta_seguridad = request.form["pregunta_seguridad"]
-    respuesta_seguridad = bcrypt.generate_password_hash(request.form["respuesta_seguridad"]).decode('utf-8')
-    
+    respuesta_seguridad = bcrypt.generate_password_hash(
+        request.form["respuesta_seguridad"]
+    ).decode("utf-8")
+
     # Conectar a la base de datos y ejecutar la actualización
     try:
         cursor = mysql.connection.cursor()
@@ -709,7 +740,15 @@ def actualizar_empleado():
             SET cedula = %s, nombre = %s, rol = %s, hash_de_contrasena = %s, pregunta_seguridad = %s, respuesta_seguridad = %s
             WHERE id = %s
             """,
-            (cedula, nombre, rol, hash_contrasena, pregunta_seguridad, respuesta_seguridad, empleado_id)
+            (
+                cedula,
+                nombre,
+                rol,
+                hash_contrasena,
+                pregunta_seguridad,
+                respuesta_seguridad,
+                empleado_id,
+            ),
         )
         mysql.connection.commit()
         cursor.close()
@@ -719,7 +758,9 @@ def actualizar_empleado():
 
     except MySQLdb.Error as e:
         flash(f"Error al actualizar empleado: {str(e)}", "error")
-        return redirect(url_for("herramientas"))  # Puedes redirigir a donde sea necesario en caso de error
+        return redirect(
+            url_for("herramientas")
+        )  # Puedes redirigir a donde sea necesario en caso de error
 
     finally:
         cursor.close()
@@ -736,7 +777,7 @@ def listar_empleados():
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute(
             "SELECT * FROM usuarios WHERE rol = 'empleado'",
-            ('%' + termino_busqueda + '%',),
+            ("%" + termino_busqueda + "%",),
         )
     else:
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -753,81 +794,109 @@ def listar_empleados():
     )
 
 
-@app.route('/respaldar_base', methods=['POST'])
+@app.route("/respaldar_base", methods=["POST"])
 def respaldar_base():
-    NOMBRE = 'camicandy.sql'
+    NOMBRE = "camicandy.sql"
 
-    base = subprocess.run(['C:\\xampp\\mysql\\bin\\mysqldump.exe', "camicandy", '-u', 'root'], capture_output=True, text=True).stdout
+    base = subprocess.run(
+        ["C:\\xampp\\mysql\\bin\\mysqldump.exe", "camicandy", "-u", "root"],
+        capture_output=True,
+        text=True,
+    ).stdout
 
     # with open(NOMBRE, mode="w") as f:
     #    f.write(base)
-    
+
     return send_file(NOMBRE, as_attachment=True)
 
 
-@app.route('/recuperar_base', methods=['POST'])
+@app.route("/recuperar_base", methods=["POST"])
 def recuperar_base():
-    if request.method == 'GET':
+    if request.method == "GET":
         return redirect(url_for("herramientas"))
     else:
-        if 'file' not in request.files:
+        if "file" not in request.files:
             flash("No file part")
-            return redirect(url_for('herramientas'))
+            return redirect(url_for("herramientas"))
         file = request.files["file"]
     if file.filename == "":
         flash("No selected file")
         return redirect(request.url)
-    
-    if file and file.filename.rsplit('.', 1)[1].lower() == "sql":
-            filename = secure_filename(file.filename)
-            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-            file.save(filepath)
-            flash("File uploaded")
-            
-            try:
-                # Dropear db vieja
-                subprocess.run(['C:\\xampp\\mysql\\bin\\mysqladmin.exe', "-f", "-u", "root", "drop", "camicandy"], check=True)
-                
-                # Crear db de nuevo
-                subprocess.run(['C:\\xampp\\mysql\\bin\\mysqladmin.exe', "-u", "root", "create", "camicandy"], check=True)
-                
-                # Restaurar db 
-                abs_filepath = os.path.abspath(filepath)
-                with open(abs_filepath, 'r') as file:
-                    subprocess.run(['C:\\xampp\\mysql\\bin\\mysql.exe', "-u", "root", "camicandy"], stdin=file, check=True)
-                
-                flash("Database restored successfully")
-            except subprocess.CalledProcessError as e:
-                flash(f"An error occurred: {e}")
-                return redirect(url_for('herramientas'))
-            
-            # Mantenerse en la sección de herramientas
-            return redirect(url_for('herramientas'))
+
+    if file and file.filename.rsplit(".", 1)[1].lower() == "sql":
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        file.save(filepath)
+        flash("File uploaded")
+
+        try:
+            # Dropear db vieja
+            subprocess.run(
+                [
+                    "C:\\xampp\\mysql\\bin\\mysqladmin.exe",
+                    "-f",
+                    "-u",
+                    "root",
+                    "drop",
+                    "camicandy",
+                ],
+                check=True,
+            )
+
+            # Crear db de nuevo
+            subprocess.run(
+                [
+                    "C:\\xampp\\mysql\\bin\\mysqladmin.exe",
+                    "-u",
+                    "root",
+                    "create",
+                    "camicandy",
+                ],
+                check=True,
+            )
+
+            # Restaurar db
+            abs_filepath = os.path.abspath(filepath)
+            with open(abs_filepath, "r") as file:
+                subprocess.run(
+                    ["C:\\xampp\\mysql\\bin\\mysql.exe", "-u", "root", "camicandy"],
+                    stdin=file,
+                    check=True,
+                )
+
+            flash("Database restored successfully")
+        except subprocess.CalledProcessError as e:
+            flash(f"An error occurred: {e}")
+            return redirect(url_for("herramientas"))
+
+        # Mantenerse en la sección de herramientas
+        return redirect(url_for("herramientas"))
     else:
         flash("Invalid file type")
         return redirect(request.url)
-    
 
 
-@app.route('/buscar_productos', methods=['GET'])
+@app.route("/buscar_productos", methods=["GET"])
 def buscar_productos():
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
-    criterio = request.args.get('criterio', '')
+    criterio = request.args.get("criterio", "")
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM productos WHERE nombre LIKE %s AND status = %s", ('%' + criterio + '%', True))
+    cursor.execute(
+        "SELECT * FROM productos WHERE nombre LIKE %s AND status = %s",
+        ("%" + criterio + "%", True),
+    )
     productos = cursor.fetchall()
     cursor.close()
 
-    return render_template('venta.html', productos=productos, username=session["username"], rol=session["rol"])
-
-
-
-
-
-
+    return render_template(
+        "venta.html",
+        productos=productos,
+        username=session["username"],
+        rol=session["rol"],
+    )
 
 
 @app.route("/logout")
@@ -837,6 +906,7 @@ def logout():
     session.pop("username", None)
     session.pop("rol", None)
     return redirect(url_for("login"))
+
 
 if __name__ == "__main__":
     app.run(debug=True)

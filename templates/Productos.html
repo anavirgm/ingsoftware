@@ -1,4 +1,3 @@
-
 {% if rol == "administrador" %}
 
 <!doctype html>
@@ -139,14 +138,12 @@
             onkeyup="buscarProducto()"
           />
           <button onclick="mostrarFormulario()">Añadir producto</button>
-            <button class="Actualizar" onclick="abrirModalActualizar()">
+          <button class="Actualizar" onclick="abrirModalActualizar()">
             Actualizar
           </button>
           <button class="Eliminar" onclick="eliminarProductos()">
             Eliminar
           </button>
-
-
         </div>
         <div class="productos">
           <table class="table_de_productos">
@@ -213,7 +210,7 @@
             name="precio_en_dolares"
             required
           /><br />
-          
+
           <input type="submit" value="Agregar" />
         </form>
       </div>
@@ -266,7 +263,7 @@
             name="precio_en_dolares_actualizar"
             required
           /><br />
-          
+
           <button type="submit">Actualizar</button>
         </form>
       </div>
@@ -386,5 +383,5 @@
   </body>
 </html>
 {% else %}
-<p> </p>
+<p></p>
 {% endif %}

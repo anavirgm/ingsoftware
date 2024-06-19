@@ -1,240 +1,325 @@
 {% if rol == "administrador" %}
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CamiCandy - Herramientas</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/herramientas.css') }}"
+    />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CamiCandy - Herramientas</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/herramientas.css') }}">
-</head>
+  <body id="body">
+    <header>
+      <div class="icon__menu">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
+          alt="Menu"
+          id="btn_open"
+        />
+      </div>
+      <div class="icon__configuracion">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+          alt="Configuración"
+        />
+      </div>
+      <div class="boton">
+        <button class="switch" id="switch">
+          <span
+            ><img
+              src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
+              alt="Sol"
+          /></span>
+          <span
+            ><img
+              src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
+              alt="Luna"
+          /></span>
+        </button>
+      </div>
+    </header>
 
-<body id="body">
-  <header>
-    <div class="icon__menu">
-      <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="Menu" id="btn_open">
+    <div class="menu__side" id="menu_side">
+      <div class="name_page">
+        <img
+          src="{{ url_for('static', filename='imagenes/logo.png') }}"
+          alt="Logo"
+        />
+        <h4>CamiCandy</h4>
+      </div>
+
+      <div class="options__menu">
+        <a href="{{ url_for('dashboard') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
+              title="Dashboard"
+            />
+            <h4>Dashboard</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('productos') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
+              title="Productos"
+            />
+            <h4>Productos</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('clientes') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
+              title="Clientes"
+            />
+            <h4>Clientes</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('proveedores') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}"
+              title="Proveedores"
+            />
+            <h4>Proveedores</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('transacciones') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
+              title="Transacciones"
+            />
+            <h4>Transacciones</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('reportes') }}">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}"
+              title="Reportes"
+            />
+            <h4>Reportes</h4>
+          </div>
+        </a>
+        <a href="{{ url_for('herramientas') }}" class="selector">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+              title="Herramientas"
+            />
+            <h4>Herramientas</h4>
+          </div>
+        </a>
+        <a href="#">
+          <div class="option">
+            <img
+              src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
+              title="Ayuda"
+            />
+            <h4>Ayuda</h4>
+          </div>
+        </a>
+      </div>
     </div>
-    <div class="icon__configuracion">
-      <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" alt="Configuración">
-    </div>
-    <div class="boton">
-      <button class="switch" id="switch">
-        <span><img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="Sol"></span>
-        <span><img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="Luna"></span>
-      </button>
-    </div>
-  </header>
 
-  <div class="menu__side" id="menu_side">
-    <div class="name_page">
-      <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="Logo">
-      <h4>CamiCandy</h4>
-    </div>
+    <main>
+      <div class="container_clientes">
+        <h1>Herramientas</h1>
+        <form action="{{ url_for('respaldar_base') }}" method="post">
+          <button type="submit" class="btn-primary">BACKUP</button>
+        </form>
+        <br />
+        <form
+          action="{{ url_for('recuperar_base') }}"
+          method="post"
+          enctype="multipart/form-data"
+        >
+          <input type="file" name="file" accept=".sql" />
+          <button type="submit" class="btn-primary">RESTORE DATABASE</button>
+        </form>
 
-    <div class="options__menu">
-      <a href="{{ url_for('dashboard') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard">
-          <h4>Dashboard</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('productos') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="Productos">
-          <h4>Productos</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('clientes') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Clientes">
-          <h4>Clientes</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('proveedores') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}" title="Proveedores">
-          <h4>Proveedores</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('transacciones') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}" title="Transacciones">
-          <h4>Transacciones</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('reportes') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes">
-          <h4>Reportes</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('herramientas') }}" class="selector">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" title="Herramientas">
-          <h4>Herramientas</h4>
-        </div>
-      </a>
-      <a href="#">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}" title="Ayuda">
-          <h4>Ayuda</h4>
-        </div>
-      </a>
-    </div>
-  </div>
+        {% with messages = get_flashed_messages() %} {% if messages %}
+        <ul>
+          {% for message in messages %}
+          <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+        {% endif %} {% endwith %}
+        <hr />
 
-  <main>
-    <div class="container_clientes">
-      <h1>Herramientas</h1>
-      <form action="{{ url_for('respaldar_base') }}" method="post">
-        <button type="submit" class="btn-primary">BACKUP</button>
-      </form>
-      <br>
-      <form action="{{ url_for('recuperar_base') }}" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".sql">
-        <button type="submit" class="btn-primary">RESTORE DATABASE</button>
-      </form>
+        <h2>Gestión de Empleados</h2>
 
-      {% with messages = get_flashed_messages() %} {% if messages %}
-      <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %} {% endwith %}
-      <hr>
+        <h3>Agregar Nuevo Empleado</h3>
+        <form action="{{ url_for('agregar_empleado') }}" method="POST">
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" required /><br />
 
-      <h2>Gestión de Empleados</h2>
+          <label for="cedula">Cédula:</label>
+          <input
+            type="text"
+            id="cedula"
+            name="cedula"
+            required
+            onkeypress="return validarNumero(event)"
+          /><br />
 
-      <h3>Agregar Nuevo Empleado</h3>
-      <form action="{{ url_for('agregar_empleado') }}" method="POST">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required /><br />
+          <label for="rol">Rol:</label>
+          <select id="rol" name="rol" required>
+            <option value="empleado">Empleado</option></select
+          ><br />
 
-        <label for="cedula">Cédula:</label>
-        <input type="text" id="cedula" name="cedula" required onkeypress="return validarNumero(event)" /><br />
+          <label for="hash_contrasena">Contraseña:</label>
+          <input
+            type="password"
+            id="hash_contrasena"
+            name="hash_contrasena"
+            required
+          /><br />
 
-        <label for="rol">Rol:</label>
-        <select id="rol" name="rol" required>
-          <option value="empleado">Empleado</option>
-        </select><br />
+          <label for="pregunta_seguridad">Pregunta de Seguridad:</label>
+          <select id="pregunta_seguridad" name="pregunta_seguridad" required>
+            <option value="¿Cuándo es tu cumpleaños?">
+              ¿Cuándo es tu cumpleaños?
+            </option>
+            <option value="¿A qué secundaria fuiste?">
+              ¿A qué secundaria fuiste?
+            </option>
+            <option value="¿Cómo se llamaba tu mamá?">
+              ¿Cómo se llamaba tu mamá?
+            </option>
+            <option value="¿Cuál es tu postre favorito?">
+              ¿Cuál es tu postre favorito?
+            </option></select
+          ><br />
 
-        <label for="hash_contrasena">Contraseña:</label>
-        <input type="password" id="hash_contrasena" name="hash_contrasena" required /><br />
+          <label for="respuesta_seguridad">Respuesta de Seguridad:</label>
+          <input
+            type="text"
+            id="respuesta_seguridad"
+            name="respuesta_seguridad"
+            required
+          /><br />
 
-        <label for="pregunta_seguridad">Pregunta de Seguridad:</label>
-        <select id="pregunta_seguridad" name="pregunta_seguridad" required>
-          <option value="¿Cuándo es tu cumpleaños?">¿Cuándo es tu cumpleaños?</option>
-          <option value="¿A qué secundaria fuiste?">¿A qué secundaria fuiste?</option>
-          <option value="¿Cómo se llamaba tu mamá?">¿Cómo se llamaba tu mamá?</option>
-          <option value="¿Cuál es tu postre favorito?">¿Cuál es tu postre favorito?</option>
-        </select><br />
+          <button type="submit" class="btn-primary">Agregar Empleado</button>
+        </form>
+      </div>
+    </main>
 
-        <label for="respuesta_seguridad">Respuesta de Seguridad:</label>
-        <input type="text" id="respuesta_seguridad" name="respuesta_seguridad" required /><br />
-
-        <button type="submit" class="btn-primary">Agregar Empleado</button>
-      </form>
-
-    </div>
-  </main>
-
-  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-  <script>
-    function validarNumero(event) {
-      // Permitir: backspace, delete, tab, escape, enter y .
-      if (
-        ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(event.key) !== -1 ||
-        ((event.ctrlKey || event.metaKey) && ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
-        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !== -1
-      ) {
+    <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+    <script>
+      function validarNumero(event) {
+        // Permitir: backspace, delete, tab, escape, enter y .
+        if (
+          ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
+            event.key,
+          ) !== -1 ||
+          ((event.ctrlKey || event.metaKey) &&
+            ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+          ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(
+            event.key,
+          ) !== -1
+        ) {
+          return true;
+        }
+        // Asegurarse de que es un número
+        if (!/^[0-9]$/.test(event.key)) {
+          event.preventDefault();
+          return false;
+        }
         return true;
       }
-      // Asegurarse de que es un número
-      if (!/^[0-9]$/.test(event.key)) {
-        event.preventDefault();
-        return false;
+
+      // Función para abrir el modal de agregar empleado
+      function mostrarFormulario() {
+        document.getElementById("modal").style.display = "block";
       }
-      return true;
-    }
 
-    // Función para abrir el modal de agregar empleado
-    function mostrarFormulario() {
-      document.getElementById('modal').style.display = 'block';
-    }
-
-    // Función para cerrar el modal de agregar empleado
-    function cerrarFormulario() {
-      document.getElementById('modal').style.display = 'none';
-    }
-
-    // Función para abrir el modal de actualizar empleado
-    function abrirModalActualizar() {
-      document.getElementById('modal-actualizar').style.display = 'block';
-    }
-
-    // Función para cerrar el modal de actualizar empleado
-    function cerrarModalActualizar() {
-      document.getElementById('modal-actualizar').style.display = 'none';
-    }
-
-    // Función para obtener los datos del empleado seleccionado y llenar el formulario de actualización
-    function llenarFormularioActualizar(empleadoId, nombre, fechaNacimiento, cargo, sueldo) {
-      document.getElementById('empleado_id_actualizar').value = empleadoId;
-      document.getElementById('nombre_actualizar').value = nombre;
-      document.getElementById('fecha_de_nacimiento_actualizar').value = fechaNacimiento;
-      document.getElementById('cargo_actualizar').value = cargo;
-      document.getElementById('sueldo_en_dolares_actualizar').value = sueldo;
-
-      abrirModalActualizar();
-    }
-
-    // Función para deseleccionar todos los checkboxes de empleados
-    function deseleccionarTodos() {
-      var checkboxes = document.getElementsByClassName('empleado-checkbox');
-      for (var i = 0; i < checkboxes.length; i++) {
-        checkboxes[i].checked = false;
+      // Función para cerrar el modal de agregar empleado
+      function cerrarFormulario() {
+        document.getElementById("modal").style.display = "none";
       }
-    }
 
-    // Función para eliminar empleados seleccionados
-    function eliminarEmpleados() {
-      var checkboxes = document.getElementsByClassName('empleado-checkbox');
-      var empleadosAEliminar = [];
+      // Función para abrir el modal de actualizar empleado
+      function abrirModalActualizar() {
+        document.getElementById("modal-actualizar").style.display = "block";
+      }
 
-      for (var i = 0; i < checkboxes.length; i++) {
-        if (checkboxes[i].checked) {
-          empleadosAEliminar.push(checkboxes[i].value);
+      // Función para cerrar el modal de actualizar empleado
+      function cerrarModalActualizar() {
+        document.getElementById("modal-actualizar").style.display = "none";
+      }
+
+      // Función para obtener los datos del empleado seleccionado y llenar el formulario de actualización
+      function llenarFormularioActualizar(
+        empleadoId,
+        nombre,
+        fechaNacimiento,
+        cargo,
+        sueldo,
+      ) {
+        document.getElementById("empleado_id_actualizar").value = empleadoId;
+        document.getElementById("nombre_actualizar").value = nombre;
+        document.getElementById("fecha_de_nacimiento_actualizar").value =
+          fechaNacimiento;
+        document.getElementById("cargo_actualizar").value = cargo;
+        document.getElementById("sueldo_en_dolares_actualizar").value = sueldo;
+
+        abrirModalActualizar();
+      }
+
+      // Función para deseleccionar todos los checkboxes de empleados
+      function deseleccionarTodos() {
+        var checkboxes = document.getElementsByClassName("empleado-checkbox");
+        for (var i = 0; i < checkboxes.length; i++) {
+          checkboxes[i].checked = false;
         }
       }
 
-      if (empleadosAEliminar.length > 0) {
-        // Enviar los empleados seleccionados para eliminar
-        fetch('/eliminar_empleados', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            empleados: empleadosAEliminar
-          })
-        })
-          .then(response => response.json())
-          .then(data => {
-            if (data.success) {
-              // Recargar la página después de eliminar los empleados
-              location.reload();
-            } else {
-              console.error('Error al eliminar empleados:', data.error);
-            }
-          })
-          .catch(error => {
-            console.error('Error en la solicitud de eliminación de empleados:', error);
-          });
-      }
-    }
-  </script>
-</body>
+      // Función para eliminar empleados seleccionados
+      function eliminarEmpleados() {
+        var checkboxes = document.getElementsByClassName("empleado-checkbox");
+        var empleadosAEliminar = [];
 
+        for (var i = 0; i < checkboxes.length; i++) {
+          if (checkboxes[i].checked) {
+            empleadosAEliminar.push(checkboxes[i].value);
+          }
+        }
+
+        if (empleadosAEliminar.length > 0) {
+          // Enviar los empleados seleccionados para eliminar
+          fetch("/eliminar_empleados", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              empleados: empleadosAEliminar,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                // Recargar la página después de eliminar los empleados
+                location.reload();
+              } else {
+                console.error("Error al eliminar empleados:", data.error);
+              }
+            })
+            .catch((error) => {
+              console.error(
+                "Error en la solicitud de eliminación de empleados:",
+                error,
+              );
+            });
+        }
+      }
+    </script>
+  </body>
 </html>
 {% endif %}

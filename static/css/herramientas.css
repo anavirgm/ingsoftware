@@ -11,7 +11,7 @@ body {
   transition: margin-left 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
   margin-top: 100px;
   margin-bottom: 20px;
-  background: #ECECEE;
+  background: #ececee;
 }
 
 header {
@@ -159,9 +159,6 @@ a.selector {
   left: -30px;
 }
 
-
-
-
 .body_move {
   margin-left: 250px;
 }
@@ -217,13 +214,14 @@ a.selector {
 body.dark {
   background: #2c2c2c;
   color: white;
-  transition: background 0.3s, color 0.3s;
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 
 body.dark header {
   background: #152937;
   color: w;
-
 }
 
 body.dark .menu__side {
@@ -312,21 +310,21 @@ body.dark .container_clientes h1 {
 }
 
 .container_clientes input[type="text"],
-  .container_clientes input[type="password"],
-  .container_clientes select {
-    margin-top: 5px;
-    padding: 10px;
-    font-size: 16px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    width: 100%;
-    box-sizing: border-box;
-  }
+.container_clientes input[type="password"],
+.container_clientes select {
+  margin-top: 5px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
 
-  .container_clientes input[type="text"]:focus,
-  .container_clientes input[type="password"]:focus,
-  .container_clientes select:focus {
-    border-color: #66afe9;
-    outline: none;
-    box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
-  }
+.container_clientes input[type="text"]:focus,
+.container_clientes input[type="password"]:focus,
+.container_clientes select:focus {
+  border-color: #66afe9;
+  outline: none;
+  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}

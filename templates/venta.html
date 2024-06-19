@@ -64,7 +64,7 @@
           <h4>Transacciones</h4>
         </div>
       </a>
-      <a href="{{url_for('reportes')}}">
+      <a href="{{ url_for('reportes') }}">
         <div class="option">
           <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes">
           <h4>Reportes</h4>
@@ -91,28 +91,43 @@
       <div class="container_productos_buscar">
         <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
       </div>
+
+      <form action="{{ url_for('realizar_venta') }}" method="POST">
+        <label for="marca_de_tiempo">Marca de tiempo:</label>
+        <input type="datetime-local" id="marca_de_tiempo" name="marca_de_tiempo" required><br>
+
+        <label for="tasa_bcv">Tasa BCV {{ today }}: <strong>{{ tasa_bcv }} Bs.</strong></label>
+        <br>
+
+        <label for="usuarios_id">Usuario ejecutor: {{usuario}}</label>
+        <br>
+
+        <label for="clientes_id">Cliente:</label>
+        <select id="clientes_id" name="clientes_id" required>
+          {% for cliente in clientes %}
+          <option value="{{ cliente.id }}">{{ cliente.nombre }}</option>
+          {% endfor %}
+        </select><br>
+
       <div class="productos">
         <table class="table_de_productos">
           <thead>
             <tr>
               <th>ID</th>
               <th>Nombre</th>
-              <th>Fecha de Vencimiento</th>
               <th>Cantidad Disponible</th>
               <th>Precio ($)</th>
               <th>Acciones</th>
             </tr>
           </thead>
           <tbody id="tabla-productos-body">
-            <!-- Aquí se mostrarán los datos de los productos -->
             {% for producto in productos %}
             <tr>
               <td>{{ producto.id }}</td>
               <td>{{ producto.nombre }}</td>
-              <td>{{ producto.fecha_de_vencimiento }}</td>
               <td>{{ producto.cantidad_disponible }}</td>
               <td>{{ producto.precio_en_dolares }}</td>
-              <td><button onclick="añadirAlCarrito('{{ producto.id }}')">Añadir</button></td>
+              <td><button type="button" onclick="añadirAlCarrito('{{ producto.id }}')">Añadir</button></td>
             </tr>
             {% endfor %}
           </tbody>
@@ -134,7 +149,6 @@
           </tr>
         </thead>
         <tbody id="tabla-carrito-body">
-          <!-- Aquí se mostrarán los productos añadidos al carrito -->
           {% for producto in carrito %}
           <tr>
             <td>{{ producto.id }}</td>
@@ -147,7 +161,7 @@
             <td>{{ producto.precio_en_dolares }}</td>
             <td id="precio-total{{ producto.id }}">{{ (producto.precio_en_dolares * producto.cantidad).toFixed(2) }}
             </td>
-            <td><button onclick="eliminarDelCarrito('{{ producto.id }}')">Eliminar</button></td>
+            <td><button type="button" onclick="eliminarDelCarrito('{{ producto.id }}')">Eliminar</button></td>
           </tr>
           {% endfor %}
         </tbody>
@@ -155,7 +169,6 @@
     </div>
   </main>
 
-  
   <script src="{{ url_for('static', filename='js/component.js') }}"></script>
   <script>
     let carrito = [];
@@ -164,30 +177,50 @@
     {
       id: "{{ producto.id }}",
         nombre: "{{ producto.nombre }}",
-          fecha_de_vencimiento: "{{ producto.fecha_de_vencimiento }}",
             cantidad_disponible: "{{ producto.cantidad_disponible }}",
               precio_en_dolares: "{{ producto.precio_en_dolares }}"
     } {% if not loop.last %}, {% endif %}
     {% endfor %}
     ];
 
+    let clientes = [
+      {% for cliente in clientes %}
+    {
+      id: "{{ cliente.id }}",
+        nombre: "{{ cliente.nombre }}"
+    } {% if not loop.last %}, {% endif %}
+    {% endfor %}
+    ];
+
     function buscarProducto() {
       const input = document.getElementById("buscar-producto").value.toUpperCase();
-      const tbody = document.getElementById("tabla-productos-body");
-      tbody.innerHTML = "";
 
+      // Actualizar tabla de productos
+      const productosBody = document.getElementById("tabla-productos-body");
+      productosBody.innerHTML = "";
       productos.forEach(producto => {
         if (producto.nombre.toUpperCase().includes(input)) {
           const row = document.createElement("tr");
           row.innerHTML = `
             <td>${producto.id}</td>
             <td>${producto.nombre}</td>
-            <td>${producto.fecha_de_vencimiento}</td>
             <td>${producto.cantidad_disponible}</td>
             <td>${producto.precio_en_dolares}</td>
-            <td><button onclick="añadirAlCarrito('${producto.id}')">Añadir</button></td>
+            <td><button type="button" onclick="añadirAlCarrito('${producto.id}')">Añadir</button></td>
           `;
-          tbody.appendChild(row);
+          productosBody.appendChild(row);
+        }
+      });
+
+      // Actualizar selección de clientes
+      const clientesSelect = document.getElementById("clientes_id");
+      clientesSelect.innerHTML = "";
+      clientes.forEach(cliente => {
+        if (cliente.nombre.toUpperCase().includes(input)) {
+          const option = document.createElement("option");
+          option.value = cliente.id;
+          option.textContent = cliente.nombre;
+          clientesSelect.appendChild(option);
         }
       });
     }
@@ -220,7 +253,7 @@
           </td>
           <td>${producto.precio_en_dolares}</td>
           <td id="precio-total${producto.id}">${(producto.precio_en_dolares * producto.cantidad).toFixed(2)}</td>
-          <td><button onclick="eliminarDelCarrito('${producto.id}')">Eliminar</button></td>
+          <td><button type="button" onclick="eliminarDelCarrito('${producto.id}')">Eliminar</button></td>
         `;
 
         tbody.appendChild(row);
@@ -241,7 +274,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', function () {
-      buscarProducto(); // Mostrar todos los productos al cargar la página
+      buscarProducto(); // Mostrar todos los productos y clientes al cargar la página
     });
   </script>
 </body>

@@ -12,9 +12,12 @@ from flask import (
 from werkzeug.utils import secure_filename
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
+from datetime import datetime
 import MySQLdb.cursors
 import subprocess
 import os
+import requests
+
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
@@ -299,48 +302,56 @@ def clientes():
         rol=session["rol"],
     )
 
-
-@app.route('/realizar_venta', methods=['GET', 'POST'])
+@app.route("/realizar_venta", methods=["GET", "POST"])
 def realizar_venta():
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    
+
     # Obtener productos activos
     cursor.execute("SELECT * FROM productos WHERE status = 1")
     productos_activos = cursor.fetchall()
-    
+
     # Obtener clientes activos
     cursor.execute("SELECT * FROM clientes WHERE status = 1")
     clientes_activos = cursor.fetchall()
-    
+
     # Obtener usuarios activos
     cursor.execute("SELECT * FROM usuarios")
     usuarios_activos = cursor.fetchall()
-    
+
     cursor.close()
 
-    if request.method == 'POST':
+    tasa_bcv = requests.get(
+        "https://pydolarvenezuela-api.vercel.app/api/v1/dollar/unit/bcv"
+    ).json()["price"]
+    today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if request.method == "POST":
         try:
-            marca_de_tiempo = request.form['marca_de_tiempo']
-            tasa_bcv = request.form['tasa_bcv']
-            clientes_id = request.form['clientes_id']
-            usuarios_id = request.form['usuarios_id']
-            productos_id = request.form['productos_id']
-            cantidad = request.form['cantidad']
+            marca_de_tiempo = request.form["marca_de_tiempo"]
+            # tasa_bcv = request.form["tasa_bcv"]
+            clientes_id = request.form["clientes_id"]
+            usuarios_id = session["id"]
+            productos_id = request.form["productos_id"]
+            cantidad = request.form["cantidad"]
 
             # Validar que el producto y el usuario estén activos
-            producto_activo = any(prod['id'] == int(productos_id) for prod in productos_activos)
-            usuario_activo = any(user['id'] == int(usuarios_id) for user in usuarios_activos)
-            
+            producto_activo = any(
+                prod["id"] == int(productos_id) for prod in productos_activos
+            )
+            usuario_activo = any(
+                user["id"] == int(usuarios_id) for user in usuarios_activos
+            )
+
             if not producto_activo:
                 flash("El producto seleccionado no está activo")
-                return redirect(url_for('realizar_venta'))
+                return redirect(url_for("realizar_venta"))
 
             if not usuario_activo:
                 flash("El usuario seleccionado no está activo")
-                return redirect(url_for('realizar_venta'))
+                return redirect(url_for("realizar_venta"))
 
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
@@ -351,7 +362,7 @@ def realizar_venta():
                 (marca_de_tiempo, tasa_bcv, clientes_id, usuarios_id)
                 VALUES (%s, %s, %s, %s)
                 """,
-                (marca_de_tiempo, tasa_bcv, clientes_id, usuarios_id)
+                (marca_de_tiempo, tasa_bcv, clientes_id, usuarios_id),
             )
             mysql.connection.commit()
 
@@ -364,25 +375,28 @@ def realizar_venta():
                 (transacciones_id, productos_id, cantidad)
                 VALUES (%s, %s, %s)
                 """,
-                (transaccion_id, productos_id, cantidad)
+                (transaccion_id, productos_id, cantidad),
             )
             mysql.connection.commit()
 
             cursor.close()
             flash("Venta realizada correctamente")
-            return redirect(url_for('clientes'))
-        
+            return redirect(url_for("clientes"))
+
         except Exception as e:
             flash(f"Ocurrió un error: {str(e)}")
-            return redirect(url_for('realizar_venta'))
+            return redirect(url_for("realizar_venta"))
 
     return render_template(
-        'venta.html',
+        "venta.html",
         productos=productos_activos,
         clientes=clientes_activos,
         usuarios=usuarios_activos,
         username=session["username"],
         rol=session["rol"],
+        tasa_bcv=tasa_bcv,
+        today=today,
+        usuario=session["username"],
     )
 
 
@@ -817,6 +831,11 @@ def buscar_productos():
     cursor.close()
 
     return render_template('venta.html', productos=productos, username=session["username"], rol=session["rol"])
+
+
+
+
+
 
 
 

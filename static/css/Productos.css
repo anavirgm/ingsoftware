@@ -180,6 +180,55 @@ a.selector {
   transition: border-color 0.3s;
 }
 
+
+form {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  margin: auto;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: #333;
+}
+
+form input[type="datetime-local"],
+form select {
+  width: calc(100% - 15px);
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  box-sizing: border-box;
+}
+
+form input[type="datetime-local"]:focus,
+form select:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+form strong {
+  color: #007bff;
+}
+
+form br {
+  margin-bottom: 20px;
+}
+
+
+
+
+
+
+
+
+
 .container_productos_buscar input:focus {
   border-color: #007bff;
 }
@@ -220,6 +269,7 @@ a.selector {
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
+
 
 /* Estilos para la tabla de clientes */
 .table_de_productos {

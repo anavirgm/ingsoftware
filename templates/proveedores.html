@@ -1,374 +1,189 @@
-{% if rol == "administrador" %}
-  <!doctype html>
-  <html lang="en">
-    <head>
-      <meta charset="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <title>CamiCandy - Proveedores</title>
-      <link
-        rel="stylesheet"
-        href="{{ url_for('static', filename='css/Clientes.css') }}"
-      />
-    </head>
-
-    <body id="body">
-      <header>
-        <div class="icon__menu">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
-            alt="Menu"
-            id="btn_open"
-          />
-        </div>
-        <div class="icon__configuracion">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-            alt="Configuración"
-          />
-        </div>
-        <div class="boton">
-          <button class="switch" id="switch">
-            <span
-              ><img
-                src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
-                alt="Sol"
-            /></span>
-            <span
-              ><img
-                src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
-                alt="Luna"
-            /></span>
-          </button>
-        </div>
-      </header>
-
-      <div class="menu__side" id="menu_side">
-        <div class="name_page">
-          <img
-            src="{{ url_for('static', filename='imagenes/logo.png') }}"
-            alt="Logo"
-          />
-          <h4>CamiCandy</h4>
-        </div>
-
-        <div class="options__menu">
-          <a href="{{ url_for('dashboard') }}">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
-                title="Dashboard"
-              />
-              <h4>Dashboard</h4>
-            </div>
-          </a>
-          <a href="{{ url_for('productos') }}">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
-                title="Productos"
-              />
-              <h4>Productos</h4>
-            </div>
-          </a>
-          <a href="{{ url_for('clientes') }}">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
-                title="Clientes"
-              />
-              <h4>Clientes</h4>
-            </div>
-          </a>
-          <a href="{{ url_for('proveedores') }}" class="selector">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}"
-                title="Proveedores"
-              />
-              <h4>Proveedores</h4>
-            </div>
-          </a>
-          <a href="{{ url_for('transacciones') }}">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-                title="Transacciones"
-              />
-              <h4>Transacciones</h4>
-            </div>
-          </a>
-          <a href="{{ url_for('reportes') }}">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}"
-                title="Reportes"
-              />
-              <h4>Reportes</h4>
-            </div>
-          </a>
-          <a href="{{ url_for('herramientas') }}">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-                title="Herramientas"
-              />
-              <h4>Herramientas</h4>
-            </div>
-          </a>
-          <a href="#">
-            <div class="option">
-              <img
-                src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
-                title="Ayuda"
-              />
-              <h4>Ayuda</h4>
-            </div>
-          </a>
-        </div>
+{% extends "base.html" %} {% block title %}Proveedores{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/Clientes.css') }}"
+  />
+{% endblock %}
+{% block content %}
+  {% include 'header.html' %}
+  {% include 'sidebar.html' %}
+  <main>
+    <div class="container_clientes">
+      <h1>Proveedores</h1>
+      <div class="container_clientes_buscar">
+        <input
+          type="text"
+          placeholder="Buscar"
+          oninput="filtrarProveedores(this.value)"
+        />
+        <button onclick="mostrarFormulario()">Añadir proveedor</button>
+        <button class="Realizar_venta" onclick="realizarVenta()">
+          Realizar compra
+        </button>
+        <button class="Actualizar" onclick="abrirModalActualizar()">
+          Actualizar
+        </button>
+        <button class="Eliminar" onclick="eliminarProveedores()">
+          Eliminar
+        </button>
       </div>
-
-      <main>
-        <div class="container_clientes">
-          <h1>Proveedores</h1>
-          <div class="container_clientes_buscar">
-            <input
-              type="text"
-              placeholder="Buscar"
-              oninput="filtrarProveedores(this.value)"
-            />
-            <button onclick="mostrarFormulario()">Añadir proveedor</button>
-            <button class="Realizar_venta" onclick="realizarVenta()">
-              Realizar compra
-            </button>
-            <button class="Actualizar" onclick="abrirModalActualizar()">
-              Actualizar
-            </button>
-            <button class="Eliminar" onclick="eliminarProveedores()">
-              Eliminar
-            </button>
-          </div>
-          <div class="clientes">
-            <table class="table_de_clientes">
-              <thead>
-                <tr>
-                  <th><input type="checkbox" id="select-all" /></th>
-                  <th>ID</th>
-                  <th>Nombre</th>
-                  <th>Dirección</th>
-                  <th>RIF</th>
-                </tr>
-              </thead>
-              <tbody id="proveedores-table-body">
-                <!-- Aquí se mostrarán los datos de los proveedores -->
-                {% for proveedor in proveedores %}
-                  <tr>
-                    <td>
-                      <input
-                        type="checkbox"
-                        class="proveedor-checkbox"
-                        data-id="{{ proveedor.id }}"
-                      />
-                    </td>
-                    <td>{{ proveedor.id }}</td>
-                    <td>{{ proveedor.nombre }}</td>
-                    <td>{{ proveedor.direccion }}</td>
-                    <td>{{ proveedor.rif }}</td>
-                  </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </main>
-
-      <!-- Ventana emergente para agregar un nuevo proveedor -->
-      <div id="modal" class="modal">
-        <div class="modal-content">
-          <span class="close" onclick="cerrarFormulario()">&times;</span>
-          <h2>Agregar Nuevo Proveedor</h2>
-          <form
-            id="formulario"
-            action="{{ url_for('proveedores') }}"
-            method="POST"
-          >
-            <label for="nombre">Nombre:</label>
-            <input type="text" id="nombre" name="nombre" required /><br />
-            <label for="direccion">Dirección:</label>
-            <input type="text" id="direccion" name="direccion" required /><br />
-            <label for="rif">RIF:</label>
-            <input type="text" id="rif" name="rif" required /><br />
-            <input type="submit" value="Agregar" />
-          </form>
-        </div>
+      <div class="clientes">
+        <table class="table_de_clientes">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="select-all" /></th>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Dirección</th>
+              <th>RIF</th>
+            </tr>
+          </thead>
+          <tbody id="proveedores-table-body">
+            <!-- Aquí se mostrarán los datos de los proveedores -->
+            {% for proveedor in proveedores %}
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    class="proveedor-checkbox"
+                    data-id="{{ proveedor.id }}"
+                  />
+                </td>
+                <td>{{ proveedor.id }}</td>
+                <td>{{ proveedor.nombre }}</td>
+                <td>{{ proveedor.direccion }}</td>
+                <td>{{ proveedor.rif }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       </div>
+    </div>
+  </main>
+{% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+  <script>
+    function validarNumero(event) {
+      // Permitir: backspace, delete, tab, escape, enter y .
+      if (
+        ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
+          event.key,
+        ) !== -1 ||
+        ((event.ctrlKey || event.metaKey) &&
+          ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(
+          event.key,
+        ) !== -1
+      ) {
+        return true;
+      }
+      // Asegurarse de que es un número
+      if (!/^[0-9]$/.test(event.key)) {
+        event.preventDefault();
+        return false;
+      }
+      return true;
+    }
 
-      <div id="modal-actualizar" class="modal" style="display: none">
-        <div class="modal-content">
-          <span class="close" onclick="cerrarModalActualizar()">&times;</span>
-          <h2>Actualizar Proveedor</h2>
-          <form
-            id="formulario-actualizar"
-            method="POST"
-            action="{{ url_for('actualizar_proveedor') }}"
-          >
-            <input
-              type="hidden"
-              id="proveedor_id_actualizar"
-              name="proveedor_id_actualizar"
-            />
-            <label for="nombre_actualizar">Nombre:</label>
-            <input
-              type="text"
-              id="nombre_actualizar"
-              name="nombre_actualizar"
-              required
-            /><br />
-            <label for="direccion_actualizar">Dirección:</label>
-            <input
-              type="text"
-              id="direccion_actualizar"
-              name="direccion_actualizar"
-              required
-            /><br />
-            <label for="rif_actualizar">RIF:</label>
-            <input
-              type="text"
-              id="rif_actualizar"
-              name="rif_actualizar"
-              required
-            /><br />
-            <button type="submit">Actualizar</button>
-          </form>
-        </div>
-      </div>
+    function mostrarFormulario() {
+      document.getElementById("modal").style.display = "block";
+    }
 
-      <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-      <script>
-        function validarNumero(event) {
-          // Permitir: backspace, delete, tab, escape, enter y .
-          if (
-            ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
-              event.key,
-            ) !== -1 ||
-            ((event.ctrlKey || event.metaKey) &&
-              ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
-            ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(
-              event.key,
-            ) !== -1
-          ) {
-            return true;
-          }
-          // Asegurarse de que es un número
-          if (!/^[0-9]$/.test(event.key)) {
-            event.preventDefault();
-            return false;
-          }
-          return true;
+    function cerrarFormulario() {
+      document.getElementById("modal").style.display = "none";
+      limpiarCampos();
+    }
+
+    function limpiarCampos() {
+      document.getElementById("formulario").reset();
+    }
+
+    function eliminarProveedores() {
+      const ids = obtenerProveedoresSeleccionados();
+      if (ids.length === 0) {
+        alert("Seleccione al menos un proveedor para eliminar.");
+        return;
+      }
+
+      const confirmacion = confirm(
+        "¿Está seguro de que desea eliminar los proveedores seleccionados?",
+      );
+      if (!confirmacion) {
+        return;
+      }
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "{{ url_for('eliminar_proveedores') }}";
+
+      ids.forEach((id) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "proveedor_ids";
+        input.value = id;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+
+    const selectAllCheckbox = document.getElementById("select-all");
+    const checkboxes = document.querySelectorAll(".proveedor-checkbox");
+
+    selectAllCheckbox.addEventListener("change", function () {
+      checkboxes.forEach(function (checkbox) {
+        checkbox.checked = selectAllCheckbox.checked;
+      });
+    });
+    function obtenerProveedoresSeleccionados() {
+      const checkboxes = document.querySelectorAll(
+        ".proveedor-checkbox:checked",
+      );
+      const ids = Array.from(checkboxes).map((checkbox) =>
+        checkbox.getAttribute("data-id"),
+      );
+      return ids;
+    }
+
+    function abrirModalActualizar() {
+      const filaSeleccionada = document
+        .querySelector("input.proveedor-checkbox:checked")
+        .closest("tr");
+
+      const proveedorId = filaSeleccionada.cells[1].textContent;
+
+      document.getElementById("proveedor_id_actualizar").value = proveedorId;
+
+      const nombre = filaSeleccionada.cells[2].textContent;
+      const direccion = filaSeleccionada.cells[3].textContent;
+      const rif = filaSeleccionada.cells[4].textContent;
+
+      document.getElementById("nombre_actualizar").value = nombre;
+      document.getElementById("direccion_actualizar").value = direccion;
+      document.getElementById("rif_actualizar").value = rif;
+
+      document.getElementById("modal-actualizar").style.display = "block";
+    }
+
+    function cerrarModalActualizar() {
+      document.getElementById("modal-actualizar").style.display = "none";
+    }
+
+    function filtrarProveedores(texto) {
+      const filas = document.querySelectorAll(".table_de_clientes tbody tr");
+
+      filas.forEach((fila) => {
+        const contenido = fila.textContent.toLowerCase();
+        if (contenido.includes(texto.toLowerCase())) {
+          fila.style.display = "table-row";
+        } else {
+          fila.style.display = "none";
         }
-
-        function mostrarFormulario() {
-          document.getElementById("modal").style.display = "block";
-        }
-
-        function cerrarFormulario() {
-          document.getElementById("modal").style.display = "none";
-          limpiarCampos();
-        }
-
-        function limpiarCampos() {
-          document.getElementById("formulario").reset();
-        }
-
-        function eliminarProveedores() {
-          const ids = obtenerProveedoresSeleccionados();
-          if (ids.length === 0) {
-            alert("Seleccione al menos un proveedor para eliminar.");
-            return;
-          }
-
-          const confirmacion = confirm(
-            "¿Está seguro de que desea eliminar los proveedores seleccionados?",
-          );
-          if (!confirmacion) {
-            return;
-          }
-
-          const form = document.createElement("form");
-          form.method = "POST";
-          form.action = "{{ url_for('eliminar_proveedores') }}";
-
-          ids.forEach((id) => {
-            const input = document.createElement("input");
-            input.type = "hidden";
-            input.name = "proveedor_ids";
-            input.value = id;
-            form.appendChild(input);
-          });
-
-          document.body.appendChild(form);
-          form.submit();
-        }
-
-        const selectAllCheckbox = document.getElementById("select-all");
-        const checkboxes = document.querySelectorAll(".proveedor-checkbox");
-
-        selectAllCheckbox.addEventListener("change", function () {
-          checkboxes.forEach(function (checkbox) {
-            checkbox.checked = selectAllCheckbox.checked;
-          });
-        });
-        function obtenerProveedoresSeleccionados() {
-          const checkboxes = document.querySelectorAll(
-            ".proveedor-checkbox:checked",
-          );
-          const ids = Array.from(checkboxes).map((checkbox) =>
-            checkbox.getAttribute("data-id"),
-          );
-          return ids;
-        }
-
-        function abrirModalActualizar() {
-          const filaSeleccionada = document
-            .querySelector("input.proveedor-checkbox:checked")
-            .closest("tr");
-
-          const proveedorId = filaSeleccionada.cells[1].textContent;
-
-          document.getElementById("proveedor_id_actualizar").value =
-            proveedorId;
-
-          const nombre = filaSeleccionada.cells[2].textContent;
-          const direccion = filaSeleccionada.cells[3].textContent;
-          const rif = filaSeleccionada.cells[4].textContent;
-
-          document.getElementById("nombre_actualizar").value = nombre;
-          document.getElementById("direccion_actualizar").value = direccion;
-          document.getElementById("rif_actualizar").value = rif;
-
-          document.getElementById("modal-actualizar").style.display = "block";
-        }
-
-        function cerrarModalActualizar() {
-          document.getElementById("modal-actualizar").style.display = "none";
-        }
-
-        function filtrarProveedores(texto) {
-          const filas = document.querySelectorAll(
-            ".table_de_clientes tbody tr",
-          );
-
-          filas.forEach((fila) => {
-            const contenido = fila.textContent.toLowerCase();
-            if (contenido.includes(texto.toLowerCase())) {
-              fila.style.display = "table-row";
-            } else {
-              fila.style.display = "none";
-            }
-          });
-        }
-      </script>
-    </body>
-  </html>
-{% else %}
-  <p></p>
-{% endif %}
+      });
+    }
+  </script>
+{% endblock %}

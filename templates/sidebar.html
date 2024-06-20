@@ -1,0 +1,74 @@
+<div class="menu__side" id="menu_side">
+  <div class="name_page">
+    <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="" />
+    <h4>CamiCandy</h4>
+  </div>
+
+  <div class="options__menu">
+    <a href="{{ url_for('dashboard') }}" class="selector">
+      <div class="option">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
+          title="Dashboard"
+        />
+        <h4>Dashboard</h4>
+      </div>
+    </a>
+    <a href="{{ url_for('clientes') }}">
+      <div class="option">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
+          title="Cliente"
+        />
+        <h4>Clientes</h4>
+      </div>
+    </a>
+    <a href="{{ url_for('transacciones') }}">
+      <div class="option">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
+          title="Transacciones"
+        />
+        <h4>Transacciones</h4>
+      </div>
+    </a>
+    {% if rol == "administrador" %}
+    <a href="{{ url_for('productos') }}">
+      <div class="option">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
+          title="productos"
+        />
+        <h4>Productos</h4>
+      </div>
+    </a>
+    <a href="{{ url_for('proveedores') }}">
+      <div class="option">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}"
+          title="Proveedores"
+        />
+        <h4>Proveedores</h4>
+      </div>
+    </a>
+    <a href="{{ url_for('reportes') }}">
+      <div class="option">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}"
+          title="Reportes"
+        />
+        <h4>Reportes</h4>
+      </div>
+    </a>
+    <a href="{{ url_for('herramientas') }}">
+      <div class="option">
+        <img
+          src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+          title="Herramientas"
+        />
+        <h4>Herramientas</h4>
+      </div>
+    </a>
+    {% endif %}
+  </div>
+</div>

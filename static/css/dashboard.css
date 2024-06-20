@@ -10,7 +10,7 @@ body {
   margin-left: 100px;
   transition: margin-left 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
   margin-top: 100px;
-  background: #ECECEE;
+  background: #ececee;
   position: relative;
   font-family: Arial, sans-serif;
 }
@@ -72,10 +72,6 @@ h5 {
   position: absolute;
 }
 
-.boton {
-  padding-left: 100px;
-}
-
 .icon__notificacion {
   width: 50px;
   height: 100%;
@@ -92,11 +88,11 @@ h5 {
   margin-right: 10px;
 }
 
-
-
 .logout img {
   cursor: pointer;
-  transition: transform 0.3s, opacity 0.3s;
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
 }
 
 .logout img:hover {
@@ -327,7 +323,7 @@ body.dark .large-card p {
 
 .menu__side_move {
   width: 250px;
-  left:0;
+  left: 0;
 }
 
 /* estética del botón de tema */
@@ -395,7 +391,6 @@ body.dark {
 
 body.dark header {
   background: #152937;
-  color: w;
 }
 
 body.dark .menu__side {
@@ -411,4 +406,16 @@ body.dark .menu__side {
   overflow: hidden;
   border-right: 40px solid#152937;
   transition: 0.3s ease all;
+}
+
+.separator {
+  flex: 1;
+}
+
+.logout {
+  padding-right: 100px;
+}
+
+body.body_move .logout {
+  padding-right: 250px;
 }

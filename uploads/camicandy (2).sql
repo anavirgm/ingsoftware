@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-06-2024 a las 04:59:47
+-- Tiempo de generación: 20-06-2024 a las 14:23:59
 -- Versión del servidor: 11.2.0-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -69,8 +69,8 @@ CREATE TABLE `productos` (
 INSERT INTO `productos` (`id`, `nombre`, `fecha_de_vencimiento`, `cantidad_disponible`, `imagen`, `precio_en_dolares`, `status`) VALUES
 (1, 'Vainilla', '2024-12-31', 80, NULL, 3.99, 1),
 (2, 'Chocolate', '2024-12-31', 90, NULL, 4.99, 1),
-(3, 'Limón', '2024-12-31', 67, NULL, 3.49, 1),
-(4, 'Fresa', '2024-12-31', 83, NULL, 4.50, 1),
+(3, 'Limón', '2024-12-31', 65, NULL, 3.49, 1),
+(4, 'Fresa', '2024-12-31', 77, NULL, 4.50, 1),
 (5, 'Menta', '2024-12-31', 60, NULL, 4.49, 0);
 
 -- --------------------------------------------------------
@@ -140,7 +140,9 @@ INSERT INTO `transacciones` (`id`, `marca_de_tiempo`, `importe_en_dolares`, `tas
 (31, '2024-06-20 02:44:00', 12.49, 36.39, 2, NULL, 1),
 (32, '2024-06-20 02:45:00', 12.48, 36.39, 6, NULL, 1),
 (33, '2024-06-20 02:46:00', 6.98, 36.39, 3, NULL, 1),
-(34, '2024-06-20 02:52:00', 9.00, 36.39, 1, NULL, 1);
+(34, '2024-06-20 02:52:00', 9.00, 36.39, 1, NULL, 1),
+(37, '2024-06-20 12:20:50', 10.44, 36.39, 3, NULL, 1),
+(38, '2024-06-20 12:21:00', 4.05, 36.39, 1, NULL, 1);
 
 --
 -- Disparadores `transacciones`
@@ -241,7 +243,12 @@ INSERT INTO `transacciones_tiene_productos` (`transacciones_id`, `productos_id`,
 (32, 1, 2),
 (32, 4, 1),
 (33, 3, 2),
-(34, 4, 2);
+(34, 4, 2),
+(35, 3, 1),
+(35, 4, 2),
+(36, 4, 2),
+(37, 4, 2),
+(38, 3, 1);
 
 --
 -- Disparadores `transacciones_tiene_productos`
@@ -251,34 +258,21 @@ CREATE TRIGGER `actualizar_stock_monto` AFTER INSERT ON `transacciones_tiene_pro
 
     DECLARE total_amount DECIMAL(10, 2);
 
-    
-
-    
-
+    -- Actualizar la cantidad disponible del producto
     UPDATE productos 
-
     SET cantidad_disponible = cantidad_disponible - NEW.cantidad 
-
     WHERE id = NEW.productos_id;
 
-    
+    -- Calcular el monto total incluyendo IVA
+    SELECT SUM(transacciones_tiene_productos.cantidad * productos.precio_en_dolares) * 1.16
+    INTO total_amount
+    FROM transacciones_tiene_productos
+    JOIN productos ON transacciones_tiene_productos.productos_id = productos.id
+    WHERE transacciones_tiene_productos.transacciones_id = NEW.transacciones_id;
 
-    
-
-    SET total_amount = (SELECT SUM(cantidad * precio_en_dolares) FROM transacciones_tiene_productos 
-
-                        JOIN productos ON transacciones_tiene_productos.productos_id = productos.id
-
-                        WHERE transacciones_tiene_productos.transacciones_id = NEW.transacciones_id);
-
-    
-
-    
-
+    -- Actualizar el importe en dólares en la tabla transacciones
     UPDATE transacciones
-
     SET importe_en_dolares = total_amount
-
     WHERE id = NEW.transacciones_id;
 
 END
@@ -380,7 +374,7 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT de la tabla `transacciones`
 --
 ALTER TABLE `transacciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`

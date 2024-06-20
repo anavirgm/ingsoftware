@@ -1,244 +1,126 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CamiCandy - Clientes</title>
+{% extends "base.html" %} {% block title %}Clientes{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link
+    rel="shortcut icon"
+    href="{{ url_for('static', filename='favicon.ico') }}"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/Productos.css') }}"
+  />
+{% endblock %}
+{% block content %}
+  {% include 'header.html' %}
+  {% include 'sidebar.html' %}
+  <main>
+    <h1>Clientes</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Nombre</th>
+          <th>Dirección</th>
+          <th>Teléfono</th>
+          <th>Cédula</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Aquí se mostrarán los datos del clientes -->
+        <tr>
+          <td>{{ cliente.id }}</td>
+          <td>{{ cliente.nombre }}</td>
+          <td>{{ cliente.direccion }}</td>
+          <td>{{ cliente.telefono }}</td>
+          <td>{{ cliente.cedula }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <button onclick="mostrarFormulario()">Modificar Cliente</button>
+  </main>
 
-    <link
-      rel="shortcut icon"
-      href="{{ url_for('static', filename='favicon.ico') }}"
-    />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='css/Productos.css') }}"
-    />
-  </head>
+  <!-- Ventana emergente para agregar un nuevo cliente -->
+  <div id="formulario_cliente" style="display: none">
+    <h2>Agregar Nuevo Cliente</h2>
+    <form action="{{ url_for('clientes') }}" method="POST">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required /><br />
 
-  <body id="body">
-    <header>
-      <div class="icon__menu">
-        <img
-          src="{{ url_for('static', filename='imagenes/icons/menu.png') }}"
-          alt=""
-          id="btn_open"
-        />
-      </div>
-      <div class="icon__configuracion">
-        <img
-          src="{{ url_for('static', filename='imagenes/icons/config.png') }}"
-          alt=""
-        />
-      </div>
-      <div class="boton">
-        <button class="switch" id="switch">
-          <span
-            ><img
-              src="{{ url_for('static', filename='imagenes/icons/sol.png') }}"
-              alt=""
-          /></span>
-          <span
-            ><img
-              src="{{ url_for('static', filename='imagenes/icons/luna.png') }}"
-              alt=""
-          /></span>
-        </button>
-      </div>
-    </header>
+      <label for="direccion">Dirección:</label>
+      <input type="text" id="direccion" name="direccion" required /><br />
 
-    <div class="menu__side" id="menu_side">
-      <div class="name_page">
-        <img
-          src="{{ url_for('static', filename='imagenes/logo.png') }}"
-          alt=""
-        />
-        <h4>CamiCandy</h4>
-      </div>
+      <label for="telefono">Teléfono:</label>
+      <input
+        type="text"
+        id="telefono"
+        name="telefono"
+        required
+        onkeydown="return validarNumero(event)"
+      /><br />
 
-      <div class="options__menu">
-        <a href="{{ url_for('dashboard') }}">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
-              title="Dashboard"
-            />
-            <h4>Dashboard</h4>
-          </div>
-        </a>
-        <a href="{{ url_for('productos') }}">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
-              title="Productos"
-            />
-            <h4>Productos</h4>
-          </div>
-        </a>
-        <a href="{{ url_for('clientes') }}" class="selector">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
-              title="Clientes"
-            />
-            <h4>Clientes</h4>
-          </div>
-        </a>
-        <a href="">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}"
-              title="Proveedores"
-            />
-            <h4>Proveedores</h4>
-          </div>
-        </a>
-        <a href="">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-              title="Transacciones"
-            />
-            <h4>Transacciones</h4>
-          </div>
-        </a>
-        <a href="">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}"
-              title="Reportes"
-            />
-            <h4>Reportes</h4>
-          </div>
-        </a>
-        <a href="">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-              title="Herramientas"
-            />
-            <h4>Herramientas</h4>
-          </div>
-        </a>
-        <a href="">
-          <div class="option">
-            <img
-              src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
-              title="Ayuda"
-            />
-            <h4>Ayuda</h4>
-          </div>
-        </a>
-      </div>
-    </div>
+      <label for="cedula">Cédula:</label>
+      <input
+        type="text"
+        id="cedula"
+        name="cedula"
+        required
+        onkeydown="return validarNumero(event)"
+      /><br />
 
-    <main>
-      <h1>Clientes</h1>
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Dirección</th>
-            <th>Teléfono</th>
-            <th>Cédula</th>
-          </tr>
-        </thead>
-        <tbody>
-          <!-- Aquí se mostrarán los datos del clientes -->
-          <tr>
-            <td>{{ cliente.id }}</td>
-            <td>{{ cliente.nombre }}</td>
-            <td>{{ cliente.direccion }}</td>
-            <td>{{ cliente.telefono }}</td>
-            <td>{{ cliente.cedula }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <button onclick="mostrarFormulario()">Modificar Cliente</button>
-    </main>
+      <input type="submit" value="Agregar" />
+    </form>
+    <button onclick="cerrarFormulario()">Cerrar</button>
+  </div>
+{% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 
-    <!-- Ventana emergente para agregar un nuevo cliente -->
-    <div id="formulario_cliente" style="display: none">
-      <h2>Agregar Nuevo Cliente</h2>
-      <form action="{{ url_for('clientes') }}" method="POST">
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required /><br />
-
-        <label for="direccion">Dirección:</label>
-        <input type="text" id="direccion" name="direccion" required /><br />
-
-        <label for="telefono">Teléfono:</label>
-        <input
-          type="text"
-          id="telefono"
-          name="telefono"
-          required
-          onkeydown="return validarNumero(event)"
-        /><br />
-
-        <label for="cedula">Cédula:</label>
-        <input
-          type="text"
-          id="cedula"
-          name="cedula"
-          required
-          onkeydown="return validarNumero(event)"
-        /><br />
-
-        <input type="submit" value="Agregar" />
-      </form>
-      <button onclick="cerrarFormulario()">Cerrar</button>
-    </div>
-
-    <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-
-    <script>
-      function validarNumero(event) {
-        // Permitir: backspace, delete, tab, escape, enter y .
-        if (
-          event.key === "Backspace" ||
-          event.key === "Delete" ||
-          event.key === "Tab" ||
-          event.key === "Escape" ||
-          event.key === "Enter" ||
-          event.key === "."
-        ) {
-          return true;
-        }
-        // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
-        if (
-          (event.ctrlKey || event.metaKey) &&
-          (event.key === "a" ||
-            event.key === "c" ||
-            event.key === "v" ||
-            event.key === "x")
-        ) {
-          return true;
-        }
-        // Permitir: las teclas de flecha
-        if (
-          event.key === "ArrowLeft" ||
-          event.key === "ArrowRight" ||
-          event.key === "ArrowUp" ||
-          event.key === "ArrowDown"
-        ) {
-          return true;
-        }
-        // Asegurarse de que es un número
-        if (!/^[0-9]$/.test(event.key)) {
-          event.preventDefault();
-          return false;
-        }
+  <script>
+    function validarNumero(event) {
+      // Permitir: backspace, delete, tab, escape, enter y .
+      if (
+        event.key === "Backspace" ||
+        event.key === "Delete" ||
+        event.key === "Tab" ||
+        event.key === "Escape" ||
+        event.key === "Enter" ||
+        event.key === "."
+      ) {
         return true;
       }
-
-      function mostrarFormulario() {
-        document.getElementById("formulario_cliente").style.display = "block";
+      // Permitir: Ctrl+A, Ctrl+C, Ctrl+V, Ctrl+X
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        (event.key === "a" ||
+          event.key === "c" ||
+          event.key === "v" ||
+          event.key === "x")
+      ) {
+        return true;
       }
-
-      function cerrarFormulario() {
-        document.getElementById("formulario_cliente").style.display = "none";
+      // Permitir: las teclas de flecha
+      if (
+        event.key === "ArrowLeft" ||
+        event.key === "ArrowRight" ||
+        event.key === "ArrowUp" ||
+        event.key === "ArrowDown"
+      ) {
+        return true;
       }
-    </script>
-  </body>
-</html>
+      // Asegurarse de que es un número
+      if (!/^[0-9]$/.test(event.key)) {
+        event.preventDefault();
+        return false;
+      }
+      return true;
+    }
+
+    function mostrarFormulario() {
+      document.getElementById("formulario_cliente").style.display = "block";
+    }
+
+    function cerrarFormulario() {
+      document.getElementById("formulario_cliente").style.display = "none";
+    }
+  </script>
+{% endblock %}

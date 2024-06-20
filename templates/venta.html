@@ -166,7 +166,21 @@
           {% endfor %}
         </tbody>
       </table>
-      <button type="submit">Realizar Venta</button>
+
+      <div class="subtotal-iva-total">
+        <label>Subtotal: <span id="subtotal">$0.00</span></label><br>
+        <label>IVA (16%): <span id="iva">$0.00</span></label><br>
+        <label style="font-size: 24px;">Total: <span id="total">$0.00</span></label> <!-- Aplicación directa de tamaño de fuente -->
+      </div>
+
+      <!-- Contenedor para centrar el botón -->
+      <div class="button-container">
+        <button type="submit" onclick="return confirmarVenta()">Realizar Venta</button>
+      </div>
+    </div>
+
+    <input type="hidden" id="input-total" name="total" value="0.00">
+
     </div>
     </form>
   </main>
@@ -176,27 +190,27 @@
     let carrito = [];
     let productos = [
       {% for producto in productos %}
-    {
-      id: "{{ producto.id }}",
+      {
+        id: "{{ producto.id }}",
         nombre: "{{ producto.nombre }}",
-            cantidad_disponible: "{{ producto.cantidad_disponible }}",
-              precio_en_dolares: "{{ producto.precio_en_dolares }}"
-    } {% if not loop.last %}, {% endif %}
-    {% endfor %}
+        cantidad_disponible: "{{ producto.cantidad_disponible }}",
+        precio_en_dolares: "{{ producto.precio_en_dolares }}"
+      } {% if not loop.last %}, {% endif %}
+      {% endfor %}
     ];
-
+  
     let clientes = [
       {% for cliente in clientes %}
-    {
-      id: "{{ cliente.id }}",
+      {
+        id: "{{ cliente.id }}",
         nombre: "{{ cliente.nombre }}"
-    } {% if not loop.last %}, {% endif %}
-    {% endfor %}
+      } {% if not loop.last %}, {% endif %}
+      {% endfor %}
     ];
-
+  
     function buscarProducto() {
       const input = document.getElementById("buscar-producto").value.toUpperCase();
-
+  
       // Actualizar tabla de productos
       const productosBody = document.getElementById("tabla-productos-body");
       productosBody.innerHTML = "";
@@ -213,7 +227,7 @@
           productosBody.appendChild(row);
         }
       });
-
+  
       // Actualizar selección de clientes
       const clientesSelect = document.getElementById("clientes_id");
       clientesSelect.innerHTML = "";
@@ -226,7 +240,7 @@
         }
       });
     }
-
+  
     function añadirAlCarrito(id) {
       const producto = productos.find(p => p.id === id);
       if (producto) {
@@ -237,13 +251,14 @@
           carrito.push({ ...producto, cantidad: 1 });
         }
         actualizarCarrito();
+        actualizarTotales(); // Llamar a la función para actualizar totales
       }
     }
-
+  
     function actualizarCarrito() {
       const tbody = document.getElementById("tabla-carrito-body");
       tbody.innerHTML = "";
-
+  
       carrito.forEach(producto => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -257,24 +272,56 @@
           <td id="precio-total${producto.id}">${(producto.precio_en_dolares * producto.cantidad).toFixed(2)}</td>
           <td><button type="button" onclick="eliminarDelCarrito('${producto.id}')">Eliminar</button></td>
         `;
-
+  
         tbody.appendChild(row);
       });
     }
-
+  
     function eliminarDelCarrito(id) {
       carrito = carrito.filter(p => p.id !== id);
       actualizarCarrito();
+      actualizarTotales(); // Llamar a la función para actualizar totales
     }
-
+  
     function actualizarCantidad(id, cantidad) {
       const producto = carrito.find(p => p.id === id);
       if (producto) {
         producto.cantidad = parseInt(cantidad);
         document.getElementById(`precio-total${id}`).textContent = (producto.precio_en_dolares * producto.cantidad).toFixed(2);
+        actualizarTotales(); // Llamar a la función para actualizar totales
       }
     }
+  
+    function actualizarTotales() {
+      // Calcular subtotal
+      let subtotal = 0;
+      carrito.forEach(producto => {
+        subtotal += producto.precio_en_dolares * producto.cantidad;
+      });
+  
+      // Calcular IVA (16%)
+      let iva = subtotal * 0.16;
+  
+      // Calcular total
+      let total = subtotal + iva;
+  
+      // Actualizar los elementos HTML
+      document.getElementById("subtotal").textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById("iva").textContent = `$${iva.toFixed(2)}`;
+      document.getElementById("total").textContent = `$${total.toFixed(2)}`;
+  
+      // Actualizar input hidden del total (si es necesario enviarlo en el formulario)
+      document.getElementById("input-total").value = total.toFixed(2);
+    }
+  
+    
 
+    function confirmarVenta() {
+            return confirm("¿Está seguro de que desea registrar esta venta?");
+        }
+
+
+  
     document.getElementById("venta-form").addEventListener("submit", function (e) {
       e.preventDefault();
       
@@ -287,11 +334,12 @@
       
       form.submit();
     });
-
+  
     document.addEventListener('DOMContentLoaded', function () {
       buscarProducto(); // Mostrar todos los productos y clientes al cargar la página
     });
   </script>
+  
 </body>
 
 </html>

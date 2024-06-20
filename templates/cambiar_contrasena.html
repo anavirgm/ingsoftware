@@ -1,37 +1,37 @@
-{% extends "base.html" %} {% block title %}Cambiar Contraseña{% endblock %} {% block head
-%}
-{{ super() }}
-<link rel="preconnect" href="https://fonts.gstatic.com" />
-<link
-  rel="stylesheet"
-  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
-/>
-<link
-  href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap"
-  rel="stylesheet"
-/>
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/styles.css') }}"
-/>
-{% endblock %} {% block content %}
-
-    <form method="post">
-      <h3>Cambiar Contraseña</h3>
-      <label for="nueva_contrasena">Nueva Contraseña</label>
-      <input
-        type="password"
-        id="nueva_contrasena"
-        name="nueva_contrasena"
-        required
-      />
-      <button type="submit">Cambiar Contraseña</button>
-      {% with messages = get_flashed_messages() %} {% if messages %}
+{% extends "base.html" %} {% block title %}Cambiar Contraseña{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="preconnect" href="https://fonts.gstatic.com" />
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+  />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/styles.css') }}"
+  />
+{% endblock %}
+{% block content %}
+  <form method="post">
+    <h3>Cambiar Contraseña</h3>
+    <label for="nueva_contrasena">Nueva Contraseña</label>
+    <input
+      type="password"
+      id="nueva_contrasena"
+      name="nueva_contrasena"
+      required
+    />
+    <button type="submit">Cambiar Contraseña</button>
+    {% with messages = get_flashed_messages() %}{% if messages %}
       <ul>
         {% for message in messages %}
-        <li>{{ message }}</li>
+          <li>{{ message }}</li>
         {% endfor %}
       </ul>
-      {% endif %} {% endwith %}
-    </form>
+    {% endif %}{% endwith %}
+  </form>
 {% endblock %}

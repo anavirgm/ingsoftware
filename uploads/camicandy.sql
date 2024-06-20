@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 19-06-2024 a las 10:09:20
+-- Tiempo de generación: 20-06-2024 a las 04:59:47
 -- Versión del servidor: 11.2.0-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -43,7 +43,8 @@ CREATE TABLE `clientes` (
 INSERT INTO `clientes` (`id`, `nombre`, `direccion`, `telefono`, `cedula`, `status`) VALUES
 (1, 'Antonio Villalobos', 'Maracaibo', '04145555556', '30643276', 1),
 (2, 'Samuel Rincon', 'Los Olivos', '04125555555', '29888888', 1),
-(3, 'Juan Urdaneta', 'C2', '04146074412', '29999999', 0);
+(3, 'Juan Urdaneta', 'C2', '04146074412', '29999999', 1),
+(6, 'Jesus Apolinar', 'Maracaibo', '04145555555', '30999999', 1);
 
 -- --------------------------------------------------------
 
@@ -66,10 +67,10 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `nombre`, `fecha_de_vencimiento`, `cantidad_disponible`, `imagen`, `precio_en_dolares`, `status`) VALUES
-(1, 'Vainilla', '2024-12-31', 82, NULL, 3.99, 1),
-(2, 'Chocolate', '2024-12-31', 91, NULL, 4.99, 1),
-(3, 'Sorbete de Limón', '2024-12-31', 72, NULL, 3.49, 1),
-(4, 'Fresa', '2024-12-31', 104, NULL, 4.50, 1),
+(1, 'Vainilla', '2024-12-31', 80, NULL, 3.99, 1),
+(2, 'Chocolate', '2024-12-31', 90, NULL, 4.99, 1),
+(3, 'Limón', '2024-12-31', 67, NULL, 3.49, 1),
+(4, 'Fresa', '2024-12-31', 83, NULL, 4.50, 1),
 (5, 'Menta', '2024-12-31', 60, NULL, 4.49, 0);
 
 -- --------------------------------------------------------
@@ -92,7 +93,7 @@ CREATE TABLE `proveedores` (
 
 INSERT INTO `proveedores` (`id`, `nombre`, `rif`, `direccion`, `status`) VALUES
 (1, 'HELADOS TIO RICO', 'J88888888', 'CARACAS', 1),
-(2, 'HELADOS LA ARGENTINA', 'J99999999', '5 DE JULIO XD', 1),
+(2, 'HELADOS LA ARGENTINA', 'J99999999', '5 DE JULIO', 1),
 (3, 'HELADOS CARABOBO', 'J-40855439-9', 'Carabobo', 1);
 
 -- --------------------------------------------------------
@@ -124,15 +125,22 @@ INSERT INTO `transacciones` (`id`, `marca_de_tiempo`, `importe_en_dolares`, `tas
 (6, '2024-06-13 14:56:33', 24.95, 38.00, 1, NULL, 2),
 (7, '2024-06-30 14:41:00', 24.95, 38.00, 3, NULL, 1),
 (8, '2024-06-30 14:42:00', 9.98, 38.00, 1, NULL, 1),
-(9, '2024-06-20 14:46:00', 15.96, 37.00, 2, NULL, 5),
 (10, '2024-06-18 14:50:00', 23.94, 37.00, 2, NULL, 1),
 (11, '2024-06-18 15:21:00', 7.98, 50.00, 1, NULL, 1),
 (12, '2024-06-14 15:21:00', 4.99, 23.00, 2, NULL, 1),
 (13, '2024-06-09 15:39:00', 17.45, 45.00, 1, NULL, 1),
 (14, '2024-06-18 17:00:00', 39.92, 36.42, 1, NULL, 1),
 (17, '2024-06-19 07:52:19', 25.44, 38.00, 3, NULL, 1),
-(18, '2024-06-19 08:03:00', 12.49, 36.42, 3, NULL, 1),
-(19, '2024-06-19 08:06:00', 25.96, 36.42, 2, NULL, 1);
+(24, '2024-06-20 02:05:00', 9.00, 36.39, 1, NULL, 1),
+(25, '2024-06-20 02:06:00', 11.48, 36.39, 3, NULL, 1),
+(26, '2024-06-20 02:10:00', 4.99, 36.39, 6, NULL, 1),
+(27, '2024-06-20 02:25:00', 13.50, 36.39, 1, NULL, 1),
+(28, '2024-06-20 02:27:00', 9.00, 36.39, 3, NULL, 1),
+(29, '2024-06-20 02:30:00', 9.00, 36.39, 6, NULL, 1),
+(31, '2024-06-20 02:44:00', 12.49, 36.39, 2, NULL, 1),
+(32, '2024-06-20 02:45:00', 12.48, 36.39, 6, NULL, 1),
+(33, '2024-06-20 02:46:00', 6.98, 36.39, 3, NULL, 1),
+(34, '2024-06-20 02:52:00', 9.00, 36.39, 1, NULL, 1);
 
 --
 -- Disparadores `transacciones`
@@ -217,7 +225,23 @@ INSERT INTO `transacciones_tiene_productos` (`transacciones_id`, `productos_id`,
 (18, 3, 1),
 (19, 4, 2),
 (19, 2, 1),
-(19, 1, 3);
+(19, 1, 3),
+(20, 4, 2),
+(22, 4, 2),
+(23, 4, 2),
+(24, 4, 2),
+(25, 3, 2),
+(25, 4, 1),
+(26, 2, 1),
+(27, 4, 3),
+(28, 4, 2),
+(29, 4, 2),
+(31, 4, 2),
+(31, 3, 1),
+(32, 1, 2),
+(32, 4, 1),
+(33, 3, 2),
+(34, 4, 2);
 
 --
 -- Disparadores `transacciones_tiene_productos`
@@ -283,8 +307,7 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`id`, `cedula`, `nombre`, `rol`, `hash_de_contrasena`, `pregunta_seguridad`, `respuesta_seguridad`) VALUES
 (1, '30597012', 'Ana Mota', 'administrador', '$2b$12$TB07LX0M/Ipz7ikFDt/OJeHmZ.ePzPS6wz.7KGnQC.aHAkEtohM0C', '¿Cuál es tu postre favorito?', '$2y$10$wdKk9e/y5sSN2tTwMQ0ux.q9cwkhsfwTo4nO1Zt4dK9Dmv0Qn/.1S'),
-(2, '29877987', 'Samuel Rincon', 'empleado', '$2y$10$IsiNfgnLdHIvvf2GlVzegOBINWykVFtxiklJrt/2m7aeZgJ6PYsVS', '¿Cuál es tu postre favorito?', '$2y$10$KUcsOLOw6C8MzL5oNoOcwuJCbGuTiLQN9Dr7ykcqTRGh2oqiFN15e'),
-(5, '123123123', 'Jesus', 'empleado', '$2b$12$Y6lba6FwpfibCzmV78z3Fups6wNYcLtCXUrjAGRrQRM90M6QrPDd.', '¿Cómo se llamaba tu mamá?', '$2b$12$Cd4M4i7mkDY5QSc64o5Wq.s.Mz2QW.ZX0svYCrjVFokL93sTnUrDG');
+(2, '29877987', 'Samuel Rincon', 'empleado', '$2y$10$IsiNfgnLdHIvvf2GlVzegOBINWykVFtxiklJrt/2m7aeZgJ6PYsVS', '¿Cuál es tu postre favorito?', '$2y$10$KUcsOLOw6C8MzL5oNoOcwuJCbGuTiLQN9Dr7ykcqTRGh2oqiFN15e');
 
 --
 -- Índices para tablas volcadas
@@ -339,7 +362,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -357,7 +380,7 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT de la tabla `transacciones`
 --
 ALTER TABLE `transacciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`

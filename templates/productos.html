@@ -1,0 +1,176 @@
+{% extends "base.html" %} {% block title %}Productos{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link
+    rel="stylesheet"
+    href="{{ url_for('static', filename='css/productos.css') }}"
+  />
+{% endblock %}
+{% block content %}
+  {% include 'header.html' %}
+  {% include 'sidebar.html' %}
+  <main>
+    <div class="container_productos">
+      <h1>Productos</h1>
+      <div class="container_productos_buscar">
+        <input
+          type="text"
+          placeholder="Buscar"
+          id="buscar-producto"
+          onkeyup="buscarProducto()"
+        />
+        <button onclick="mostrarFormulario()">Añadir producto</button>
+        <button class="Actualizar" onclick="abrirModalActualizar()">
+          Actualizar
+        </button>
+        <button class="Eliminar" onclick="eliminarProductos()">Eliminar</button>
+      </div>
+      <div class="productos">
+        <table class="table_de_productos">
+          <thead>
+            <tr>
+              <th><input type="checkbox" id="select-all" /></th>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Fecha de Vencimiento</th>
+              <th>Cantidad Disponible</th>
+              <th>Precio ($)</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-productos-body">
+            <!-- Aquí se mostrarán los datos de los productos -->
+            {% for producto in productos %}
+              <tr>
+                <td>
+                  <input
+                    type="checkbox"
+                    class="producto-checkbox"
+                    data-id="{{ producto.id }}"
+                  />
+                </td>
+                <td>{{ producto.id }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>{{ producto.fecha_de_vencimiento }}</td>
+                <td>{{ producto.cantidad_disponible }}</td>
+                <td>{{ producto.precio_en_dolares }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+{% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+  <script>
+    function mostrarFormulario() {
+      document.getElementById("modal").style.display = "block";
+    }
+
+    function cerrarFormulario() {
+      document.getElementById("modal").style.display = "none";
+      limpiarCampos();
+    }
+
+    function limpiarCampos() {
+      document.getElementById("formulario").reset();
+    }
+
+    function eliminarProductos() {
+      const ids = obtenerProductosSeleccionados();
+      if (ids.length === 0) {
+        alert("Seleccione al menos un producto para eliminar.");
+        return;
+      }
+      const confirmacion = confirm(
+        "¿Está seguro de que desea eliminar los productos seleccionados?",
+      );
+      if (!confirmacion) {
+        return;
+      }
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "{{ url_for('eliminar_productos') }}";
+      ids.forEach((id) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "producto_ids";
+        input.value = id;
+        form.appendChild(input);
+      });
+      document.body.appendChild(form);
+      form.submit();
+    }
+
+    const selectAllCheckbox = document.getElementById("select-all");
+    const checkboxes = document.querySelectorAll(".producto-checkbox");
+    selectAllCheckbox.addEventListener("change", function () {
+      checkboxes.forEach(function (checkbox) {
+        checkbox.checked = selectAllCheckbox.checked;
+      });
+    });
+
+    function obtenerProductosSeleccionados() {
+      const checkboxes = document.querySelectorAll(
+        ".producto-checkbox:checked",
+      );
+      const ids = Array.from(checkboxes).map((checkbox) =>
+        checkbox.getAttribute("data-id"),
+      );
+      return ids;
+    }
+
+    function abrirModalActualizar() {
+      const filaSeleccionada = document
+        .querySelector("input.producto-checkbox:checked")
+        .closest("tr");
+      const productoId = filaSeleccionada.cells[1].textContent;
+      document.getElementById("producto_id_actualizar").value = productoId;
+      const nombre = filaSeleccionada.cells[2].textContent;
+      const fechaDeVencimiento = filaSeleccionada.cells[3].textContent;
+      const cantidadDisponible = filaSeleccionada.cells[4].textContent;
+      const precioEnDolares = filaSeleccionada.cells[5].textContent;
+
+      document.getElementById("nombre_actualizar").value = nombre;
+      document.getElementById("fecha_de_vencimiento_actualizar").value =
+        fechaDeVencimiento;
+      document.getElementById("cantidad_disponible_actualizar").value =
+        cantidadDisponible;
+      document.getElementById("precio_en_dolares_actualizar").value =
+        precioEnDolares;
+      document.getElementById("modal-actualizar").style.display = "block";
+    }
+
+    function cerrarModalActualizar() {
+      document.getElementById("modal-actualizar").style.display = "none";
+    }
+
+    function buscarProducto() {
+      var input, filter, table, tbody, tr, td, i, txtValue;
+      input = document.getElementById("buscar-producto");
+      filter = input.value.toUpperCase();
+      table = document.querySelector(".table_de_productos");
+      tbody = document.getElementById("tabla-productos-body");
+      tr = tbody.getElementsByTagName("tr");
+
+      // Recorrer todas las filas de la tabla y ocultar las que no coincidan con la búsqueda
+      for (i = 0; i < tr.length; i++) {
+        td_id = tr[i].getElementsByTagName("td")[1]; // Columna de ID
+        td_nombre = tr[i].getElementsByTagName("td")[2]; // Columna de nombre
+        if (td_id || td_nombre) {
+          txtValue_id = td_id.textContent || td_id.innerText;
+          txtValue_nombre = td_nombre.textContent || td_nombre.innerText;
+          if (
+            txtValue_id.toUpperCase().indexOf(filter) > -1 ||
+            txtValue_nombre.toUpperCase().indexOf(filter) > -1
+          ) {
+            tr[i].style.display = "";
+          } else {
+            tr[i].style.display = "none";
+          }
+        }
+      }
+    }
+  </script>
+{% endblock %}

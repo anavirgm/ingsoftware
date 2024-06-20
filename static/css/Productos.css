@@ -544,7 +544,9 @@ button[type="submit"] {
   border: none;
   border-radius: 25px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
+  transition:
+    background-color 0.3s ease,
+    transform 0.3s ease;
   margin-top: 20px;
 }
 
@@ -577,14 +579,12 @@ button[type="submit"]:focus {
 .subtotal-iva-total label {
   display: block;
   margin-bottom: 5px;
-  font-size: 18px; 
+  font-size: 18px;
 }
-
 
 .subtotal-iva-total span {
   font-weight: bold;
 }
-
 
 .button-container {
   text-align: center;

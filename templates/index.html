@@ -1,8 +1,6 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <title>Admin login</title>
-
+{% extends "base.html" %} {% block title %}Login{% endblock %}
+{% block head %}
+  {{ super() }}
     <link rel="preconnect" href="https://fonts.gstatic.com" />
     <link
       rel="stylesheet"
@@ -21,8 +19,8 @@
       rel="shortcut icon"
       href="{{ url_for('static', filename='favicon.ico') }}"
     />
-  </head>
-  <body>
+{% endblock %}
+{% block content %}
     <div class="background">
       <div class="shape"></div>
       <div class="shape"></div>
@@ -55,15 +53,16 @@
         >¿Olvidó su contraseña?</a
       >
 
-      {% with messages = get_flashed_messages() %} {% if messages %}
-      <ul>
-        {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %} {% endwith %}
+      {% with messages = get_flashed_messages() %}{% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}{% endwith %}
     </form>
-
+{% endblock %}
+{%block scripts%}
     <script>
       function validarNumero(event) {
         // permitir backspace, delete, tab, escape, enter y .
@@ -113,5 +112,4 @@
         }
       }
     </script>
-  </body>
-</html>
+{%endblock%}

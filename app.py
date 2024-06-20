@@ -443,8 +443,8 @@ def eliminar_clientes():
 
 @app.route("/proveedores", methods=["GET", "POST"])
 def proveedores():
-    if "loggedin" not in session:
-        return redirect(url_for("login"))
+    if "loggedin" not in session or session["rol"] != "administrador":
+        return redirect(url_for("dashboard"))
 
     if request.method == "POST":
         nombre = request.form["nombre"]
@@ -645,16 +645,15 @@ def transacciones():
 
 @app.route("/reportes")
 def reportes():
-    if "loggedin" in session:
-
-        print(session)
+    if "loggedin" in session and session["rol"] == "administrador":
         return render_template(
             "reportes.html",
             username=session["username"],
             rol=session["rol"],
             reportes=reportes,
         )
-    return redirect(url_for("login"))
+
+    return redirect(url_for("dashboard"))
 
 
 ################################### HERRAMIENTAS ######################################
@@ -662,16 +661,15 @@ def reportes():
 
 @app.route("/herramientas")
 def herramientas():
-    if "loggedin" in session:
+    if "loggedin" not in session or session["rol"] != "administrador":
+        return redirect(url_for("dashboard"))
 
-        print(session)
-        return render_template(
-            "herramientas.html",
-            username=session["username"],
-            rol=session["rol"],
-            herramientas=herramientas,
-        )
-    return redirect(url_for("login"))
+    return render_template(
+        "herramientas.html",
+        username=session["username"],
+        rol=session["rol"],
+        herramientas=herramientas,
+    )
 
 
 @app.route("/agregar_empleado", methods=["GET", "POST"])

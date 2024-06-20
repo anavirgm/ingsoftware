@@ -1,90 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CamiCandy - Realizar Venta</title>
+{% extends "base.html" %} {% block title %}Realizar Venta{% endblock %}
+{% block head %}
+  {{ super() }}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/Productos.css') }}">
-</head>
-
-<body id="body">
-  <header>
-    <div class="icon__menu">
-      <img src="{{ url_for('static', filename='imagenes/icons/menu.png') }}" alt="" id="btn_open">
-    </div>
-    <div class="icon__configuracion">
-      <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" alt="">
-    </div>
-    <div class="boton">
-      <button class="switch" id="switch">
-        <span>
-          <img src="{{ url_for('static', filename='imagenes/icons/sol.png') }}" alt="">
-        </span>
-        <span>
-          <img src="{{ url_for('static', filename='imagenes/icons/luna.png') }}" alt="">
-        </span>
-      </button>
-    </div>
-  </header>
-
-  <div class="menu__side" id="menu_side">
-    <div class="name_page">
-      <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="">
-      <h4>CamiCandy</h4>
-    </div>
-    <div class="options__menu">
-      <a href="{{ url_for('dashboard') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard">
-          <h4>Dashboard</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('productos') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="Productos">
-          <h4>Productos</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('clientes') }}" class="selector">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Clientes">
-          <h4>Clientes</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('proveedores') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}" title="Proveedores">
-          <h4>Proveedores</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('transacciones') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}" title="Transacciones">
-          <h4>Transacciones</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('reportes') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes">
-          <h4>Reportes</h4>
-        </div>
-      </a>
-      <a href="{{ url_for('herramientas') }}">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" title="Herramientas">
-          <h4>Herramientas</h4>
-        </div>
-      </a>
-      <a href="#">
-        <div class="option">
-          <img src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}" title="Ayuda">
-          <h4>Ayuda</h4>
-        </div>
-      </a>
-    </div>
-  </div>
-
+{% endblock %}
+{% block content %}
+  {% include 'header.html' %}
+  {% include 'sidebar.html' %}
   <main>
     <div class="container_productos">
       <h1>Realizar Venta</h1>
@@ -184,7 +105,8 @@
     </div>
     </form>
   </main>
-
+{% endblock %}
+{% block scripts %}
   <script src="{{ url_for('static', filename='js/component.js') }}"></script>
   <script>
     let carrito = [];
@@ -198,7 +120,7 @@
       } {% if not loop.last %}, {% endif %}
       {% endfor %}
     ];
-  
+
     let clientes = [
       {% for cliente in clientes %}
       {
@@ -207,10 +129,10 @@
       } {% if not loop.last %}, {% endif %}
       {% endfor %}
     ];
-  
+
     function buscarProducto() {
       const input = document.getElementById("buscar-producto").value.toUpperCase();
-  
+
       // Actualizar tabla de productos
       const productosBody = document.getElementById("tabla-productos-body");
       productosBody.innerHTML = "";
@@ -227,7 +149,7 @@
           productosBody.appendChild(row);
         }
       });
-  
+
       // Actualizar selección de clientes
       const clientesSelect = document.getElementById("clientes_id");
       clientesSelect.innerHTML = "";
@@ -240,7 +162,7 @@
         }
       });
     }
-  
+
     function añadirAlCarrito(id) {
       const producto = productos.find(p => p.id === id);
       if (producto) {
@@ -254,11 +176,11 @@
         actualizarTotales(); // Llamar a la función para actualizar totales
       }
     }
-  
+
     function actualizarCarrito() {
       const tbody = document.getElementById("tabla-carrito-body");
       tbody.innerHTML = "";
-  
+
       carrito.forEach(producto => {
         const row = document.createElement("tr");
         row.innerHTML = `
@@ -272,17 +194,17 @@
           <td id="precio-total${producto.id}">${(producto.precio_en_dolares * producto.cantidad).toFixed(2)}</td>
           <td><button type="button" onclick="eliminarDelCarrito('${producto.id}')">Eliminar</button></td>
         `;
-  
+
         tbody.appendChild(row);
       });
     }
-  
+
     function eliminarDelCarrito(id) {
       carrito = carrito.filter(p => p.id !== id);
       actualizarCarrito();
       actualizarTotales(); // Llamar a la función para actualizar totales
     }
-  
+
     function actualizarCantidad(id, cantidad) {
       const producto = carrito.find(p => p.id === id);
       if (producto) {
@@ -291,55 +213,52 @@
         actualizarTotales(); // Llamar a la función para actualizar totales
       }
     }
-  
+
     function actualizarTotales() {
       // Calcular subtotal
       let subtotal = 0;
       carrito.forEach(producto => {
         subtotal += producto.precio_en_dolares * producto.cantidad;
       });
-  
+
       // Calcular IVA (16%)
       let iva = subtotal * 0.16;
-  
+
       // Calcular total
       let total = subtotal + iva;
-  
+
       // Actualizar los elementos HTML
       document.getElementById("subtotal").textContent = `$${subtotal.toFixed(2)}`;
       document.getElementById("iva").textContent = `$${iva.toFixed(2)}`;
       document.getElementById("total").textContent = `$${total.toFixed(2)}`;
-  
+
       // Actualizar input hidden del total (si es necesario enviarlo en el formulario)
       document.getElementById("input-total").value = total.toFixed(2);
     }
-  
-    
+
+
 
     function confirmarVenta() {
             return confirm("¿Está seguro de que desea registrar esta venta?");
         }
 
 
-  
+
     document.getElementById("venta-form").addEventListener("submit", function (e) {
       e.preventDefault();
-      
+
       const form = e.target;
       const carritoInput = document.createElement("input");
       carritoInput.type = "hidden";
       carritoInput.name = "carrito";
       carritoInput.value = JSON.stringify(carrito);
       form.appendChild(carritoInput);
-      
+
       form.submit();
     });
-  
+
     document.addEventListener('DOMContentLoaded', function () {
       buscarProducto(); // Mostrar todos los productos y clientes al cargar la página
     });
   </script>
-  
-</body>
-
-</html>
+{% endblock %}

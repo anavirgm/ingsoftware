@@ -242,26 +242,7 @@ a.selector {
   color: #555;
 }
 
-/* Dark mode styles */
-body.dark {
-  background-color: #121212;
-  color: #ffffff;
-}
 
-body.dark .card,
-body.dark .large-card {
-  background-color: #313131;
-  color: #bbb;
-}
-
-body.dark .card p,
-body.dark .large-card p {
-  color: #888;
-}
-
-.large-card {
-  height: 256px;
-}
 
 /* estilos de las cards clientes */
 .container_clientes_buscar {
@@ -372,8 +353,32 @@ body.dark .large-card p {
 }
 
 /* clases para tema oscuro */
+/* Dark mode styles */
+body.dark {
+  background-color: #121212;
+  color: #ffffff;
+  margin-top: 100px;
+}
+
+body.dark .card,
+body.dark .large-card {
+  background-color: #313131;
+  color: #bbb;
+}
+
+body.dark .card p,
+body.dark .large-card p {
+  color: #888;
+}
+
+.large-card {
+  height: 256px;
+}
+
+
 body.dark * {
   color: white;
+  
 }
 
 body.dark button,
@@ -387,6 +392,7 @@ body.dark {
   transition: margin-left 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
   margin-top: 80px;
   background: #2c2c2c;
+  margin-top: 100px;
 }
 
 body.dark header {

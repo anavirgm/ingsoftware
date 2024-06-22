@@ -16,9 +16,9 @@ head %} {{ super() }}
         oninput="filtrarProveedores(this.value)"
       />
       <button onclick="mostrarFormulario()">Añadir proveedor</button>
-      <button class="Realizar_venta" onclick="realizarVenta()">
-        Realizar compra
-      </button>
+      <a href="{{ url_for('realizar_venta') }}"
+        ><button class="Realizar_venta">Realizar compra</button></a
+      >
       <button class="Actualizar" onclick="abrirModalActualizar()">
         Actualizar
       </button>

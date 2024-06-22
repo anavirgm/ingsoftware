@@ -26,20 +26,7 @@ header {
   transition: 0.3s ease all;
 }
 
-.icon__menu {
-  width: 50px;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translateX(10px);
-}
-
-.icon__menu img {
-  cursor: pointer;
-  position: absolute;
-}
-
+.icon__menu,
 .icon__configuracion {
   width: 50px;
   height: 100%;
@@ -49,13 +36,10 @@ header {
   transform: translateX(10px);
 }
 
+.icon__menu img,
 .icon__configuracion img {
   cursor: pointer;
   position: absolute;
-}
-
-.boton {
-  padding-left: 100px;
 }
 
 .menu__side {
@@ -190,61 +174,47 @@ a.selector {
 body.dark {
   background: #2c2c2c;
   color: white;
-  transition:
-    background 0.3s,
-    color 0.3s;
+  transition: background 0.3s, color 0.3s;
 }
 
 body.dark header {
   background: #152937;
-  color: w;
 }
 
 body.dark .menu__side {
-  width: 100px;
-  height: 100%;
   background: #152937;
-  position: fixed;
-  top: 0;
-  left: 0;
-  color: white;
-  font-size: 18px;
-  z-index: 300;
-  overflow: hidden;
-  border-right: 40px solid#152937;
-  transition: 0.3s ease all;
+  border-right: 40px solid #152937;
 }
 
-body.dark .container_clientes {
-  background-color: #3a3a3a;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+.container {
+  display: flex;
+  padding: 20px;
 }
 
-body.dark .container_clientes h1 {
-  color: white;
-}
-
-.container_clientes {
+.backup,
+.gestion-empleados {
   background: #fff;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  margin: 50px auto;
+  flex: 1;
+  margin: 10px;
 }
 
-.container_clientes h1 {
+.backup h2,
+.gestion-empleados h2 {
   text-align: center;
   color: #333;
+  margin-bottom: 20px;
 }
 
-.container_clientes form {
+.container form {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.container_clientes button {
+.container button {
   background-color: #007bff;
   color: white;
   border: none;
@@ -256,38 +226,14 @@ body.dark .container_clientes h1 {
   margin: 10px 0;
 }
 
-.container_clientes button:hover {
+.container button:hover {
   background-color: #0056b3;
 }
 
-.container_clientes input[type="file"] {
-  margin: 10px 0;
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  width: 100%;
-  box-sizing: border-box;
-}
-
-.container_clientes input[type="text"],
-.container_clientes input[type="submit"],
-.container_clientes button {
-  margin-top: 5px;
-  padding: 10px;
-  font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-}
-
-.container_clientes input[type="text"]:focus {
-  border-color: #66afe9;
-  outline: none;
-  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
-}
-
-.container_clientes input[type="text"],
-.container_clientes input[type="password"],
-.container_clientes select {
+.container input[type="file"],
+.container input[type="text"],
+.container input[type="password"],
+.container select {
   margin-top: 5px;
   padding: 10px;
   font-size: 16px;
@@ -297,10 +243,38 @@ body.dark .container_clientes h1 {
   box-sizing: border-box;
 }
 
-.container_clientes input[type="text"]:focus,
-.container_clientes input[type="password"]:focus,
-.container_clientes select:focus {
+.container input[type="file"] {
+  padding: 10px;
+}
+
+.container input[type="text"]:focus,
+.container input[type="password"]:focus,
+.container select:focus {
   border-color: #66afe9;
   outline: none;
   box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
+}
+
+body.dark .backup,
+body.dark .gestion-empleados {
+  background-color: #3a3a3a;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .backup h2,
+body.dark .gestion-empleados h2 {
+  color: white;
+}
+
+h1.main-title {
+  margin-left: 40px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 5px;
 }

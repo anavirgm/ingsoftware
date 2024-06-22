@@ -1,82 +1,76 @@
-{% extends "base.html" %} {% block title %}Transacciones{% endblock %}
-{% block head %}
-  {{ super() }}
-  <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/transacciones.css') }}"
-  />
-{% endblock %}
-{% block content %}
-  {% include 'header.html' %}
-  {% include 'sidebar.html' %}
-  <main>
-    <div class="container_proveedores">
-      <h1>Transacciones</h1>
-      <div class="container_proveedores_buscar">
-        <input
-          type="text"
-          placeholder="Buscar"
-          onkeyup="filtrarTransacciones(this.value)"
-        />
-      </div>
-      <div class="proveedores">
-        <table class="table_de_proveedores">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Marca de tiempo</th>
-              <th>Importe ($)</th>
-              <th>Tasa BCV</th>
-              <th>Importe (Bs)</th>
-              <th>Cliente</th>
-              <th>Proveedor</th>
-              <th>Realizada por</th>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- Aquí se mostrarán los datos de las transacciones -->
-            {% for transaccion in transacciones %}
-              <tr>
-                <td>{{ transaccion.id }}</td>
-                <td>{{ transaccion.marca_de_tiempo }}</td>
-                <td>{{ transaccion.importe_en_dolares }}</td>
-                <td>{{ transaccion.tasa_bcv }}</td>
-                <td>
-                  {{
-                    transaccion.importe_en_dolares * transaccion.tasa_bcv |
-                    round
-                  }}
-                </td>
-                {% if transaccion.clientes_id %}
-                  <td>{{ transaccion.cliente }}</td>
-                  <td>N/A</td>
-                {% else %}
-                  <td>N/A</td>
-                  <td>{{ transaccion.proveedor }}</td>
-                {% endif %}
-                <td>{{ transaccion.usuario }}</td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+{% extends "base.html" %} {% block title %}Transacciones{% endblock %} {% block
+head %} {{ super() }}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/transacciones.css') }}"
+/>
+{% endblock %} {% block content %} {% include 'header.html' %} {% include
+'sidebar.html' %}
+<main>
+  <div class="container_proveedores">
+    <h1>Transacciones</h1>
+    <div class="container_proveedores_buscar">
+      <input
+        type="text"
+        placeholder="Buscar"
+        onkeyup="filtrarTransacciones(this.value)"
+      />
     </div>
-  </main>
-{% endblock %}
-{% block scripts %}
-  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-  <script>
-    function filtrarTransacciones(texto) {
-      const filas = document.querySelectorAll(".table_de_proveedores tbody tr");
+    <div class="proveedores">
+      <table class="table_de_proveedores">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Marca de tiempo</th>
+            <th>Importe ($)</th>
+            <th>Tasa BCV</th>
+            <th>Importe (Bs)</th>
+            <th>Cliente</th>
+            <th>Proveedor</th>
+            <th>Realizada por</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Aquí se mostrarán los datos de las transacciones -->
+          {% for transaccion in transacciones %}
+          <tr>
+            <td>{{ transaccion.id }}</td>
+            <td>{{ transaccion.marca_de_tiempo }}</td>
+            <td>{{ transaccion.importe_en_dolares }}</td>
+            <td>{{ transaccion.tasa_bcv }}</td>
+            <td>
+              {{ transaccion.importe_en_dolares * transaccion.tasa_bcv | round
+              }}
+            </td>
+            {% if transaccion.clientes_id %}
+            <td>{{ transaccion.cliente }}</td>
+            <td>N/A</td>
+            {% else %}
+            <td>N/A</td>
+            <td>{{ transaccion.proveedor }}</td>
+            {% endif %}
+            <td>{{ transaccion.usuario }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</main>
+{% endblock %} {% block scripts %}
+<script src="{{ url_for('static', filename='js/component.js') }}"></script>
+<script>
+  function filtrarTransacciones(texto) {
+    const filas = document.querySelectorAll(".table_de_proveedores tbody tr");
 
-      filas.forEach((fila) => {
-        const idTransaccion = fila.querySelector("td:first-child").textContent;
-        if (idTransaccion.includes(texto)) {
-          fila.style.display = "table-row";
-        } else {
-          fila.style.display = "none";
-        }
-      });
-    }
-  </script>
+    filas.forEach((fila) => {
+      const idTransaccion = fila.querySelector("td:first-child").textContent;
+      if (idTransaccion.includes(texto)) {
+        fila.style.display = "table-row";
+      } else {
+        fila.style.display = "none";
+      }
+    });
+  }
+</script>
 {% endblock %}

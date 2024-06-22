@@ -113,6 +113,7 @@ def dashboard():
             total_transacciones=total_transacciones,
             ventas_semana=ventas_semana,
             ingreso_semana=ingreso_semana,
+            current_page="dashboard",
         )
     return redirect(url_for("login"))
 
@@ -162,6 +163,7 @@ def productos():
         username=session["username"],
         rol=session["rol"],
         productos=all_products,
+        current_page="productos",
     )
 
 
@@ -255,30 +257,6 @@ def eliminar_productos():
 #################################### CLIENTES ################################################
 
 
-@app.route("/clientes/<id>", methods=["GET", "PUT"])
-def cliente(id):
-    # redireccionar si no hay una sesión activa
-    if "loggedin" not in session:
-        return redirect(url_for("login"))
-
-        # vista de cliente detallada donde se podrá editar la información del usuario if request.method == "GET":
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        # hacer la consulta
-        cursor.execute(
-            "SELECT * FROM clientes WHERE id = %s",
-            (id),
-        )
-        # extraer la información del cliente
-        cliente = cursor.fetchone()
-        if cliente:
-            mysql.connection.commit()
-            cursor.close()
-            return render_template("cliente.html", cliente=cliente)
-
-        # en el caso de que no exista un usuario con ese id, mantenerse en la lista de clientes
-        return redirect(url_for("clientes"))
-
-
 @app.route("/clientes", methods=["GET", "POST"])
 def clientes():
     if "loggedin" not in session:
@@ -309,6 +287,7 @@ def clientes():
         clientes=clientes,
         username=session["username"],
         rol=session["rol"],
+        current_page="clientes",
     )
 
 
@@ -390,6 +369,7 @@ def realizar_venta():
         tasa_bcv=tasa_bcv,
         today=today,
         usuario=session["username"],
+        current_page="clientes",
     )
 
 
@@ -470,6 +450,7 @@ def proveedores():
         proveedores=proveedores,
         username=session["username"],
         rol=session["rol"],
+        current_page="proveedores",
     )
 
 
@@ -637,6 +618,7 @@ def transacciones():
         username=session["username"],
         rol=session["rol"],
         transacciones=transacciones,
+        current_page="transacciones",
     )
 
 
@@ -651,6 +633,7 @@ def reportes():
             username=session["username"],
             rol=session["rol"],
             reportes=reportes,
+            current_page="reportes",
         )
 
     return redirect(url_for("dashboard"))
@@ -669,6 +652,7 @@ def herramientas():
         username=session["username"],
         rol=session["rol"],
         herramientas=herramientas,
+        current_page="herramientas",
     )
 
 

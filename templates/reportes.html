@@ -1,89 +1,76 @@
-{% extends "base.html" %} {% block title %}Reportes{% endblock %}
-{% block head %}
-  {{ super() }}
-  <!-- Incluir jsPDF desde CDN -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
-  <link
-    rel="stylesheet"
-    href="{{ url_for('static', filename='css/reportes.css') }}"
-  />
-  <link
-    rel="shortcut icon"
-    href="{{ url_for('static', filename='favicon.ico') }}"
-  />
-{% endblock %}
-{% block content %}
-  {% include 'header.html' %}
-  {% include 'sidebar.html' %}
-  <main class="container">
-    <div class="grid cards-section">
-      <div class="card" id="productos-card">
-        <h2>Productos</h2>
-        <button class="imprimir-btn" onclick="imprimirPDF('productos-card')">
-          Imprimir reporte
-        </button>
-      </div>
-
-      <div class="card" id="clientes-card">
-        <h2>Clientes</h2>
-        <button class="imprimir-btn" onclick="imprimirPDF('clientes-card')">
-          Imprimir reporte
-        </button>
-      </div>
-
-      <div class="card" id="proveedores-card">
-        <h2>Proveedores</h2>
-        <button class="imprimir-btn" onclick="imprimirPDF('proveedores-card')">
-          Imprimir reporte
-        </button>
-      </div>
-
-      <div class="card" id="transacciones-card">
-        <h2>Transacciones</h2>
-        <button
-          class="imprimir-btn"
-          onclick="imprimirPDF('transacciones-card')"
-        >
-          Imprimir reporte
-        </button>
-      </div>
-
-      <div class="card" id="transacciones-card">
-        <h2>Empleados</h2>
-        <button
-          class="imprimir-btn"
-          onclick="imprimirPDF('transacciones-card')"
-        >
-          Imprimir reporte
-        </button>
-      </div>
-
-      <div class="card" id="transacciones-card">
-        <h2>Ventas</h2>
-        <button
-          class="imprimir-btn"
-          onclick="imprimirPDF('transacciones-card')"
-        >
-          Imprimir reporte
-        </button>
-      </div>
+{% extends "base.html" %} {% block title %}Reportes{% endblock %} {% block head
+%} {{ super() }}
+<!-- Incluir jsPDF desde CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/reportes.css') }}"
+/>
+<link
+  rel="shortcut icon"
+  href="{{ url_for('static', filename='favicon.ico') }}"
+/>
+{% endblock %} {% block content %} {% include 'header.html' %} {% include
+'sidebar.html' %}
+<main class="container">
+  <div class="grid cards-section">
+    <div class="card" id="productos-card">
+      <h2>Productos</h2>
+      <button class="imprimir-btn" onclick="imprimirPDF('productos-card')">
+        Imprimir reporte
+      </button>
     </div>
-  </main>
-{% endblock %}
-{% block scripts %}
-  <script>
-    function imprimirPDF(cardId) {
-      const doc = new jsPDF();
-      const cardElement = document.getElementById(cardId);
 
-      // Obtener el contenido de la tarjeta
-      const cardContent = cardElement.innerHTML;
+    <div class="card" id="clientes-card">
+      <h2>Clientes</h2>
+      <button class="imprimir-btn" onclick="imprimirPDF('clientes-card')">
+        Imprimir reporte
+      </button>
+    </div>
 
-      // Agregar el contenido al documento PDF
-      doc.text(cardContent, 10, 10);
+    <div class="card" id="proveedores-card">
+      <h2>Proveedores</h2>
+      <button class="imprimir-btn" onclick="imprimirPDF('proveedores-card')">
+        Imprimir reporte
+      </button>
+    </div>
 
-      // Guardar el PDF
-      doc.save(`${cardId}.pdf`);
-    }
-  </script>
+    <div class="card" id="transacciones-card">
+      <h2>Transacciones</h2>
+      <button class="imprimir-btn" onclick="imprimirPDF('transacciones-card')">
+        Imprimir reporte
+      </button>
+    </div>
+
+    <div class="card" id="transacciones-card">
+      <h2>Empleados</h2>
+      <button class="imprimir-btn" onclick="imprimirPDF('transacciones-card')">
+        Imprimir reporte
+      </button>
+    </div>
+
+    <div class="card" id="transacciones-card">
+      <h2>Ventas</h2>
+      <button class="imprimir-btn" onclick="imprimirPDF('transacciones-card')">
+        Imprimir reporte
+      </button>
+    </div>
+  </div>
+</main>
+{% endblock %} {% block scripts %}
+<script>
+  function imprimirPDF(cardId) {
+    const doc = new jsPDF();
+    const cardElement = document.getElementById(cardId);
+
+    // Obtener el contenido de la tarjeta
+    const cardContent = cardElement.innerHTML;
+
+    // Agregar el contenido al documento PDF
+    doc.text(cardContent, 10, 10);
+
+    // Guardar el PDF
+    doc.save(`${cardId}.pdf`);
+  }
+</script>
 {% endblock %}

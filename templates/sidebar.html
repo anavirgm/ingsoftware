@@ -5,67 +5,46 @@
   </div>
 
   <div class="options__menu">
-    <a href="{{ url_for('dashboard') }}" class="selector">
+    <a href="{{ url_for('dashboard') }}" class="{{ 'selector' if current_page == 'dashboard' else '' }}">
       <div class="option">
-        <img
-          src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}"
-          title="Dashboard"
-        />
+        <img src="{{ url_for('static', filename='imagenes/icons/dashboard.png') }}" title="Dashboard" />
         <h4>Dashboard</h4>
       </div>
     </a>
-    <a href="{{ url_for('clientes') }}">
+    <a href="{{ url_for('clientes') }}" class="{{ 'selector' if current_page == 'clientes' else '' }}">
       <div class="option">
-        <img
-          src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}"
-          title="Cliente"
-        />
+        <img src="{{ url_for('static', filename='imagenes/icons/clientes.png') }}" title="Cliente" />
         <h4>Clientes</h4>
       </div>
     </a>
-    <a href="{{ url_for('transacciones') }}">
+    <a href="{{ url_for('transacciones') }}" class="{{ 'selector' if current_page == 'transacciones' else '' }}">
       <div class="option">
-        <img
-          src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}"
-          title="Transacciones"
-        />
+        <img src="{{ url_for('static', filename='imagenes/icons/icons8-transacción-30.png') }}" title="Transacciones" />
         <h4>Transacciones</h4>
       </div>
     </a>
     {% if rol == "administrador" %}
-      <a href="{{ url_for('productos') }}">
+      <a href="{{ url_for('productos') }}" class="{{ 'selector' if current_page == 'productos' else '' }}">
         <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/productos.png') }}"
-            title="productos"
-          />
+          <img src="{{ url_for('static', filename='imagenes/icons/productos.png') }}" title="productos" />
           <h4>Productos</h4>
         </div>
       </a>
-      <a href="{{ url_for('proveedores') }}">
+      <a href="{{ url_for('proveedores') }}" class="{{ 'selector' if current_page == 'proveedores' else '' }}">
         <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}"
-            title="Proveedores"
-          />
+          <img src="{{ url_for('static', filename='imagenes/icons/proveedores.png') }}" title="Proveedores" />
           <h4>Proveedores</h4>
         </div>
       </a>
-      <a href="{{ url_for('reportes') }}">
+      <a href="{{ url_for('reportes') }}" class="{{ 'selector' if current_page == 'reportes' else '' }}">
         <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}"
-            title="Reportes"
-          />
+          <img src="{{ url_for('static', filename='imagenes/icons/reportes.png') }}" title="Reportes" />
           <h4>Reportes</h4>
         </div>
       </a>
-      <a href="{{ url_for('herramientas') }}">
+      <a href="{{ url_for('herramientas') }}" class="{{ 'selector' if current_page == 'herramientas' else '' }}">
         <div class="option">
-          <img
-            src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-            title="Herramientas"
-          />
+          <img src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}" title="Herramientas" />
           <h4>Herramientas</h4>
         </div>
       </a>

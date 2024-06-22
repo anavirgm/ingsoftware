@@ -36,7 +36,6 @@ mysql = MySQL(app)
 bcrypt = Bcrypt(app)
 
 
-
 @app.route("/", methods=["GET", "POST"])
 def login():
     if (
@@ -114,7 +113,7 @@ def dashboard():
             total_transacciones=total_transacciones,
             ventas_semana=ventas_semana,
             ingreso_semana=ingreso_semana,
-            current_page='dashboard'
+            current_page="dashboard",
         )
     return redirect(url_for("login"))
 
@@ -164,7 +163,7 @@ def productos():
         username=session["username"],
         rol=session["rol"],
         productos=all_products,
-        current_page='productos'
+        current_page="productos",
     )
 
 
@@ -257,6 +256,7 @@ def eliminar_productos():
 
 #################################### CLIENTES ################################################
 
+
 @app.route("/clientes", methods=["GET", "POST"])
 def clientes():
     if "loggedin" not in session:
@@ -287,7 +287,7 @@ def clientes():
         clientes=clientes,
         username=session["username"],
         rol=session["rol"],
-        current_page='clientes'
+        current_page="clientes",
     )
 
 
@@ -369,7 +369,7 @@ def realizar_venta():
         tasa_bcv=tasa_bcv,
         today=today,
         usuario=session["username"],
-        current_page='clientes'
+        current_page="clientes",
     )
 
 
@@ -450,7 +450,7 @@ def proveedores():
         proveedores=proveedores,
         username=session["username"],
         rol=session["rol"],
-        current_page='proveedores'
+        current_page="proveedores",
     )
 
 
@@ -618,7 +618,7 @@ def transacciones():
         username=session["username"],
         rol=session["rol"],
         transacciones=transacciones,
-        current_page='transacciones'
+        current_page="transacciones",
     )
 
 
@@ -633,7 +633,7 @@ def reportes():
             username=session["username"],
             rol=session["rol"],
             reportes=reportes,
-            current_page='reportes'
+            current_page="reportes",
         )
 
     return redirect(url_for("dashboard"))
@@ -652,7 +652,7 @@ def herramientas():
         username=session["username"],
         rol=session["rol"],
         herramientas=herramientas,
-        current_page='herramientas'
+        current_page="herramientas",
     )
 
 

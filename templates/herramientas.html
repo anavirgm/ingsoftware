@@ -1,146 +1,162 @@
-{% extends "base.html" %} 
-{% block title %}Herramientas{% endblock %} 
-{% block head %} 
-  {{ super() }}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/herramientas.css') }}" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/Clientes.css') }}" />
-{% endblock %} 
-{% block content %} 
-  {% include 'header.html' %} 
-  {% include 'sidebar.html' %}
-  <main>
-    
-    <h1 class="main-title">Herramientas</h1>
-    <div class="container">
-      <div class="backup">
-        <h2>Recovery Data</h2>
-        <form action="{{ url_for('respaldar_base') }}" method="post">
-          <button type="submit" class="btn-primary">BACKUP</button>
-        </form>
-        <br />
-        <form action="{{ url_for('recuperar_base') }}" method="post" enctype="multipart/form-data">
-          <input type="file" name="file" accept=".sql" />
-          <button type="submit" class="btn-primary">RESTORE DATABASE</button>
-        </form>
+{% extends "base.html" %}
+{% block title %}Herramientas{% endblock %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/herramientas.css') }}" />
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Clientes.css') }}" />
+{% endblock %}
+{% block content %}
+{% include 'header.html' %}
+{% include 'sidebar.html' %}
+<main>
 
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-        <ul> console:
-          {% for message in messages %}
-          <li>{{ message }}</li>
+  <h1 class="main-title">Herramientas</h1>
+  <div class="container">
+    <div class="backup">
+      <h2>Recovery Data</h2>
+      <form action="{{ url_for('respaldar_base') }}" method="post">
+        <button type="submit" class="btn-primary">BACKUP</button>
+      </form>
+      <br />
+      <form action="{{ url_for('recuperar_base') }}" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".sql" />
+        <button type="submit" class="btn-primary">RESTORE DATABASE</button>
+      </form>
+
+      {% with messages = get_flashed_messages() %}
+      {% if messages %}
+      <ul> console:
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+      {% endwith %}
+    </div>
+
+    <div class="gestion-empleados">
+      <h2>Gestión de Empleados</h2>
+      <h3>Agregar Nuevo Empleado</h3>
+      <form action="{{ url_for('agregar_empleado') }}" method="POST">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required /><br />
+
+        <label for="cedula">Cédula:</label>
+        <input type="text" id="cedula" name="cedula" required onkeypress="return validarNumero(event)" /><br />
+
+        <label for="rol">Rol:</label>
+        <select id="rol" name="rol" required>
+          <option value="empleado">Empleado</option>
+        </select><br />
+
+        <label for="hash_contrasena">Contraseña:</label>
+        <input type="password" id="hash_contrasena" name="hash_contrasena" required /><br />
+
+        <label for="pregunta_seguridad">Pregunta de Seguridad:</label>
+        <select id="pregunta_seguridad" name="pregunta_seguridad" required>
+          <option value="¿Cuándo es tu cumpleaños?">¿Cuándo es tu cumpleaños?</option>
+          <option value="¿A qué secundaria fuiste?">¿A qué secundaria fuiste?</option>
+          <option value="¿Cómo se llamaba tu mamá?">¿Cómo se llamaba tu mamá?</option>
+          <option value="¿Cuál es tu postre favorito?">¿Cuál es tu postre favorito?</option>
+        </select><br />
+
+        <label for="respuesta_seguridad">Respuesta de Seguridad:</label>
+        <input type="text" id="respuesta_seguridad" name="respuesta_seguridad" required /><br />
+
+        <button type="submit" class="btn-primary">Agregar Empleado</button>
+      </form>
+    </div>
+  </div>
+
+  <div class="container_clientes">
+    <h1>Empleados</h1>
+    <div class="container_clientes_buscar">
+      <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Buscar por ID, nombre o cédula..." />
+
+      <button onclick="mostrarFormulario()">Añadir empleado</button>
+      <button class="Actualizar" onclick="abrirModalActualizar()">Actualizar</button>
+      <button class="Eliminar" onclick="eliminarEmpleados()">Eliminar</button>
+    </div>
+    <div class="clientes">
+      <table class="table_de_clientes">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="select-all" /></th>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Cédula</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for empleado in empleados %}
+          <tr>
+            <td>
+              <input type="checkbox" class="empleado-checkbox" data-id="{{ empleado.id }}" />
+            </td>
+            <td>{{ empleado.id }}</td>
+            <td>{{ empleado.nombre }}</td>
+            <td>{{ empleado.direccion }}</td>
+            <td>{{ empleado.telefono }}</td>
+            <td>{{ empleado.cedula }}</td>
+          </tr>
           {% endfor %}
-        </ul>
-        {% endif %}
-        {% endwith %}
-      </div>
-
-      <div class="gestion-empleados">
-        <h2>Gestión de Empleados</h2>
-        <h3>Agregar Nuevo Empleado</h3>
-        <form action="{{ url_for('agregar_empleado') }}" method="POST">
-          <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre" required /><br />
-
-          <label for="cedula">Cédula:</label>
-          <input type="text" id="cedula" name="cedula" required onkeypress="return validarNumero(event)" /><br />
-
-          <label for="rol">Rol:</label>
-          <select id="rol" name="rol" required>
-            <option value="empleado">Empleado</option>
-          </select><br />
-
-          <label for="hash_contrasena">Contraseña:</label>
-          <input type="password" id="hash_contrasena" name="hash_contrasena" required /><br />
-
-          <label for="pregunta_seguridad">Pregunta de Seguridad:</label>
-          <select id="pregunta_seguridad" name="pregunta_seguridad" required>
-            <option value="¿Cuándo es tu cumpleaños?">¿Cuándo es tu cumpleaños?</option>
-            <option value="¿A qué secundaria fuiste?">¿A qué secundaria fuiste?</option>
-            <option value="¿Cómo se llamaba tu mamá?">¿Cómo se llamaba tu mamá?</option>
-            <option value="¿Cuál es tu postre favorito?">¿Cuál es tu postre favorito?</option>
-          </select><br />
-
-          <label for="respuesta_seguridad">Respuesta de Seguridad:</label>
-          <input type="text" id="respuesta_seguridad" name="respuesta_seguridad" required /><br />
-
-          <button type="submit" class="btn-primary">Agregar Empleado</button>
-        </form>
-      </div>
+        </tbody>
+      </table>
     </div>
+  </div>
 
+</main>
 
-    <!--
-    <div class="container_clientes">
-      <h1>Herramientas</h1>
-      <div class="container_clientes_buscar">
-        <input
-          type="text"
-          id="searchInput"
-          onkeyup="searchTable()"
-          placeholder="Buscar por ID, nombre o cédula..."
-        />
-  
-        <button class="Actualizar" onclick="abrirModalActualizar()">
-          Actualizar
-        </button>
-        <button class="Eliminar" onclick="eliminarClientes()">Eliminar</button>
-      </div>
-      <div class="clientes">
-        <table class="table_de_clientes">
-          <thead>
-            <tr>
-              <th><input type="checkbox" id="select-all" /></th>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Dirección</th>
-              <th>Teléfono</th>
-              <th>Cédula</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for cliente in clientes %}
-            <tr>
-              <td>
-                <input
-                  type="checkbox"
-                  class="cliente-checkbox"
-                  data-id="{{ cliente.id }}"
-                />
-              </td>
-              <td>{{ cliente.id }}</td>
-              <td>{{ cliente.nombre }}</td>
-              <td>{{ cliente.direccion }}</td>
-              <td>{{ cliente.telefono }}</td>
-              <td>{{ cliente.cedula }}</td>
-              <td>{{ cliente.status }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
-    </div>
-    -->
-    
-  </main>
-{% endblock %} 
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarFormulario()">&times;</span>
+    <h2>Agregar Nuevo Empleado</h2>
+    <form id="formulario" action="{{ url_for('agregar_empleado') }}" method="POST">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required /><br />
+      <label for="direccion">Dirección:</label>
+      <input type="text" id="direccion" name="direccion" required /><br />
+      <label for="telefono">Teléfono:</label>
+      <input type="text" id="telefono" name="telefono" required onkeydown="return validarNumero(event)" /><br />
+      <label for="cedula">Cédula:</label>
+      <input type="text" id="cedula" name="cedula" required onkeydown="return validarNumero(event)" /><br />
+      <input type="submit" value="Agregar" />
+    </form>
+  </div>
+</div>
+
+<div id="modal-actualizar" class="modal" style="display: none">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalActualizar()">&times;</span>
+    <h2>Actualizar Empleado</h2>
+    <form id="formulario-actualizar" method="POST" action="{{ url_for('actualizar_empleado') }}">
+      <input type="hidden" id="empleado_id_actualizar" name="empleado_id_actualizar" />
+      <label for="nombre_actualizar">Nombre:</label>
+      <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
+      <label for="direccion_actualizar">Dirección:</label>
+      <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
+      <label for="telefono_actualizar">Teléfono:</label>
+      <input type="text" id="telefono_actualizar" name="telefono_actualizar" required /><br />
+      <label for="cedula_actualizar">Cédula:</label>
+      <input type="text" id="cedula_actualizar" name="cedula_actualizar" required /><br />
+      <button type="submit">Actualizar</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 <script>
   function validarNumero(event) {
-    // Permitir: backspace, delete, tab, escape, enter y .
     if (
-      ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
-        event.key,
-      ) !== -1 ||
-      ((event.ctrlKey || event.metaKey) &&
-        ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
-      ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !==
-        -1
+      ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(event.key) !== -1 ||
+      ((event.ctrlKey || event.metaKey) && ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+      ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !== -1
     ) {
       return true;
     }
-    // Asegurarse de que es un número
     if (!/^[0-9]$/.test(event.key)) {
       event.preventDefault();
       return false;
@@ -148,89 +164,102 @@
     return true;
   }
 
-  // Función para abrir el modal de agregar empleado
   function mostrarFormulario() {
     document.getElementById("modal").style.display = "block";
   }
 
-  // Función para cerrar el modal de agregar empleado
   function cerrarFormulario() {
     document.getElementById("modal").style.display = "none";
+    limpiarCampos();
   }
 
-  // Función para abrir el modal de actualizar empleado
+  function limpiarCampos() {
+    document.getElementById("formulario").reset();
+  }
+
+  function obtenerEmpleadosSeleccionados() {
+    const checkboxes = document.querySelectorAll(".empleado-checkbox:checked");
+    const ids = Array.from(checkboxes).map((checkbox) => checkbox.getAttribute("data-id"));
+    return ids;
+  }
+
+  function eliminarEmpleados() {
+    const ids = obtenerEmpleadosSeleccionados();
+    if (ids.length === 0) {
+      alert("Seleccione al menos un empleado para eliminar.");
+      return;
+    }
+
+    const confirmacion = confirm("¿Está seguro de que desea eliminar los empleados seleccionados?");
+    if (!confirmacion) {
+      return;
+    }
+
+    ids.forEach((id) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "empleado_ids";
+      input.value = id;
+      form.appendChild(input);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  const selectAllCheckbox = document.getElementById("select-all");
+  const checkboxes = document.querySelectorAll(".empleado-checkbox");
+
+  selectAllCheckbox.addEventListener("change", function () {
+    checkboxes.forEach(function (checkbox) {
+      checkbox.checked = selectAllCheckbox.checked;
+    });
+  });
+
   function abrirModalActualizar() {
+    const filaSeleccionada = document.querySelector("input.empleado-checkbox:checked").closest("tr");
+
+    const empleadoId = filaSeleccionada.cells[1].textContent;
+
+    document.getElementById("empleado_id_actualizar").value = empleadoId;
+
+    const nombre = filaSeleccionada.cells[2].textContent;
+    const direccion = filaSeleccionada.cells[3].textContent;
+    const telefono = filaSeleccionada.cells[4].textContent;
+    const cedula = filaSeleccionada.cells[5].textContent;
+
+    document.getElementById("nombre_actualizar").value = nombre;
+    document.getElementById("direccion_actualizar").value = direccion;
+    document.getElementById("telefono_actualizar").value = telefono;
+    document.getElementById("cedula_actualizar").value = cedula;
+
     document.getElementById("modal-actualizar").style.display = "block";
   }
 
-  // Función para cerrar el modal de actualizar empleado
   function cerrarModalActualizar() {
     document.getElementById("modal-actualizar").style.display = "none";
   }
 
-  // Función para obtener los datos del empleado seleccionado y llenar el formulario de actualización
-  function llenarFormularioActualizar(
-    empleadoId,
-    nombre,
-    fechaNacimiento,
-    cargo,
-    sueldo,
-  ) {
-    document.getElementById("empleado_id_actualizar").value = empleadoId;
-    document.getElementById("nombre_actualizar").value = nombre;
-    document.getElementById("fecha_de_nacimiento_actualizar").value =
-      fechaNacimiento;
-    document.getElementById("cargo_actualizar").value = cargo;
-    document.getElementById("sueldo_en_dolares_actualizar").value = sueldo;
-
-    abrirModalActualizar();
-  }
-
-  // Función para deseleccionar todos los checkboxes de empleados
-  function deseleccionarTodos() {
-    var checkboxes = document.getElementsByClassName("empleado-checkbox");
-    for (var i = 0; i < checkboxes.length; i++) {
-      checkboxes[i].checked = false;
-    }
-  }
-
-  // Función para eliminar empleados seleccionados
-  function eliminarEmpleados() {
-    var checkboxes = document.getElementsByClassName("empleado-checkbox");
-    var empleadosAEliminar = [];
-
-    for (var i = 0; i < checkboxes.length; i++) {
-      if (checkboxes[i].checked) {
-        empleadosAEliminar.push(checkboxes[i].value);
-      }
-    }
-
-    if (empleadosAEliminar.length > 0) {
-      // Enviar los empleados seleccionados para eliminar
-      fetch("/eliminar_empleados", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          empleados: empleadosAEliminar,
-        }),
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.success) {
-            // Recargar la página después de eliminar los empleados
-            location.reload();
+  function searchTable() {
+    let input, filter, table, tr, td, i, txtValue;
+    input = document.getElementById("searchInput");
+    filter = input.value.toUpperCase();
+    table = document.querySelector(".table_de_clientes");
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td");
+      for (let j = 1; j < td.length; j++) {
+        let cell = td[j];
+        if (cell) {
+          txtValue = cell.textContent || cell.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+            break;
           } else {
-            console.error("Error al eliminar empleados:", data.error);
+            tr[i].style.display = "none";
           }
-        })
-        .catch((error) => {
-          console.error(
-            "Error en la solicitud de eliminación de empleados:",
-            error,
-          );
-        });
+        }
+      }
     }
   }
 </script>

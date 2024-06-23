@@ -1,27 +1,25 @@
-{% extends "base.html" %} {% block title %}Proveedores{% endblock %} {% block
-head %} {{ super() }}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/Clientes.css') }}"
-/>
-{% endblock %} {% block content %} {% include 'header.html' %} {% include
-'sidebar.html' %}
+{% extends "base.html" %}
+
+{% block title %}Proveedores{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/Clientes.css') }}" />
+{% endblock %}
+
+{% block content %}
+{% include 'header.html' %}
+{% include 'sidebar.html' %}
 <main>
   <div class="container_clientes">
     <h1>Proveedores</h1>
     <div class="container_clientes_buscar">
-      <input
-        type="text"
-        placeholder="Buscar"
-        oninput="filtrarProveedores(this.value)"
-      />
+      <input type="text" placeholder="Buscar" oninput="filtrarProveedores(this.value)" />
       <button onclick="mostrarFormulario()">Añadir proveedor</button>
-      <a href="{{ url_for('realizar_venta') }}"
-        ><button class="Realizar_venta">Realizar compra</button></a
-      >
-      <button class="Actualizar" onclick="abrirModalActualizar()">
-        Actualizar
-      </button>
+      <a href="{{ url_for('realizar_venta') }}">
+        <button class="Realizar_venta">Realizar compra</button>
+      </a>
+      <button class="Actualizar" onclick="abrirModalActualizar()">Actualizar</button>
       <button class="Eliminar" onclick="eliminarProveedores()">Eliminar</button>
     </div>
     <div class="clientes">
@@ -36,15 +34,10 @@ head %} {{ super() }}
           </tr>
         </thead>
         <tbody id="proveedores-table-body">
-          <!-- Aquí se mostrarán los datos de los proveedores -->
           {% for proveedor in proveedores %}
           <tr>
             <td>
-              <input
-                type="checkbox"
-                class="proveedor-checkbox"
-                data-id="{{ proveedor.id }}"
-              />
+              <input type="checkbox" class="proveedor-checkbox" data-id="{{ proveedor.id }}" />
             </td>
             <td>{{ proveedor.id }}</td>
             <td>{{ proveedor.nombre }}</td>
@@ -56,29 +49,103 @@ head %} {{ super() }}
       </table>
     </div>
   </div>
+
+  <div id="alerta" class="alert alert-primary d-flex align-items-center" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </svg>
+    <div id="alerta-mensaje">
+      Debe seleccionar un proveedor para actualizar.
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlerta()"></button>
+  </div>
+  
+  <div id="alerta-eliminar" class="alert alert-eliminar d-flex align-items-center" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </svg>
+    <div id="alerta-mensaje-eliminar">
+      Debe seleccionar al menos un proveedor para eliminar.
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlertaEliminar()"></button>
+  </div>
+  
+  
 </main>
-{% endblock %} {% block scripts %}
+
+<!-- Ventana emergente para agregar un nuevo proveedor -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarFormulario()">&times;</span>
+    <h2>Agregar Nuevo Proveedor</h2>
+    <form id="formulario" action="{{ url_for('proveedores') }}" method="POST">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" name="nombre" required onkeypress="return validarLetras(event)" /><br />
+      <label for="direccion">Dirección:</label>
+      <input type="text" id="direccion" name="direccion" required /><br />
+      <label for="rif">RIF:</label>
+      <input type="text" id="rif" name="rif" required onkeypress="return validarNumeros(event)" /><br />
+      <input type="submit" value="Agregar" />
+    </form>
+  </div>
+</div>
+
+<div id="modal-actualizar" class="modal" style="display: none">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalActualizar()">&times;</span>
+    <h2>Actualizar Proveedor</h2>
+    <form id="formulario-actualizar" method="POST" action="{{ url_for('actualizar_proveedor') }}">
+      <input type="hidden" id="proveedor_id_actualizar" name="proveedor_id_actualizar" />
+      <label for="nombre_actualizar">Nombre:</label>
+      <input type="text" id="nombre_actualizar" name="nombre_actualizar" required onkeypress="return validarLetras(event)" /><br />
+      <label for="direccion_actualizar">Dirección:</label>
+      <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
+      <label for="rif_actualizar">RIF:</label>
+      <input type="text" id="rif_actualizar" name="rif_actualizar" required onkeypress="return validarNumeros(event)" /><br />
+      <button type="submit">Actualizar</button>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 <script>
-  function validarNumero(event) {
+   function validarLetras(event) {
     // Permitir: backspace, delete, tab, escape, enter y .
     if (
-      ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
-        event.key,
-      ) !== -1 ||
-      ((event.ctrlKey || event.metaKey) &&
-        ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
-      ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !==
-        -1
+      ["Backspace", "Delete", "Tab", "Escape", "Enter"].indexOf(event.key) !== -1 ||
+      ((event.ctrlKey || event.metaKey) && ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+      ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !== -1
+    ) {
+      return true;
+    }
+    // Asegurarse de que es una letra
+    if (/^[a-zA-Z]$/.test(event.key)) {
+      return true;
+    } else {
+      event.preventDefault();
+      return false;
+    }
+  }
+
+  function validarNumeros(event) {
+    // Permitir: backspace, delete, tab, escape, enter y .
+    if (
+      ["Backspace", "Delete", "Tab", "Escape", "Enter"].indexOf(event.key) !== -1 ||
+      ((event.ctrlKey || event.metaKey) && ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+      ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !== -1
     ) {
       return true;
     }
     // Asegurarse de que es un número
-    if (!/^[0-9]$/.test(event.key)) {
+    if (/^[0-9]$/.test(event.key)) {
+      return true;
+    } else {
       event.preventDefault();
       return false;
     }
-    return true;
   }
 
   function mostrarFormulario() {
@@ -95,14 +162,14 @@ head %} {{ super() }}
   }
 
   function eliminarProveedores() {
-    const ids = obtenerProveedoresSeleccionados();
-    if (ids.length === 0) {
-      alert("Seleccione al menos un proveedor para eliminar.");
+    const proveedoresSeleccionados = obtenerProveedoresSeleccionados();
+    if (proveedoresSeleccionados.length === 0) {
+      mostrarAlertaEliminar('Debe seleccionar al menos un proveedor para eliminar.');
       return;
     }
 
     const confirmacion = confirm(
-      "¿Está seguro de que desea eliminar los proveedores seleccionados?",
+      "¿Está seguro de que desea eliminar los proveedores seleccionados?"
     );
     if (!confirmacion) {
       return;
@@ -112,7 +179,7 @@ head %} {{ super() }}
     form.method = "POST";
     form.action = "{{ url_for('eliminar_proveedores') }}";
 
-    ids.forEach((id) => {
+    proveedoresSeleccionados.forEach((id) => {
       const input = document.createElement("input");
       input.type = "hidden";
       input.name = "proveedor_ids";
@@ -132,26 +199,24 @@ head %} {{ super() }}
       checkbox.checked = selectAllCheckbox.checked;
     });
   });
-  function obtenerProveedoresSeleccionados() {
-    const checkboxes = document.querySelectorAll(".proveedor-checkbox:checked");
-    const ids = Array.from(checkboxes).map((checkbox) =>
-      checkbox.getAttribute("data-id"),
-    );
-    return ids;
-  }
 
   function abrirModalActualizar() {
-    const filaSeleccionada = document
-      .querySelector("input.proveedor-checkbox:checked")
-      .closest("tr");
+    const filaSeleccionada = document.querySelector("input.proveedor-checkbox:checked");
 
-    const proveedorId = filaSeleccionada.cells[1].textContent;
+    if (!filaSeleccionada) {
+      mostrarAlerta('Debe seleccionar un proveedor para actualizar.');
+      return;
+    }
+
+    const fila = filaSeleccionada.closest("tr");
+
+    const proveedorId = fila.cells[1].textContent;
 
     document.getElementById("proveedor_id_actualizar").value = proveedorId;
 
-    const nombre = filaSeleccionada.cells[2].textContent;
-    const direccion = filaSeleccionada.cells[3].textContent;
-    const rif = filaSeleccionada.cells[4].textContent;
+    const nombre = fila.cells[2].textContent;
+    const direccion = fila.cells[3].textContent;
+    const rif = fila.cells[4].textContent;
 
     document.getElementById("nombre_actualizar").value = nombre;
     document.getElementById("direccion_actualizar").value = direccion;
@@ -164,17 +229,71 @@ head %} {{ super() }}
     document.getElementById("modal-actualizar").style.display = "none";
   }
 
-  function filtrarProveedores(texto) {
-    const filas = document.querySelectorAll(".table_de_clientes tbody tr");
+  function obtenerProveedoresSeleccionados() {
+    const checkboxes = document.querySelectorAll(".proveedor-checkbox:checked");
+    const ids = Array.from(checkboxes).map((checkbox) => checkbox.getAttribute("data-id"));
+    return ids;
+  }
+
+  function filtrarProveedores(valor) {
+    const filtro = valor.toLowerCase();
+    const filas = document.querySelectorAll("#proveedores-table-body tr");
 
     filas.forEach((fila) => {
-      const contenido = fila.textContent.toLowerCase();
-      if (contenido.includes(texto.toLowerCase())) {
-        fila.style.display = "table-row";
+      const nombre = fila.cells[2].textContent.toLowerCase();
+      const direccion = fila.cells[3].textContent.toLowerCase();
+      const rif = fila.cells[4].textContent.toLowerCase();
+      if (
+        nombre.includes(filtro) ||
+        direccion.includes(filtro) ||
+        rif.includes(filtro)
+      ) {
+        fila.style.display = "";
       } else {
         fila.style.display = "none";
       }
     });
   }
+
+
+
+
+  // Alertas
+  function mostrarAlerta(mensaje) {
+    const alerta = document.getElementById("alerta");
+    const alertaMensaje = document.getElementById("alerta-mensaje");
+    alertaMensaje.textContent = mensaje;
+    // Cerrar la alerta de eliminar si está abierta
+    cerrarAlertaEliminar();
+    alerta.classList.add("show");
+    setTimeout(() => {
+      alerta.classList.remove("show");
+    }, 5000);
+  }
+
+  function cerrarAlerta() {
+    const alerta = document.getElementById("alerta");
+    alerta.classList.remove("show");
+  }
+
+  function mostrarAlertaEliminar(mensaje) {
+    const alertaEliminar = document.getElementById("alerta-eliminar");
+    const alertaEliminarMensaje = document.getElementById("alerta-mensaje-eliminar");
+    alertaEliminarMensaje.textContent = mensaje;
+
+    // Cerrar la alerta de actualizar si está abierta
+    cerrarAlerta();
+
+    alertaEliminar.classList.add("show");
+    setTimeout(() => {
+      alertaEliminar.classList.remove("show");
+    }, 5000);
+  }
+
+  function cerrarAlertaEliminar() {
+    const alertaEliminar = document.getElementById("alerta-eliminar");
+    alertaEliminar.classList.remove("show");
+  }
+
 </script>
 {% endblock %}

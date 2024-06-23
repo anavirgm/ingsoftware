@@ -139,7 +139,7 @@ def productos():
         ):
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute(
-                "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares) VALUES (%s, %s, %s, %s)",
+                "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, status) VALUES (%s, %s, %s, %s, 1)",
                 (
                     nombre,
                     fecha_de_vencimiento,
@@ -757,27 +757,33 @@ def listar_empleados():
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    
     if request.method == "POST" and "buscar_empleado" in request.form:
-        # Filtrar empleados por nombre o cualquier otro criterio de búsqueda
         termino_busqueda = request.form["buscar_empleado"]
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            "SELECT * FROM usuarios WHERE rol = 'empleado' AND status = 1;",
-            ("%" + termino_busqueda + "%",),
-        )
+        query = """
+            SELECT * FROM usuarios
+            WHERE rol = 'empleado' AND status = 1
+            AND (id LIKE %s OR nombre LIKE %s OR cedula LIKE %s);
+        """
+        cursor.execute(query, 
+                       ("%" + termino_busqueda + "%", 
+                        "%" + termino_busqueda + "%", 
+                        "%" + termino_busqueda + "%"))
     else:
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM usuarios WHERE rol = 'empleado' AND status = 1;")
+        query = "SELECT * FROM usuarios WHERE rol = 'empleado' AND status = 1;"
+        cursor.execute(query)
 
     empleados = cursor.fetchall()
     cursor.close()
 
     return render_template(
         "herramientas.html",
-        username=session["username"],
-        rol=session["rol"],
+        username=session.get("username"),
+        rol=session.get("rol"),
         empleados=empleados,
     )
+
 
 
 @app.route("/respaldar_base", methods=["POST"])

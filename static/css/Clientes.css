@@ -483,3 +483,111 @@ body.dark .modal input[type="submit"] {
 body.dark .modal input[type="submit"]:hover {
   background-color: #4cae4c;
 }
+
+
+
+
+
+
+
+
+/* Estilos alerta de actualizar */
+.alert {
+  position: fixed;
+  top: 20px;
+  right: -100%;
+  transform: translateX(0);
+  padding: 1rem;
+  margin: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  transition: right 0.5s ease-in-out;
+  padding-right: 2rem;
+}
+
+.alert.show {
+  right: 20px; 
+}
+
+.alert-primary {
+  color: #512e5f;
+  background-color: #d7bde2;
+  border-color: #bb8fce;
+}
+
+.alert-primary .bi {
+  color: #512e5f;
+}
+
+/* Estilos alerta de eliminar */
+.alert-eliminar {
+  position: fixed;
+  top: 20px;
+  right: -100%;
+  transform: translateX(0);
+  padding: 1rem;
+  margin: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  transition: right 0.5s ease-in-out;
+  padding-right: 2rem;
+  background-color: #f8d7da; 
+  color: #842029;
+  border-color: #f5c2c7; 
+}
+
+.alert-eliminar.show {
+  right: 20px;
+}
+
+.alert-eliminar .bi {
+  color: #842029; 
+}
+
+/* Clases adicionales */
+.d-flex {
+  display: flex !important;
+}
+
+.align-items-center {
+  align-items: center !important;
+}
+
+.flex-shrink-0 {
+  flex-shrink: 0 !important;
+}
+
+.me-2 {
+  margin-right: 0.5rem !important;
+}
+
+.btn-close {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 0;
+  z-index: 2;
+  padding: 1.25rem 1rem;
+  cursor: pointer;
+  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+  width: 1em;
+  height: 1em;
+  border: 0;
+  border-radius: 0.25rem;
+  opacity: 0.5;
+
+}
+
+.btn-close:focus {
+  outline: none;
+}
+
+.btn-close:hover {
+  opacity: 1; /* Cambia la opacidad al pasar el ratón */
+}

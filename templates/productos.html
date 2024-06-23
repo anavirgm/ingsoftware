@@ -56,8 +56,122 @@
       </table>
     </div>
   </div>
+
+
+  <!-- Ventana emergente para agregar un nuevo producto -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarFormulario()">&times;</span>
+      <h2>Agregar Nuevo Producto</h2>
+      <form id="formulario" action="{{ url_for('productos') }}" method="POST">
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" required /><br />
+        <label for="fecha_de_vencimiento">Fecha de Vencimiento:</label>
+        <input
+          type="date"
+          id="fecha_de_vencimiento"
+          name="fecha_de_vencimiento"
+          required
+        /><br />
+        <label for="cantidad_disponible">Cantidad Disponible:</label>
+        <input
+          type="number"
+          id="cantidad_disponible"
+          name="cantidad_disponible"
+          required
+        /><br />
+        <label for="precio_en_dolares">Precio ($):</label>
+        <input
+          type="text"
+          id="precio_en_dolares"
+          name="precio_en_dolares"
+          required
+        /><br />
+        
+        <input type="submit" value="Agregar" />
+      </form>
+    </div>
+  </div>
+
+  <!-- Ventana emergente para actualizar un producto -->
+  <div id="modal-actualizar" class="modal" style="display: none">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModalActualizar()">&times;</span>
+      <h2>Actualizar Producto</h2>
+      <form
+        id="formulario-actualizar"
+        action="{{ url_for('actualizar_producto') }}"
+        method="POST"
+      >
+        <input
+          type="hidden"
+          id="producto_id_actualizar"
+          name="producto_id_actualizar"
+        />
+        <label for="nombre_actualizar">Nombre:</label>
+        <input
+          type="text"
+          id="nombre_actualizar"
+          name="nombre_actualizar"
+          required
+        /><br />
+        <label for="fecha_de_vencimiento_actualizar"
+          >Fecha de Vencimiento:</label
+        >
+        <input
+          type="date"
+          id="fecha_de_vencimiento_actualizar"
+          name="fecha_de_vencimiento_actualizar"
+          required
+        /><br />
+        <label for="cantidad_disponible_actualizar"
+          >Cantidad Disponible:</label
+        >
+        <input
+          type="number"
+          id="cantidad_disponible_actualizar"
+          name="cantidad_disponible_actualizar"
+          required
+        /><br />
+        <label for="precio_en_dolares_actualizar">Precio ($):</label>
+        <input
+          type="text"
+          id="precio_en_dolares_actualizar"
+          name="precio_en_dolares_actualizar"
+          required
+        /><br />
+        
+        <button type="submit">Actualizar</button>
+      </form>
+    </div>
+  </div>
+
+
+  
+  <div id="alerta" class="alert alert-primary d-flex align-items-center" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </svg>
+    <div id="alerta-mensaje">
+      Debe seleccionar un producto para actualizar.
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlerta()"></button>
+  </div>
+  
+  <div id="alerta-eliminar" class="alert alert-eliminar d-flex align-items-center" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+    </svg>
+    <div id="alerta-mensaje-eliminar">
+      Debe seleccionar al menos un producto para eliminar.
+    </div>
+    <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlertaEliminar()"></button>
+  </div>
+  
 </main>
 {% endblock %} {% block scripts %}
+
+
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 <script>
   function mostrarFormulario() {
@@ -76,7 +190,7 @@
   function eliminarProductos() {
     const ids = obtenerProductosSeleccionados();
     if (ids.length === 0) {
-      alert("Seleccione al menos un producto para eliminar.");
+      mostrarAlertaEliminar("Seleccione al menos un producto para eliminar.");
       return;
     }
     const confirmacion = confirm(
@@ -116,9 +230,14 @@
   }
 
   function abrirModalActualizar() {
-    const filaSeleccionada = document
-      .querySelector("input.producto-checkbox:checked")
-      .closest("tr");
+    const filaSeleccionada = document.querySelector("input.producto-checkbox:checked");
+
+    if (!filaSeleccionada) {
+      mostrarAlerta('Debe seleccionar un producto para actualizar.');
+      return;
+    }
+
+    const fila = filaSeleccionada.closest("tr");
     const productoId = filaSeleccionada.cells[1].textContent;
     document.getElementById("producto_id_actualizar").value = productoId;
     const nombre = filaSeleccionada.cells[2].textContent;
@@ -166,5 +285,43 @@
       }
     }
   }
+
+    // Alertas
+    function mostrarAlerta(mensaje) {
+    const alerta = document.getElementById("alerta");
+    const alertaMensaje = document.getElementById("alerta-mensaje");
+    alertaMensaje.textContent = mensaje;
+    // Cerrar la alerta de eliminar si está abierta
+    cerrarAlertaEliminar();
+    alerta.classList.add("show");
+    setTimeout(() => {
+      alerta.classList.remove("show");
+    }, 5000);
+  }
+
+  function cerrarAlerta() {
+    const alerta = document.getElementById("alerta");
+    alerta.classList.remove("show");
+  }
+
+  function mostrarAlertaEliminar(mensaje) {
+    const alertaEliminar = document.getElementById("alerta-eliminar");
+    const alertaEliminarMensaje = document.getElementById("alerta-mensaje-eliminar");
+    alertaEliminarMensaje.textContent = mensaje;
+
+    // Cerrar la alerta de actualizar si está abierta
+    cerrarAlerta();
+
+    alertaEliminar.classList.add("show");
+    setTimeout(() => {
+      alertaEliminar.classList.remove("show");
+    }, 5000);
+  }
+
+  function cerrarAlertaEliminar() {
+    const alertaEliminar = document.getElementById("alerta-eliminar");
+    alertaEliminar.classList.remove("show");
+  }
+
 </script>
 {% endblock %}

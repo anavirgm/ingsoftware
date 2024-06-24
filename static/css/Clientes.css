@@ -522,6 +522,35 @@ body.dark .modal input[type="submit"]:hover {
   color: #512e5f;
 }
 
+
+.alert-success {
+  position: fixed;
+  top: 20px;
+  right: -100%;
+  transform: translateX(0);
+  padding: 1rem;
+  margin: 1rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  transition: right 0.5s ease-in-out;
+  padding-right: 2rem;
+  color: #155724;
+  background-color: #d4edda;
+  border-color: #c3e6cb;
+}
+
+.alert-success .show {
+  right: 20px;
+}
+
+.alert-sucess .bi {
+  color:#155724; 
+}
+
+
 /* Estilos alerta de eliminar */
 .alert-eliminar {
   position: fixed;

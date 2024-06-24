@@ -1,0 +1,258 @@
+{% extends "base.html" %} 
+{% block title %}Realizar Compra{% endblock %}
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/Productos.css') }}">
+{% endblock %}
+{% block content %}
+  {% include 'header.html' %}
+  {% include 'sidebar.html' %}
+  <main>
+    <div class="container_productos">
+      <h1>Realizar Compra</h1>
+      <div class="container_productos_buscar">
+        <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
+      </div>
+
+      <form id="venta-form" action="{{ url_for('realizar_compra') }}" method="POST">
+        <label for="marca_de_tiempo">Marca de tiempo:</label>
+        <input type="datetime-local" id="marca_de_tiempo" name="marca_de_tiempo" required><br>
+
+        <label for="tasa_bcv">Tasa BCV {{ today }}: <strong>{{ tasa_bcv }} Bs.</strong></label>
+        <br>
+
+        <label for="usuarios_id">Usuario ejecutor: {{usuario}}</label>
+        <br>
+
+        <label for="proveedores_id">Proveedores:</label>
+        <select id="proveedores_id" name="proveedores_id" required>
+          {% for proveedor in proveedores %}
+            <option value="{{ proveedor.id }}">{{ proveedor.nombre }}</option>
+          {% endfor %}
+        </select><br>
+
+        <div class="productos">
+          <table class="table_de_productos">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Cantidad Disponible</th>
+                <th>Precio ($)</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tabla-productos-body">
+              {% for producto in productos %}
+                <tr>
+                  <td>{{ producto.id }}</td>
+                  <td>{{ producto.nombre }}</td>
+                  <td>{{ producto.cantidad_disponible }}</td>
+                  <td>{{ producto.precio_en_dolares }}</td>
+                  <td><button type="button" onclick="añadirAlCarrito('{{ producto.id }}')">Añadir</button></td>
+                </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="container_productos">
+        <h2>Carrito de Compras</h2>
+        <table class="table_de_productos">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Cantidad</th>
+              <th>Precio Unitario ($)</th>
+              <th>Precio Total ($)</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-carrito-body">
+            {% for producto in carrito %}
+              <tr>
+                <td>{{ producto.id }}</td>
+                <td>{{ producto.nombre }}</td>
+                <td>
+                  <label for="cantidad{{ producto.id }}"></label>
+                  <input type="number" id="cantidad{{ producto.id }}" name="cantidad{{ producto.id }}" min="1"
+                    value="{{ producto.cantidad }}" onchange="actualizarCantidad('{{ producto.id }}', this.value)">
+                </td>
+                <td>{{ producto.precio_en_dolares }}</td>
+                <td id="precio-total{{ producto.id }}">{{ (producto.precio_en_dolares * producto.cantidad).toFixed(2) }}</td>
+                <td><button type="button" onclick="eliminarDelCarrito('{{ producto.id }}')">Eliminar</button></td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="subtotal-iva-total">
+          <label>Subtotal: <span id="subtotal">$0.00</span></label><br>
+          <label>IVA (16%): <span id="iva">$0.00</span></label><br>
+          <label style="font-size: 24px;">Total: <span id="total">$0.00</span></label> <!-- Aplicación directa de tamaño de fuente -->
+        </div>
+
+        <!-- Contenedor para centrar el botón -->
+        <div class="button-container">
+          <button type="submit" onclick="return confirmarVenta()">Realizar Compra</button>
+        </div>
+      </div>
+
+      <input type="hidden" id="input-total" name="total" value="0.00">
+    </form>
+  </main>
+{% endblock %}
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+  <script>
+    let carrito = [];
+    let productos = [
+      {% for producto in productos %}
+      {
+        id: "{{ producto.id }}",
+        nombre: "{{ producto.nombre }}",
+        cantidad_disponible: "{{ producto.cantidad_disponible }}",
+        precio_en_dolares: "{{ producto.precio_en_dolares }}"
+      } {% if not loop.last %}, {% endif %}
+      {% endfor %}
+    ];
+
+    let proveedores = [
+      {% for proveedor in proveedores %}
+      {
+        id: "{{ proveedor.id }}",
+        nombre: "{{ proveedor.nombre }}"
+      } {% if not loop.last %}, {% endif %}
+      {% endfor %}
+    ];
+
+    function buscarProducto() {
+      const input = document.getElementById("buscar-producto").value.toUpperCase();
+
+      // Actualizar tabla de productos
+      const productosBody = document.getElementById("tabla-productos-body");
+      productosBody.innerHTML = "";
+      productos.forEach(producto => {
+        if (producto.nombre.toUpperCase().includes(input)) {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${producto.id}</td>
+            <td>${producto.nombre}</td>
+            <td>${producto.cantidad_disponible}</td>
+            <td>${producto.precio_en_dolares}</td>
+            <td><button type="button" onclick="añadirAlCarrito('${producto.id}')">Añadir</button></td>
+          `;
+          productosBody.appendChild(row);
+        }
+      });
+
+      // Actualizar selección de proveedores
+      const proveedoresSelect = document.getElementById("proveedores_id");
+      proveedoresSelect.innerHTML = "";
+      proveedores.forEach(proveedor => {
+        if (proveedor.nombre.toUpperCase().includes(input)) {
+          const option = document.createElement("option");
+          option.value = proveedor.id;
+          option.textContent = proveedor.nombre;
+          proveedoresSelect.appendChild(option);
+        }
+      });
+    }
+
+    function añadirAlCarrito(id) {
+      const producto = productos.find(p => p.id === id);
+      if (producto) {
+        const productoEnCarrito = carrito.find(p => p.id === id);
+        if (productoEnCarrito) {
+          productoEnCarrito.cantidad++;
+        } else {
+          carrito.push({ ...producto, cantidad: 1 });
+        }
+        actualizarCarrito();
+        actualizarTotales(); // Llamar a la función para actualizar totales
+      }
+    }
+
+    function actualizarCarrito() {
+      const tbody = document.getElementById("tabla-carrito-body");
+      tbody.innerHTML = "";
+
+      carrito.forEach(producto => {
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${producto.id}</td>
+          <td>${producto.nombre}</td>
+          <td>
+            <label for="cantidad${producto.id}"></label>
+            <input type="number" id="cantidad${producto.id}" name="cantidad${producto.id}" min="1" value="${producto.cantidad}" onchange="actualizarCantidad('${producto.id}', this.value)">
+          </td>
+          <td>${producto.precio_en_dolares}</td>
+          <td id="precio-total${producto.id}">${(producto.precio_en_dolares * producto.cantidad).toFixed(2)}</td>
+          <td><button type="button" onclick="eliminarDelCarrito('${producto.id}')">Eliminar</button></td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    function eliminarDelCarrito(id) {
+      carrito = carrito.filter(p => p.id !== id);
+      actualizarCarrito();
+      actualizarTotales(); // Llamar a la función para actualizar totales
+    }
+
+    function actualizarCantidad(id, cantidad) {
+      const producto = carrito.find(p => p.id === id);
+      if (producto) {
+        producto.cantidad = parseInt(cantidad);
+        document.getElementById(`precio-total${id}`).textContent = (producto.precio_en_dolares * producto.cantidad).toFixed(2)
+        actualizarTotales(); // Llamar a la función para actualizar totales
+      }
+    }
+
+    function actualizarTotales() {
+      // Calcular subtotal
+      let subtotal = 0;
+      carrito.forEach(producto => {
+        subtotal += producto.precio_en_dolares * producto.cantidad;
+      });
+
+      // Calcular IVA (16%)
+      let iva = subtotal * 0.16;
+
+      // Calcular total
+      let total = subtotal + iva;
+
+      // Actualizar los elementos HTML
+      document.getElementById("subtotal").textContent = `$${subtotal.toFixed(2)}`;
+      document.getElementById("iva").textContent = `$${iva.toFixed(2)}`;
+      document.getElementById("total").textContent = `$${total.toFixed(2)}`;
+
+      // Actualizar input hidden del total (si es necesario enviarlo en el formulario)
+      document.getElementById("input-total").value = total.toFixed(2);
+    }
+
+    function confirmarVenta() {
+      return confirm("¿Está seguro de que desea registrar esta compra?");
+    }
+
+    document.getElementById("venta-form").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const form = e.target;
+      const carritoInput = document.createElement("input");
+      carritoInput.type = "hidden";
+      carritoInput.name = "carrito";
+      carritoInput.value = JSON.stringify(carrito);
+      form.appendChild(carritoInput);
+
+      form.submit();
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+      buscarProducto(); // Mostrar todos los productos y proveedores al cargar la página
+    });
+  </script>
+{% endblock %}

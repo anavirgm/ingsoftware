@@ -420,7 +420,6 @@ def eliminar_clientes():
 
 ################################## PROVEEDORES ########################################
 
-
 @app.route("/proveedores", methods=["GET", "POST"])
 def proveedores():
     if "loggedin" not in session or session["rol"] != "administrador":
@@ -438,7 +437,8 @@ def proveedores():
         )
         mysql.connection.commit()
         cursor.close()
-        flash("Proveedor agregado correctamente")
+        flash('Proveedor añadido correctamente', 'success')
+        return redirect(url_for('proveedores'))
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM proveedores WHERE status = 1")
@@ -450,6 +450,90 @@ def proveedores():
         proveedores=proveedores,
         username=session["username"],
         rol=session["rol"],
+        current_page="proveedores",
+    )
+
+
+@app.route("/realizar_compra", methods=["GET", "POST"])
+def realizar_compra():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+    # Obtener productos activos
+    cursor.execute("SELECT * FROM productos WHERE status = 1")
+    productos_activos = cursor.fetchall()
+
+    # Obtener clientes activos
+    cursor.execute("SELECT * FROM proveedores WHERE status = 1")
+    proveedores_activos = cursor.fetchall()
+
+    # Obtener usuarios activos
+    cursor.execute("SELECT * FROM usuarios WHERE status = 1")
+    usuarios_activos = cursor.fetchall()
+
+    cursor.close()
+
+    tasa_bcv = requests.get(
+        "https://pydolarvenezuela-api.vercel.app/api/v1/dollar/unit/bcv"
+    ).json()["price"]
+    today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if request.method == "POST":
+        try:
+            marca_de_tiempo = request.form["marca_de_tiempo"]
+            proveedores_id = request.form["proveedores_id"]
+            usuarios_id = session["id"]
+            carrito = json.loads(request.form["carrito"])
+
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+            # Insertar en la tabla transacciones
+            cursor.execute(
+                """
+                INSERT INTO transacciones
+                (marca_de_tiempo, tasa_bcv, proveedores_id, usuarios_id)
+                VALUES (%s, %s, %s, %s)
+                """,
+                (marca_de_tiempo, tasa_bcv, proveedores_id, usuarios_id),
+            )
+            mysql.connection.commit()
+
+            transaccion_id = cursor.lastrowid
+
+            # Insertar en la tabla transacciones_tiene_productos
+            for producto in carrito:
+                cursor.execute(
+                    """
+                    INSERT INTO transacciones_tiene_productos
+                    (transacciones_id, productos_id, cantidad)
+                    VALUES (%s, %s, %s)
+                    """,
+                    (transaccion_id, producto["id"], producto["cantidad"]),
+                )
+
+            mysql.connection.commit()  # Commit final después del bucle
+
+            cursor.close()
+            flash("Compra realizada correctamente")
+            return redirect(url_for("proveedores"))
+
+        except Exception as e:
+            flash(f"Ocurrió un error: {str(e)}")
+            return redirect(url_for("realizar_compra"))
+
+
+    return render_template(
+        "compras.html",
+        productos=productos_activos,
+        proveedores=proveedores_activos,
+        usuarios=usuarios_activos,
+        username=session["username"],
+        rol=session["rol"],
+        tasa_bcv=tasa_bcv,
+        today=today,
+        usuario=session["username"],
         current_page="proveedores",
     )
 
@@ -801,71 +885,71 @@ def respaldar_base():
 
     return send_file(NOMBRE, as_attachment=True)
 
-
 @app.route("/recuperar_base", methods=["POST"])
 def recuperar_base():
     if request.method == "GET":
         return redirect(url_for("herramientas"))
     else:
         if "file" not in request.files:
-            flash("No file part")
+            flash("No file part", 'danger')
             return redirect(url_for("herramientas"))
         file = request.files["file"]
-    if file.filename == "":
-        flash("No selected file")
-        return redirect(request.url)
+        if file.filename == "":
+            flash("No selected file", 'danger')
+            return redirect(request.url)
 
-    if file and file.filename.rsplit(".", 1)[1].lower() == "sql":
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-        file.save(filepath)
-        flash("File uploaded")
+        if file and file.filename.rsplit(".", 1)[1].lower() == "sql":
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+            file.save(filepath)
+            flash("File uploaded", 'success')
 
-        try:
-            # Dropear db vieja
-            subprocess.run(
-                [
-                    "C:\\xampp\\mysql\\bin\\mysqladmin.exe",
-                    "-f",
-                    "-u",
-                    "root",
-                    "drop",
-                    "camicandy",
-                ],
-                check=True,
-            )
-
-            # Crear db de nuevo
-            subprocess.run(
-                [
-                    "C:\\xampp\\mysql\\bin\\mysqladmin.exe",
-                    "-u",
-                    "root",
-                    "create",
-                    "camicandy",
-                ],
-                check=True,
-            )
-
-            # Restaurar db
-            abs_filepath = os.path.abspath(filepath)
-            with open(abs_filepath, "r") as file:
+            try:
+                # Dropear db vieja
                 subprocess.run(
-                    ["C:\\xampp\\mysql\\bin\\mysql.exe", "-u", "root", "camicandy"],
-                    stdin=file,
+                    [
+                        "C:\\xampp\\mysql\\bin\\mysqladmin.exe",
+                        "-f",
+                        "-u",
+                        "root",
+                        "drop",
+                        "camicandy",
+                    ],
                     check=True,
                 )
 
-            flash("Database restored successfully")
-        except subprocess.CalledProcessError as e:
-            flash(f"An error occurred: {e}")
-            return redirect(url_for("herramientas"))
+                # Crear db de nuevo
+                subprocess.run(
+                    [
+                        "C:\\xampp\\mysql\\bin\\mysqladmin.exe",
+                        "-u",
+                        "root",
+                        "create",
+                        "camicandy",
+                    ],
+                    check=True,
+                )
 
-        # Mantenerse en la sección de herramientas
-        return redirect(url_for("herramientas"))
-    else:
-        flash("Invalid file type")
-        return redirect(request.url)
+                # Restaurar db
+                abs_filepath = os.path.abspath(filepath)
+                with open(abs_filepath, "r") as file:
+                    subprocess.run(
+                        ["C:\\xampp\\mysql\\bin\\mysql.exe", "-u", "root", "camicandy"],
+                        stdin=file,
+                        check=True,
+                    )
+
+                flash("Database restored successfully", 'success')
+            except subprocess.CalledProcessError as e:
+                flash(f"An error occurred: {e}", 'error')
+                return redirect(url_for("herramientas"))
+
+            # Mantenerse en la sección de herramientas
+            return redirect(url_for("herramientas"))
+        else:
+            flash("Invalid file type", 'danger')
+            return redirect(request.url)
+
 
 
 @app.route("/buscar_productos", methods=["GET"])

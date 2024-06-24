@@ -16,7 +16,7 @@
     <div class="container_clientes_buscar">
       <input type="text" placeholder="Buscar" oninput="filtrarProveedores(this.value)" />
       <button onclick="mostrarFormulario()">Añadir proveedor</button>
-      <a href="{{ url_for('realizar_venta') }}">
+      <a href="{{ url_for('realizar_compra') }}">
         <button class="Realizar_venta">Realizar compra</button>
       </a>
       <button class="Actualizar" onclick="abrirModalActualizar()">Actualizar</button>
@@ -73,62 +73,95 @@
   
 </main>
 
-<!-- Ventana emergente para agregar un nuevo proveedor -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <span class="close" onclick="cerrarFormulario()">&times;</span>
-    <h2>Agregar Nuevo Proveedor</h2>
-    <form id="formulario" action="{{ url_for('proveedores') }}" method="POST">
-      <label for="nombre">Nombre:</label>
-      <input type="text" id="nombre" name="nombre" required onkeypress="return validarLetras(event)" /><br />
-      <label for="direccion">Dirección:</label>
-      <input type="text" id="direccion" name="direccion" required /><br />
-      <label for="rif">RIF:</label>
-      <input type="text" id="rif" name="rif" required onkeypress="return validarNumeros(event)" /><br />
-      <input type="submit" value="Agregar" />
-    </form>
-  </div>
-</div>
 
-<div id="modal-actualizar" class="modal" style="display: none">
-  <div class="modal-content">
-    <span class="close" onclick="cerrarModalActualizar()">&times;</span>
-    <h2>Actualizar Proveedor</h2>
-    <form id="formulario-actualizar" method="POST" action="{{ url_for('actualizar_proveedor') }}">
-      <input type="hidden" id="proveedor_id_actualizar" name="proveedor_id_actualizar" />
-      <label for="nombre_actualizar">Nombre:</label>
-      <input type="text" id="nombre_actualizar" name="nombre_actualizar" required onkeypress="return validarLetras(event)" /><br />
-      <label for="direccion_actualizar">Dirección:</label>
-      <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
-      <label for="rif_actualizar">RIF:</label>
-      <input type="text" id="rif_actualizar" name="rif_actualizar" required onkeypress="return validarNumeros(event)" /><br />
-      <button type="submit">Actualizar</button>
-    </form>
-  </div>
-</div>
+    <!-- Ventana emergente para agregar un nuevo proveedor -->
+    <div id="modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarFormulario()">&times;</span>
+        <h2>Agregar Nuevo Proveedor</h2>
+        <form
+          id="formulario"
+          action="{{ url_for('proveedores') }}"
+          method="POST"
+        >
+          <label for="nombre">Nombre:</label>
+          <input type="text" id="nombre" name="nombre" required /><br />
+          <label for="direccion">Dirección:</label>
+          <input type="text" id="direccion" name="direccion" required /><br />
+          <label for="rif">RIF:</label>
+          <input type="text" id="rif" name="rif" required /><br />
+          <input type="submit" value="Agregar" />
+        </form>
+      </div>
+    </div>
+
+    <div id="modal-actualizar" class="modal" style="display: none">
+      <div class="modal-content">
+        <span class="close" onclick="cerrarModalActualizar()">&times;</span>
+        <h2>Actualizar Proveedor</h2>
+        <form
+          id="formulario-actualizar"
+          method="POST"
+          action="{{ url_for('actualizar_proveedor') }}"
+        >
+          <input
+            type="hidden"
+            id="proveedor_id_actualizar"
+            name="proveedor_id_actualizar"
+          />
+          <label for="nombre_actualizar">Nombre:</label>
+          <input
+            type="text"
+            id="nombre_actualizar"
+            name="nombre_actualizar"
+            required
+          /><br />
+          <label for="direccion_actualizar">Dirección:</label>
+          <input
+            type="text"
+            id="direccion_actualizar"
+            name="direccion_actualizar"
+            required
+          /><br />
+          <label for="rif_actualizar">RIF:</label>
+          <input
+            type="text"
+            id="rif_actualizar"
+            name="rif_actualizar"
+            required
+          /><br />
+          <button type="submit">Actualizar</button>
+        </form>
+      </div>
+    </div>
 
 {% endblock %}
 
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 <script>
-   function validarLetras(event) {
-    // Permitir: backspace, delete, tab, escape, enter y .
-    if (
-      ["Backspace", "Delete", "Tab", "Escape", "Enter"].indexOf(event.key) !== -1 ||
-      ((event.ctrlKey || event.metaKey) && ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
-      ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !== -1
-    ) {
-      return true;
-    }
-    // Asegurarse de que es una letra
-    if (/^[a-zA-Z]$/.test(event.key)) {
-      return true;
-    } else {
-      event.preventDefault();
-      return false;
-    }
-  }
+   function validarNumero(event) {
+        // Permitir: backspace, delete, tab, escape, enter y .
+        if (
+          ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
+            event.key,
+          ) !== -1 ||
+          ((event.ctrlKey || event.metaKey) &&
+            ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+          ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(
+            event.key,
+          ) !== -1
+        ) {
+          return true;
+        }
+        // Asegurarse de que es un número
+        if (!/^[0-9]$/.test(event.key)) {
+          event.preventDefault();
+          return false;
+        }
+        return true;
+      }
+
 
   function validarNumeros(event) {
     // Permitir: backspace, delete, tab, escape, enter y .

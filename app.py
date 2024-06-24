@@ -47,7 +47,9 @@ def login():
         password = request.form["password"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM usuarios WHERE cedula = %s AND status = 1", (username,))
+        cursor.execute(
+            "SELECT * FROM usuarios WHERE cedula = %s AND status = 1", (username,)
+        )
         user = cursor.fetchone()
 
         if user and bcrypt.check_password_hash(user["hash_de_contrasena"], password):
@@ -420,6 +422,7 @@ def eliminar_clientes():
 
 ################################## PROVEEDORES ########################################
 
+
 @app.route("/proveedores", methods=["GET", "POST"])
 def proveedores():
     if "loggedin" not in session or session["rol"] != "administrador":
@@ -437,8 +440,8 @@ def proveedores():
         )
         mysql.connection.commit()
         cursor.close()
-        flash('Proveedor añadido correctamente', 'success')
-        return redirect(url_for('proveedores'))
+        flash("Proveedor añadido correctamente", "success")
+        return redirect(url_for("proveedores"))
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM proveedores WHERE status = 1")
@@ -523,7 +526,6 @@ def realizar_compra():
             flash(f"Ocurrió un error: {str(e)}")
             return redirect(url_for("realizar_compra"))
 
-
     return render_template(
         "compras.html",
         productos=productos_activos,
@@ -601,7 +603,8 @@ def recuperar_contrasena():
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute(
-            "SELECT pregunta_seguridad FROM usuarios WHERE cedula = %s AND status = 1", (username,)
+            "SELECT pregunta_seguridad FROM usuarios WHERE cedula = %s AND status = 1",
+            (username,),
         )
         user = cursor.fetchone()
 
@@ -625,7 +628,9 @@ def verificar_respuesta():
         username = session["recuperar_username"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM usuarios WHERE cedula = %s AND status = 1;", (username,))
+        cursor.execute(
+            "SELECT * FROM usuarios WHERE cedula = %s AND status = 1;", (username,)
+        )
         user = cursor.fetchone()
 
         if user and bcrypt.check_password_hash(user["respuesta_seguridad"], respuesta):
@@ -773,7 +778,6 @@ def agregar_empleado():
         mysql.connection.commit()
         cursor.close()
 
-        
         flash("Empleado agregado correctamente")
         return redirect(url_for("herramientas"))
 
@@ -842,7 +846,7 @@ def listar_empleados():
         return redirect(url_for("login"))
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    
+
     if request.method == "POST" and "buscar_empleado" in request.form:
         termino_busqueda = request.form["buscar_empleado"]
         query = """
@@ -850,10 +854,14 @@ def listar_empleados():
             WHERE rol = 'empleado' AND status = 1
             AND (id LIKE %s OR nombre LIKE %s OR cedula LIKE %s);
         """
-        cursor.execute(query, 
-                       ("%" + termino_busqueda + "%", 
-                        "%" + termino_busqueda + "%", 
-                        "%" + termino_busqueda + "%"))
+        cursor.execute(
+            query,
+            (
+                "%" + termino_busqueda + "%",
+                "%" + termino_busqueda + "%",
+                "%" + termino_busqueda + "%",
+            ),
+        )
     else:
         query = "SELECT * FROM usuarios WHERE rol = 'empleado' AND status = 1;"
         cursor.execute(query)
@@ -867,7 +875,6 @@ def listar_empleados():
         rol=session.get("rol"),
         empleados=empleados,
     )
-
 
 
 @app.route("/respaldar_base", methods=["POST"])
@@ -885,24 +892,25 @@ def respaldar_base():
 
     return send_file(NOMBRE, as_attachment=True)
 
+
 @app.route("/recuperar_base", methods=["POST"])
 def recuperar_base():
     if request.method == "GET":
         return redirect(url_for("herramientas"))
     else:
         if "file" not in request.files:
-            flash("No file part", 'danger')
+            flash("No file part", "danger")
             return redirect(url_for("herramientas"))
         file = request.files["file"]
         if file.filename == "":
-            flash("No selected file", 'danger')
+            flash("No selected file", "danger")
             return redirect(request.url)
 
         if file and file.filename.rsplit(".", 1)[1].lower() == "sql":
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             file.save(filepath)
-            flash("File uploaded", 'success')
+            flash("File uploaded", "success")
 
             try:
                 # Dropear db vieja
@@ -939,17 +947,16 @@ def recuperar_base():
                         check=True,
                     )
 
-                flash("Database restored successfully", 'success')
+                flash("Database restored successfully", "success")
             except subprocess.CalledProcessError as e:
-                flash(f"An error occurred: {e}", 'error')
+                flash(f"An error occurred: {e}", "error")
                 return redirect(url_for("herramientas"))
 
             # Mantenerse en la sección de herramientas
             return redirect(url_for("herramientas"))
         else:
-            flash("Invalid file type", 'danger')
+            flash("Invalid file type", "danger")
             return redirect(request.url)
-
 
 
 @app.route("/buscar_productos", methods=["GET"])

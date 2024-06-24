@@ -174,7 +174,9 @@ a.selector {
 body.dark {
   background: #2c2c2c;
   color: white;
-  transition: background 0.3s, color 0.3s;
+  transition:
+    background 0.3s,
+    color 0.3s;
 }
 
 body.dark header {
@@ -279,7 +281,6 @@ label {
   margin-bottom: 5px;
 }
 
-
 .alert-success {
   position: fixed;
   top: 20px;
@@ -304,5 +305,5 @@ label {
 }
 
 .alert-sucess .bi {
-  color:#155724; 
+  color: #155724;
 }

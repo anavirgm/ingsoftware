@@ -1280,8 +1280,8 @@ def usuarios_reporte():
     pdf.set_font("Times", size=14)
 
     # format data
-    for usuario in usuarios:
-        usuario["status"] = "Activo" if usuario["status"] else "Inactivo"
+    for proveedor in usuarios:
+        proveedor["status"] = "Activo" if proveedor["status"] else "Inactivo"
 
     # order of columns in table
     desired_order = {
@@ -1291,8 +1291,8 @@ def usuarios_reporte():
         "status": "Estado",
     }
     ordered_clientes = [
-        {desired_order[key]: usuario[key] for key in desired_order}
-        for usuario in usuarios
+        {desired_order[key]: proveedor[key] for key in desired_order}
+        for proveedor in usuarios
     ]
 
     # create report
@@ -1325,6 +1325,90 @@ def usuarios_reporte():
 
     # save report
     filename = f"{datetime.now().strftime('%Y-%m-%d')}_usuarios.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
+@app.route("/ventas_reporte", methods=["GET"])
+def ventas_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM transacciones WHERE clientes_id IS NOT NULL")
+    ventas = cursor.fetchall()
+
+    if not ventas:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de ventas")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for venta in ventas:
+        venta["importe_en_bolivares"] = (
+            f"Bs. {float(venta['importe_en_dolares']) * get_tasa_bcv():.2f}"
+        )
+        venta["importe_en_dolares"] = f"$ {venta['importe_en_dolares']}"
+        venta["marca_de_tiempo"] = venta["marca_de_tiempo"].strftime(
+            "%d-%m-%Y %H:%M:%S"
+        )
+        venta["tasa_bcv"] = f"Bs. {venta['tasa_bcv']:.2f}"
+        cursor.execute(
+            "SELECT nombre FROM usuarios WHERE id = %s", (venta["usuarios_id"],)
+        )
+        venta["usuarios_id"] = cursor.fetchone()["nombre"]
+        cursor.execute(
+            "SELECT nombre FROM clientes WHERE id = %s", (venta["clientes_id"],)
+        )
+        venta["clientes_id"] = cursor.fetchone()["nombre"]
+
+    cursor.close()
+
+    # order of columns in table
+    desired_order = {
+        "marca_de_tiempo": "Marca de tiempo",
+        "tasa_bcv": "Tasa BCV",
+        "importe_en_dolares": "Importe en dólares",
+        "clientes_id": "Cliente",
+        "usuarios_id": "Ejecutado por",
+    }
+    ordered_clientes = [
+        {desired_order[key]: venta[key] for key in desired_order} for venta in ventas
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_clientes:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del cliente en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_ventas.pdf"
     filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
     pdf.output(filepath)
 

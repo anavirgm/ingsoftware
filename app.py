@@ -1039,6 +1039,14 @@ def page_not_found(e):
     return redirect(url_for("dashboard"))
 
 
+# CREACION DE REPORTES
+############################################
+############################################
+############################################
+############################################
+############################################
+
+
 @app.route("/productos_reporte", methods=["GET"])
 def productos_reporte():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -1249,6 +1257,74 @@ def proveedores_reporte():
 
     # save report
     filename = f"{datetime.now().strftime('%Y-%m-%d')}_proveedores.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
+@app.route("/usuarios_reporte", methods=["GET"])
+def usuarios_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM usuarios")
+    usuarios = cursor.fetchall()
+    cursor.close()
+
+    if not usuarios:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de usuarios")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for usuario in usuarios:
+        usuario["status"] = "Activo" if usuario["status"] else "Inactivo"
+
+    # order of columns in table
+    desired_order = {
+        "nombre": "Nombre",
+        "cedula": "Cédula",
+        "rol": "Rol",
+        "status": "Estado",
+    }
+    ordered_clientes = [
+        {desired_order[key]: usuario[key] for key in desired_order}
+        for usuario in usuarios
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_clientes:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del cliente en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_usuarios.pdf"
     filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
     pdf.output(filepath)
 

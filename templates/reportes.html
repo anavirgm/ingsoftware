@@ -48,8 +48,13 @@
     </div>
 
     <div class="card" id="transacciones-card">
-      <h2>Empleados</h2>
-      <button class="imprimir-btn" onclick="#">Imprimir reporte</button>
+      <h2>Usuarios</h2>
+      <button
+        class="imprimir-btn"
+        onclick="window.location.href = '{{ url_for('usuarios_reporte') }}'"
+      >
+        Imprimir reporte
+      </button>
     </div>
 
     <div class="card" id="transacciones-card">

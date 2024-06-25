@@ -1415,5 +1415,89 @@ def ventas_reporte():
     return send_file(filepath, as_attachment=True, mimetype="application/pdf")
 
 
+@app.route("/compras_reporte", methods=["GET"])
+def compras_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM transacciones WHERE proveedores_id IS NOT NULL")
+    compras = cursor.fetchall()
+
+    if not compras:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de compras")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for compra in compras:
+        compra["importe_en_bolivares"] = (
+            f"Bs. {float(compra['importe_en_dolares']) * get_tasa_bcv():.2f}"
+        )
+        compra["importe_en_dolares"] = f"$ {compra['importe_en_dolares']}"
+        compra["marca_de_tiempo"] = compra["marca_de_tiempo"].strftime(
+            "%d-%m-%Y %H:%M:%S"
+        )
+        compra["tasa_bcv"] = f"Bs. {compra['tasa_bcv']:.2f}"
+        cursor.execute(
+            "SELECT nombre FROM usuarios WHERE id = %s", (compra["usuarios_id"],)
+        )
+        compra["usuarios_id"] = cursor.fetchone()["nombre"]
+        cursor.execute(
+            "SELECT nombre FROM proveedores WHERE id = %s", (compra["proveedores_id"],)
+        )
+        compra["proveedores_id"] = cursor.fetchone()["nombre"]
+
+    cursor.close()
+
+    # order of columns in table
+    desired_order = {
+        "marca_de_tiempo": "Marca de tiempo",
+        "tasa_bcv": "Tasa BCV",
+        "importe_en_dolares": "Importe en dólares",
+        "proveedores_id": "Proveedor",
+        "usuarios_id": "Ejecutado por",
+    }
+    ordered_clientes = [
+        {desired_order[key]: compra[key] for key in desired_order} for compra in compras
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_clientes:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del cliente en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_compras.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
 if __name__ == "__main__":
     app.run(debug=True)

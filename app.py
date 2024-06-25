@@ -1118,5 +1118,74 @@ def productos_reporte():
     return send_file(filepath, as_attachment=True, mimetype="application/pdf")
 
 
+@app.route("/clientes_reporte", methods=["GET"])
+def clientes_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM clientes")
+    clientes = cursor.fetchall()
+    cursor.close()
+
+    if not clientes:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de clientes")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for cliente in clientes:
+        cliente["status"] = "Activo" if cliente["status"] else "Inactivo"
+
+    # order of columns in table
+    desired_order = {
+        "nombre": "Nombre",
+        "cedula": "Cédula",
+        "direccion": "Dirección",
+        "telefono": "Teléfono",
+        "status": "Estado",
+    }
+    ordered_clientes = [
+        {desired_order[key]: cliente[key] for key in desired_order}
+        for cliente in clientes
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_clientes:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del cliente en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_clientes.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
 if __name__ == "__main__":
     app.run(debug=True)

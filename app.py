@@ -12,20 +12,25 @@ from flask import (
 from werkzeug.utils import secure_filename
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
+from fpdf import FPDF
 from datetime import datetime
+
 import MySQLdb.cursors
 import subprocess
 import os
 import requests
 
-
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "uploads"
+app.config["REPORTES_FOLDER"] = "reportes"
 app.secret_key = "your_secret_key"
 bcrypt = Bcrypt(app)
 
+# Crear directorios si no existen
 if not os.path.exists(app.config["UPLOAD_FOLDER"]):
     os.makedirs(app.config["UPLOAD_FOLDER"])
+if not os.path.exists(app.config["REPORTES_FOLDER"]):
+    os.makedirs(app.config["REPORTES_FOLDER"])
 
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
@@ -34,6 +39,48 @@ app.config["MYSQL_DB"] = "camicandy"
 
 mysql = MySQL(app)
 bcrypt = Bcrypt(app)
+
+
+def get_tasa_bcv():
+    return requests.get(
+        "https://pydolarvenezuela-api.vercel.app/api/v1/dollar/unit/bcv"
+    ).json()["price"]
+
+
+class PDF(FPDF):
+    def __init__(self, title):
+        super().__init__()
+        self.title = title
+
+    def header(self):
+        # Rendering logo:
+        self.image("static/imagenes/icons/camidark.png", 10, 1, 50)
+        # Setting font: helvetica bold 15
+        self.set_font("helvetica", "B", 15)
+
+        # Printing title:
+        width = self.get_string_width(self.title) + 6
+        # Moving cursor to the right:
+        self.set_x((210 - width) / 2)
+        self.cell(
+            width,
+            9,
+            self.title,
+            border=1,
+            align="C",
+        )
+        # print date and hour
+        self.cell(0, 10, f"{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}", 0, 1, "R")
+        # Performing a line break:
+        self.ln(20)
+
+    def footer(self):
+        # Position cursor at 1.5 cm from bottom:
+        self.set_y(-15)
+        # Setting font: helvetica italic 10
+        self.set_font("helvetica", "I", 10)
+        # Printing page number:
+        self.cell(0, 12, f"Página {self.page_no()}/{{nb}}", align="C")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -314,9 +361,7 @@ def realizar_venta():
 
     cursor.close()
 
-    tasa_bcv = requests.get(
-        "https://pydolarvenezuela-api.vercel.app/api/v1/dollar/unit/bcv"
-    ).json()["price"]
+    tasa_bcv = get_tasa_bcv()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if request.method == "POST":
@@ -478,9 +523,7 @@ def realizar_compra():
 
     cursor.close()
 
-    tasa_bcv = requests.get(
-        "https://pydolarvenezuela-api.vercel.app/api/v1/dollar/unit/bcv"
-    ).json()["price"]
+    tasa_bcv = get_tasa_bcv()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if request.method == "POST":
@@ -994,6 +1037,85 @@ def logout():
 @app.errorhandler(404)
 def page_not_found(e):
     return redirect(url_for("dashboard"))
+
+
+@app.route("/productos_reporte", methods=["GET"])
+def productos_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM productos")
+    productos = cursor.fetchall()
+    cursor.close()
+
+    if not productos:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de productos")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for producto in productos:
+        producto["precio_en_bolivares"] = float(
+            f"{float(producto['precio_en_dolares']) * get_tasa_bcv():,.2f}"
+        )
+        producto["status"] = "Activo" if producto["status"] else "Inactivo"
+        producto["cantidad_disponible"] = f"{producto['cantidad_disponible']} unidades"
+        producto["precio_en_bolivares"] = f"Bs. {producto['precio_en_bolivares']}"
+        producto["precio_en_dolares"] = f"${producto['precio_en_dolares']}"
+        producto["fecha_de_vencimiento"] = producto["fecha_de_vencimiento"].strftime(
+            "%Y-%m-%d"
+        )
+
+    # order of columns in table
+    desired_order = {
+        "nombre": "Nombre",
+        "cantidad_disponible": "Cantidad disponible",
+        "precio_en_dolares": "Precio en dólares",
+        "precio_en_bolivares": "Precio en bolívares",
+        "fecha_de_vencimiento": "Fecha de vencimiento",
+        "status": "Estado",
+    }
+    ordered_productos = [
+        {desired_order[key]: producto[key] for key in desired_order}
+        for producto in productos
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_productos:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del producto en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_productos.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
 
 
 if __name__ == "__main__":

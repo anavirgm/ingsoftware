@@ -12,20 +12,25 @@ from flask import (
 from werkzeug.utils import secure_filename
 from flask_mysqldb import MySQL
 from flask_bcrypt import Bcrypt
+from fpdf import FPDF
 from datetime import datetime
+
 import MySQLdb.cursors
 import subprocess
 import os
 import requests
 
-
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "uploads"
+app.config["REPORTES_FOLDER"] = "reportes"
 app.secret_key = "your_secret_key"
 bcrypt = Bcrypt(app)
 
+# Crear directorios si no existen
 if not os.path.exists(app.config["UPLOAD_FOLDER"]):
     os.makedirs(app.config["UPLOAD_FOLDER"])
+if not os.path.exists(app.config["REPORTES_FOLDER"]):
+    os.makedirs(app.config["REPORTES_FOLDER"])
 
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
@@ -34,6 +39,48 @@ app.config["MYSQL_DB"] = "camicandy"
 
 mysql = MySQL(app)
 bcrypt = Bcrypt(app)
+
+
+def get_tasa_bcv():
+    return requests.get(
+        "https://pydolarvenezuela-api.vercel.app/api/v1/dollar/unit/bcv"
+    ).json()["price"]
+
+
+class PDF(FPDF):
+    def __init__(self, title):
+        super().__init__()
+        self.title = title
+
+    def header(self):
+        # Rendering logo:
+        self.image("static/imagenes/icons/camidark.png", 10, 1, 50)
+        # Setting font: helvetica bold 15
+        self.set_font("helvetica", "B", 15)
+
+        # Printing title:
+        width = self.get_string_width(self.title) + 6
+        # Moving cursor to the right:
+        self.set_x((210 - width) / 2)
+        self.cell(
+            width,
+            9,
+            self.title,
+            border=1,
+            align="C",
+        )
+        # print date and hour
+        self.cell(0, 10, f"{datetime.now().strftime('%d-%m-%Y %H:%M:%S')}", 0, 1, "R")
+        # Performing a line break:
+        self.ln(20)
+
+    def footer(self):
+        # Position cursor at 1.5 cm from bottom:
+        self.set_y(-15)
+        # Setting font: helvetica italic 10
+        self.set_font("helvetica", "I", 10)
+        # Printing page number:
+        self.cell(0, 12, f"Página {self.page_no()}/{{nb}}", align="C")
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -47,7 +94,9 @@ def login():
         password = request.form["password"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM usuarios WHERE cedula = %s AND status = 1", (username,))
+        cursor.execute(
+            "SELECT * FROM usuarios WHERE cedula = %s AND status = 1", (username,)
+        )
         user = cursor.fetchone()
 
         if user and bcrypt.check_password_hash(user["hash_de_contrasena"], password):
@@ -312,9 +361,7 @@ def realizar_venta():
 
     cursor.close()
 
-    tasa_bcv = requests.get(
-        "https://pydolarvenezuela-api.vercel.app/api/v1/dollar/unit/bcv"
-    ).json()["price"]
+    tasa_bcv = get_tasa_bcv()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if request.method == "POST":
@@ -420,6 +467,7 @@ def eliminar_clientes():
 
 ################################## PROVEEDORES ########################################
 
+
 @app.route("/proveedores", methods=["GET", "POST"])
 def proveedores():
     if "loggedin" not in session or session["rol"] != "administrador":
@@ -437,8 +485,8 @@ def proveedores():
         )
         mysql.connection.commit()
         cursor.close()
-        flash('Proveedor añadido correctamente', 'success')
-        return redirect(url_for('proveedores'))
+        flash("Proveedor añadido correctamente", "success")
+        return redirect(url_for("proveedores"))
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM proveedores WHERE status = 1")
@@ -475,9 +523,7 @@ def realizar_compra():
 
     cursor.close()
 
-    tasa_bcv = requests.get(
-        "https://pydolarvenezuela-api.vercel.app/api/v1/dollar/unit/bcv"
-    ).json()["price"]
+    tasa_bcv = get_tasa_bcv()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     if request.method == "POST":
@@ -522,7 +568,6 @@ def realizar_compra():
         except Exception as e:
             flash(f"Ocurrió un error: {str(e)}")
             return redirect(url_for("realizar_compra"))
-
 
     return render_template(
         "compras.html",
@@ -601,7 +646,8 @@ def recuperar_contrasena():
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         cursor.execute(
-            "SELECT pregunta_seguridad FROM usuarios WHERE cedula = %s AND status = 1", (username,)
+            "SELECT pregunta_seguridad FROM usuarios WHERE cedula = %s AND status = 1",
+            (username,),
         )
         user = cursor.fetchone()
 
@@ -625,7 +671,9 @@ def verificar_respuesta():
         username = session["recuperar_username"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute("SELECT * FROM usuarios WHERE cedula = %s AND status = 1;", (username,))
+        cursor.execute(
+            "SELECT * FROM usuarios WHERE cedula = %s AND status = 1;", (username,)
+        )
         user = cursor.fetchone()
 
         if user and bcrypt.check_password_hash(user["respuesta_seguridad"], respuesta):
@@ -773,7 +821,6 @@ def agregar_empleado():
         mysql.connection.commit()
         cursor.close()
 
-        
         flash("Empleado agregado correctamente")
         return redirect(url_for("herramientas"))
 
@@ -842,7 +889,7 @@ def listar_empleados():
         return redirect(url_for("login"))
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    
+
     if request.method == "POST" and "buscar_empleado" in request.form:
         termino_busqueda = request.form["buscar_empleado"]
         query = """
@@ -850,10 +897,14 @@ def listar_empleados():
             WHERE rol = 'empleado' AND status = 1
             AND (id LIKE %s OR nombre LIKE %s OR cedula LIKE %s);
         """
-        cursor.execute(query, 
-                       ("%" + termino_busqueda + "%", 
-                        "%" + termino_busqueda + "%", 
-                        "%" + termino_busqueda + "%"))
+        cursor.execute(
+            query,
+            (
+                "%" + termino_busqueda + "%",
+                "%" + termino_busqueda + "%",
+                "%" + termino_busqueda + "%",
+            ),
+        )
     else:
         query = "SELECT * FROM usuarios WHERE rol = 'empleado' AND status = 1;"
         cursor.execute(query)
@@ -867,7 +918,6 @@ def listar_empleados():
         rol=session.get("rol"),
         empleados=empleados,
     )
-
 
 
 @app.route("/respaldar_base", methods=["POST"])
@@ -885,24 +935,25 @@ def respaldar_base():
 
     return send_file(NOMBRE, as_attachment=True)
 
+
 @app.route("/recuperar_base", methods=["POST"])
 def recuperar_base():
     if request.method == "GET":
         return redirect(url_for("herramientas"))
     else:
         if "file" not in request.files:
-            flash("No file part", 'danger')
+            flash("No file part", "danger")
             return redirect(url_for("herramientas"))
         file = request.files["file"]
         if file.filename == "":
-            flash("No selected file", 'danger')
+            flash("No selected file", "danger")
             return redirect(request.url)
 
         if file and file.filename.rsplit(".", 1)[1].lower() == "sql":
             filename = secure_filename(file.filename)
             filepath = os.path.join(app.config["UPLOAD_FOLDER"], filename)
             file.save(filepath)
-            flash("File uploaded", 'success')
+            flash("File uploaded", "success")
 
             try:
                 # Dropear db vieja
@@ -939,17 +990,16 @@ def recuperar_base():
                         check=True,
                     )
 
-                flash("Database restored successfully", 'success')
+                flash("Database restored successfully", "success")
             except subprocess.CalledProcessError as e:
-                flash(f"An error occurred: {e}", 'error')
+                flash(f"An error occurred: {e}", "error")
                 return redirect(url_for("herramientas"))
 
             # Mantenerse en la sección de herramientas
             return redirect(url_for("herramientas"))
         else:
-            flash("Invalid file type", 'danger')
+            flash("Invalid file type", "danger")
             return redirect(request.url)
-
 
 
 @app.route("/buscar_productos", methods=["GET"])
@@ -987,6 +1037,466 @@ def logout():
 @app.errorhandler(404)
 def page_not_found(e):
     return redirect(url_for("dashboard"))
+
+
+# CREACION DE REPORTES
+############################################
+############################################
+############################################
+############################################
+############################################
+
+
+@app.route("/productos_reporte", methods=["GET"])
+def productos_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM productos")
+    productos = cursor.fetchall()
+    cursor.close()
+
+    if not productos:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de productos")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for producto in productos:
+        producto["precio_en_bolivares"] = float(
+            f"{float(producto['precio_en_dolares']) * get_tasa_bcv():,.2f}"
+        )
+        producto["status"] = "Activo" if producto["status"] else "Inactivo"
+        producto["cantidad_disponible"] = f"{producto['cantidad_disponible']} unidades"
+        producto["precio_en_bolivares"] = f"Bs. {producto['precio_en_bolivares']}"
+        producto["precio_en_dolares"] = f"${producto['precio_en_dolares']}"
+        producto["fecha_de_vencimiento"] = producto["fecha_de_vencimiento"].strftime(
+            "%Y-%m-%d"
+        )
+
+    # order of columns in table
+    desired_order = {
+        "nombre": "Nombre",
+        "cantidad_disponible": "Cantidad disponible",
+        "precio_en_dolares": "Precio en dólares",
+        "precio_en_bolivares": "Precio en bolívares",
+        "fecha_de_vencimiento": "Fecha de vencimiento",
+        "status": "Estado",
+    }
+    ordered_productos = [
+        {desired_order[key]: producto[key] for key in desired_order}
+        for producto in productos
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_productos:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del producto en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_productos.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
+@app.route("/clientes_reporte", methods=["GET"])
+def clientes_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM clientes")
+    clientes = cursor.fetchall()
+    cursor.close()
+
+    if not clientes:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de clientes")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for cliente in clientes:
+        cliente["status"] = "Activo" if cliente["status"] else "Inactivo"
+
+    # order of columns in table
+    desired_order = {
+        "nombre": "Nombre",
+        "cedula": "Cédula",
+        "direccion": "Dirección",
+        "telefono": "Teléfono",
+        "status": "Estado",
+    }
+    ordered_clientes = [
+        {desired_order[key]: cliente[key] for key in desired_order}
+        for cliente in clientes
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_clientes:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del cliente en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_clientes.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
+@app.route("/proveedores_reporte", methods=["GET"])
+def proveedores_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM proveedores")
+    proveedores = cursor.fetchall()
+    cursor.close()
+
+    if not proveedores:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de proveedores")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for proveedor in proveedores:
+        proveedor["status"] = "Activo" if proveedor["status"] else "Inactivo"
+
+    # order of columns in table
+    desired_order = {
+        "nombre": "Nombre",
+        "rif": "RIF",
+        "direccion": "Dirección",
+        "status": "Estado",
+    }
+    ordered_clientes = [
+        {desired_order[key]: proveedor[key] for key in desired_order}
+        for proveedor in proveedores
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_clientes:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del cliente en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_proveedores.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
+@app.route("/usuarios_reporte", methods=["GET"])
+def usuarios_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM usuarios")
+    usuarios = cursor.fetchall()
+    cursor.close()
+
+    if not usuarios:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de usuarios")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for proveedor in usuarios:
+        proveedor["status"] = "Activo" if proveedor["status"] else "Inactivo"
+
+    # order of columns in table
+    desired_order = {
+        "nombre": "Nombre",
+        "cedula": "Cédula",
+        "rol": "Rol",
+        "status": "Estado",
+    }
+    ordered_clientes = [
+        {desired_order[key]: proveedor[key] for key in desired_order}
+        for proveedor in usuarios
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_clientes:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del cliente en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_usuarios.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
+@app.route("/ventas_reporte", methods=["GET"])
+def ventas_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM transacciones WHERE clientes_id IS NOT NULL")
+    ventas = cursor.fetchall()
+
+    if not ventas:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de ventas")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for venta in ventas:
+        venta["importe_en_bolivares"] = (
+            f"Bs. {float(venta['importe_en_dolares']) * get_tasa_bcv():.2f}"
+        )
+        venta["importe_en_dolares"] = f"$ {venta['importe_en_dolares']}"
+        venta["marca_de_tiempo"] = venta["marca_de_tiempo"].strftime(
+            "%d-%m-%Y %H:%M:%S"
+        )
+        venta["tasa_bcv"] = f"Bs. {venta['tasa_bcv']:.2f}"
+        cursor.execute(
+            "SELECT nombre FROM usuarios WHERE id = %s", (venta["usuarios_id"],)
+        )
+        venta["usuarios_id"] = cursor.fetchone()["nombre"]
+        cursor.execute(
+            "SELECT nombre FROM clientes WHERE id = %s", (venta["clientes_id"],)
+        )
+        venta["clientes_id"] = cursor.fetchone()["nombre"]
+
+    cursor.close()
+
+    # order of columns in table
+    desired_order = {
+        "marca_de_tiempo": "Marca de tiempo",
+        "tasa_bcv": "Tasa BCV",
+        "importe_en_dolares": "Importe en dólares",
+        "clientes_id": "Cliente",
+        "usuarios_id": "Ejecutado por",
+    }
+    ordered_clientes = [
+        {desired_order[key]: venta[key] for key in desired_order} for venta in ventas
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_clientes:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del cliente en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_ventas.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
+@app.route("/compras_reporte", methods=["GET"])
+def compras_reporte():
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM transacciones WHERE proveedores_id IS NOT NULL")
+    compras = cursor.fetchall()
+
+    if not compras:
+        flash("No existen registros en la base de datos")
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de compras")
+    pdf.add_page()
+    pdf.set_font("Times", size=14)
+
+    # format data
+    for compra in compras:
+        compra["importe_en_bolivares"] = (
+            f"Bs. {float(compra['importe_en_dolares']) * get_tasa_bcv():.2f}"
+        )
+        compra["importe_en_dolares"] = f"$ {compra['importe_en_dolares']}"
+        compra["marca_de_tiempo"] = compra["marca_de_tiempo"].strftime(
+            "%d-%m-%Y %H:%M:%S"
+        )
+        compra["tasa_bcv"] = f"Bs. {compra['tasa_bcv']:.2f}"
+        cursor.execute(
+            "SELECT nombre FROM usuarios WHERE id = %s", (compra["usuarios_id"],)
+        )
+        compra["usuarios_id"] = cursor.fetchone()["nombre"]
+        cursor.execute(
+            "SELECT nombre FROM proveedores WHERE id = %s", (compra["proveedores_id"],)
+        )
+        compra["proveedores_id"] = cursor.fetchone()["nombre"]
+
+    cursor.close()
+
+    # order of columns in table
+    desired_order = {
+        "marca_de_tiempo": "Marca de tiempo",
+        "tasa_bcv": "Tasa BCV",
+        "importe_en_dolares": "Importe en dólares",
+        "proveedores_id": "Proveedor",
+        "usuarios_id": "Ejecutado por",
+    }
+    ordered_clientes = [
+        {desired_order[key]: compra[key] for key in desired_order} for compra in compras
+    ]
+
+    # create report
+    with pdf.table() as table:
+        # header
+        header_row = table.row()
+        for cell in desired_order.values():
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for data_row in ordered_clientes:
+            row = table.row()
+            for i, datum in enumerate(data_row):
+                # imprimir el nombre del cliente en negrita y a la izquierda
+                if i == 0:
+                    pdf.set_font("Times", "B", 14)
+                    row.cell(
+                        str(data_row[datum]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=14)
+                else:
+                    row.cell(
+                        str(data_row[datum]),
+                        align="R",
+                    )
+
+    # save report
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_compras.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
+
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
 
 
 if __name__ == "__main__":

@@ -242,8 +242,6 @@ a.selector {
   color: #555;
 }
 
-
-
 /* estilos de las cards clientes */
 .container_clientes_buscar {
   padding-top: 10px;
@@ -375,10 +373,8 @@ body.dark .large-card p {
   height: 256px;
 }
 
-
 body.dark * {
   color: white;
-  
 }
 
 body.dark button,

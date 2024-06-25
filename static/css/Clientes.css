@@ -484,13 +484,6 @@ body.dark .modal input[type="submit"]:hover {
   background-color: #4cae4c;
 }
 
-
-
-
-
-
-
-
 /* Estilos alerta de actualizar */
 .alert {
   position: fixed;
@@ -509,7 +502,7 @@ body.dark .modal input[type="submit"]:hover {
 }
 
 .alert.show {
-  right: 20px; 
+  right: 20px;
 }
 
 .alert-primary {
@@ -521,7 +514,6 @@ body.dark .modal input[type="submit"]:hover {
 .alert-primary .bi {
   color: #512e5f;
 }
-
 
 .alert-success {
   position: fixed;
@@ -547,9 +539,8 @@ body.dark .modal input[type="submit"]:hover {
 }
 
 .alert-sucess .bi {
-  color:#155724; 
+  color: #155724;
 }
-
 
 /* Estilos alerta de eliminar */
 .alert-eliminar {
@@ -566,9 +557,9 @@ body.dark .modal input[type="submit"]:hover {
   align-items: center;
   transition: right 0.5s ease-in-out;
   padding-right: 2rem;
-  background-color: #f8d7da; 
+  background-color: #f8d7da;
   color: #842029;
-  border-color: #f5c2c7; 
+  border-color: #f5c2c7;
 }
 
 .alert-eliminar.show {
@@ -576,7 +567,7 @@ body.dark .modal input[type="submit"]:hover {
 }
 
 .alert-eliminar .bi {
-  color: #842029; 
+  color: #842029;
 }
 
 /* Clases adicionales */
@@ -604,13 +595,14 @@ body.dark .modal input[type="submit"]:hover {
   z-index: 2;
   padding: 1.25rem 1rem;
   cursor: pointer;
-  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+  background: transparent
+    url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e")
+    center/1em auto no-repeat;
   width: 1em;
   height: 1em;
   border: 0;
   border-radius: 0.25rem;
   opacity: 0.5;
-
 }
 
 .btn-close:focus {

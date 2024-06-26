@@ -779,10 +779,16 @@ def herramientas():
     if "loggedin" not in session or session["rol"] != "administrador":
         return redirect(url_for("dashboard"))
 
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute("SELECT * FROM usuarios")
+    all_users = cursor.fetchall()
+    cursor.close()
+
     return render_template(
         "herramientas.html",
         username=session["username"],
         rol=session["rol"],
+        usuarios=all_users,
         herramientas=herramientas,
         current_page="herramientas",
     )
@@ -832,55 +838,77 @@ def actualizar_empleado():
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
-    empleado_id = request.form.get(
-        "id_empleado"
-    )  # Asumiendo que el ID del empleado está en el formulario
-    cedula = request.form["cedula"]
-    nombre = request.form["nombre"]
-    rol = request.form["rol"]
-    hash_contrasena = bcrypt.generate_password_hash(
-        request.form["hash_contrasena"]
-    ).decode(
-        "utf-8"
-    )  # Hashear la contraseña
-    pregunta_seguridad = request.form["pregunta_seguridad"]
-    respuesta_seguridad = bcrypt.generate_password_hash(
-        request.form["respuesta_seguridad"]
-    ).decode("utf-8")
+    empleado_id = request.form.get("empleado_id_actualizar")
+    cedula = request.form["cedula_actualizar"]
+    nombre = request.form["nombre_actualizar"]
+    rol = request.form["rol_actualizar"]
+    hash_contrasena = bcrypt.generate_password_hash(request.form["hash_contrasena_actualizar"]).decode("utf-8")
+    pregunta_seguridad = request.form["pregunta_seguridad_actualizar"]
+    respuesta_seguridad = bcrypt.generate_password_hash(request.form["respuesta_seguridad_actualizar"]).decode("utf-8")
+    status = request.form["status_actualizar"]
 
-    # Conectar a la base de datos y ejecutar la actualización
     try:
         cursor = mysql.connection.cursor()
         cursor.execute(
             """
             UPDATE usuarios
-            SET cedula = %s, nombre = %s, rol = %s, hash_de_contrasena = %s, pregunta_seguridad = %s, respuesta_seguridad = %s
+            SET cedula = %s, nombre = %s, rol = %s, hash_de_contrasena = %s, pregunta_seguridad = %s,
+                respuesta_seguridad = %s, status = %s
             WHERE id = %s
             """,
-            (
-                cedula,
-                nombre,
-                rol,
-                hash_contrasena,
-                pregunta_seguridad,
-                respuesta_seguridad,
-                empleado_id,
-            ),
+            (cedula, nombre, rol, hash_contrasena, pregunta_seguridad, respuesta_seguridad, status, empleado_id)
         )
         mysql.connection.commit()
         cursor.close()
+
+        
 
         flash("Empleado actualizado correctamente", "success")
         return redirect(url_for("herramientas"))
 
     except MySQLdb.Error as e:
         flash(f"Error al actualizar empleado: {str(e)}", "error")
-        return redirect(
-            url_for("herramientas")
-        )  # Puedes redirigir a donde sea necesario en caso de error
+        return redirect(url_for("herramientas"))
 
     finally:
         cursor.close()
+
+
+@app.route("/eliminar_usuarios", methods=["POST"])
+def eliminar_usuarios():
+    # Verificar si el usuario está logueado
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    # Obtener los IDs de los usuarios a eliminar del formulario
+    usuario_ids = request.form.getlist("empleado_ids")
+
+    if not usuario_ids:
+        flash("Seleccione al menos un empleado para eliminar.", "error")
+        return redirect(url_for("herramientas"))
+
+    # Conectar a la base de datos y eliminar los usuarios seleccionados
+    try:
+        cursor = mysql.connection.cursor()
+
+        for usuario_id in usuario_ids:
+            cursor.execute(
+                "UPDATE usuarios SET status = %s WHERE id = %s", (0, usuario_id)
+            )
+
+        mysql.connection.commit()
+        cursor.close()
+
+        flash("Usuarios eliminados correctamente", "success")
+        return redirect(url_for("herramientas"))
+
+    except MySQLdb.Error as e:
+        flash(f"Error al eliminar usuarios: {str(e)}", "error")
+        return redirect(url_for("herramientas"))
+
+    finally:
+        cursor.close()
+
 
 
 @app.route("/listar_empleados", methods=["GET", "POST"])

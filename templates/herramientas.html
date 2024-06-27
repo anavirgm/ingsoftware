@@ -144,76 +144,150 @@ head %} {{ super() }}
     </div>
   </div>
 
-
-  <div id="alerta" class="alert alert-primary d-flex align-items-center" role="alert">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-      class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+  <div
+    id="alerta"
+    class="alert alert-primary d-flex align-items-center"
+    role="alert"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="currentColor"
+      class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"
+      viewBox="0 0 16 16"
+      role="img"
+      aria-label="Warning:"
+    >
       <path
-        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+      />
     </svg>
     <div id="alerta-mensaje">Debe seleccionar un cliente para actualizar.</div>
-    <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlerta()"></button>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      onclick="cerrarAlerta()"
+    ></button>
   </div>
 
-  <div id="alerta-eliminar" class="alert alert-eliminar d-flex align-items-center" role="alert">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-      class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+  <div
+    id="alerta-eliminar"
+    class="alert alert-eliminar d-flex align-items-center"
+    role="alert"
+  >
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      fill="currentColor"
+      class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2"
+      viewBox="0 0 16 16"
+      role="img"
+      aria-label="Warning:"
+    >
       <path
-        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"
+      />
     </svg>
     <div id="alerta-mensaje-eliminar">
       Debe seleccionar al menos un cliente para eliminar.
     </div>
-    <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlertaEliminar()"></button>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      onclick="cerrarAlertaEliminar()"
+    ></button>
   </div>
-
-
 </main>
 
 <div id="modal-actualizar" class="modal" style="display: none">
   <div class="modal-content">
     <span class="close" onclick="cerrarModalActualizar()">&times;</span>
     <h2>Actualizar Empleado</h2>
-    <form id="formulario-actualizar" method="POST" action="{{ url_for('actualizar_empleado') }}">
-      <input type="hidden" id="empleado_id_actualizar" name="empleado_id_actualizar" />
-      
+    <form
+      id="formulario-actualizar"
+      method="POST"
+      action="{{ url_for('actualizar_empleado') }}"
+    >
+      <input
+        type="hidden"
+        id="empleado_id_actualizar"
+        name="empleado_id_actualizar"
+      />
+
       <label for="nombre_actualizar">Nombre:</label>
-      <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
-      
+      <input
+        type="text"
+        id="nombre_actualizar"
+        name="nombre_actualizar"
+        required
+      /><br />
+
       <label for="cedula_actualizar">Cédula:</label>
-      <input type="text" id="cedula_actualizar" name="cedula_actualizar" required /><br />
-      
+      <input
+        type="text"
+        id="cedula_actualizar"
+        name="cedula_actualizar"
+        required
+      /><br />
+
       <label for="rol_actualizar">Rol:</label>
       <select id="rol_actualizar" name="rol_actualizar" required>
         <option value="empleado">Empleado</option>
-        <option value="administrador">Administrador</option>
-      </select><br />
-      
+        <option value="administrador">Administrador</option></select
+      ><br />
+
       <label for="pregunta_seguridad_actualizar">Pregunta de Seguridad:</label>
-      <select id="pregunta_seguridad_actualizar" name="pregunta_seguridad_actualizar" required>
-        <option value="¿Cuándo es tu cumpleaños?">¿Cuándo es tu cumpleaños?</option>
-        <option value="¿A qué secundaria fuiste?">¿A qué secundaria fuiste?</option>
-        <option value="¿Cómo se llamaba tu mamá?">¿Cómo se llamaba tu mamá?</option>
-        <option value="¿Cuál es tu postre favorito?">¿Cuál es tu postre favorito?</option>
-      </select><br />
-      
-      <label for="respuesta_seguridad_actualizar">Respuesta de Seguridad:</label>
-      <input type="text" id="respuesta_seguridad_actualizar" name="respuesta_seguridad_actualizar" required /><br />
-      
+      <select
+        id="pregunta_seguridad_actualizar"
+        name="pregunta_seguridad_actualizar"
+        required
+      >
+        <option value="¿Cuándo es tu cumpleaños?">
+          ¿Cuándo es tu cumpleaños?
+        </option>
+        <option value="¿A qué secundaria fuiste?">
+          ¿A qué secundaria fuiste?
+        </option>
+        <option value="¿Cómo se llamaba tu mamá?">
+          ¿Cómo se llamaba tu mamá?
+        </option>
+        <option value="¿Cuál es tu postre favorito?">
+          ¿Cuál es tu postre favorito?
+        </option></select
+      ><br />
+
+      <label for="respuesta_seguridad_actualizar"
+        >Respuesta de Seguridad:</label
+      >
+      <input
+        type="text"
+        id="respuesta_seguridad_actualizar"
+        name="respuesta_seguridad_actualizar"
+        required
+      /><br />
+
       <label for="hash_contrasena_actualizar">Contraseña:</label>
-      <input type="password" id="hash_contrasena_actualizar" name="hash_contrasena_actualizar" required /><br />
-      
+      <input
+        type="password"
+        id="hash_contrasena_actualizar"
+        name="hash_contrasena_actualizar"
+        required
+      /><br />
+
       <label for="status_actualizar">Status:</label>
       <select id="status_actualizar" name="status_actualizar" required>
         <option value="1">Activo</option>
-        <option value="0">Inactivo</option>
-      </select><br />
-      
+        <option value="0">Inactivo</option></select
+      ><br />
+
       <button type="submit" class="btn-primary">Actualizar Empleado</button>
     </form>
   </div>
 </div>
-
 
 {% endblock %} {% block scripts %}
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
@@ -261,13 +335,15 @@ head %} {{ super() }}
   function eliminarEmpleados() {
     const ids = obtenerEmpleadosSeleccionados();
     if (ids.length === 0) {
-        mostrarAlertaEliminar("Seleccione al menos un empleado para eliminar.");
-        return;
+      mostrarAlertaEliminar("Seleccione al menos un empleado para eliminar.");
+      return;
     }
 
-    const confirmacion = confirm("¿Está seguro de que desea eliminar los empleados seleccionados?");
+    const confirmacion = confirm(
+      "¿Está seguro de que desea eliminar los empleados seleccionados?",
+    );
     if (!confirmacion) {
-        return;
+      return;
     }
 
     const form = document.createElement("form");
@@ -275,17 +351,16 @@ head %} {{ super() }}
     form.action = "{{ url_for('eliminar_usuarios') }}";
 
     ids.forEach((id) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "empleado_ids";
-        input.value = id;
-        form.appendChild(input);
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "empleado_ids";
+      input.value = id;
+      form.appendChild(input);
     });
 
     document.body.appendChild(form);
     form.submit();
-}
-
+  }
 
   const selectAllCheckbox = document.getElementById("select-all");
   const checkboxes = document.querySelectorAll(".empleado-checkbox");
@@ -297,34 +372,37 @@ head %} {{ super() }}
   });
 
   function abrirModalActualizar() {
-  const filaSeleccionada = document.querySelector("input.empleado-checkbox:checked");
-  if (!filaSeleccionada) {
-    mostrarAlerta("Debe seleccionar un empleado para actualizar.");
-    return;
+    const filaSeleccionada = document.querySelector(
+      "input.empleado-checkbox:checked",
+    );
+    if (!filaSeleccionada) {
+      mostrarAlerta("Debe seleccionar un empleado para actualizar.");
+      return;
+    }
+
+    const fila = filaSeleccionada.closest("tr");
+    const empleadoId = fila.cells[1].textContent;
+    const nombre = fila.cells[2].textContent;
+    const cedula = fila.cells[3].textContent;
+    const rol = fila.cells[4].textContent;
+    const preguntaSeguridad = fila.getAttribute("data-pregunta-seguridad");
+    const respuestaSeguridad = fila.getAttribute("data-respuesta-seguridad");
+
+    document.getElementById("empleado_id_actualizar").value = empleadoId;
+    document.getElementById("nombre_actualizar").value = nombre;
+    document.getElementById("cedula_actualizar").value = cedula;
+    document.getElementById("rol_actualizar").value = rol; // Asumiendo que el rol esté en la tabla
+    document.getElementById("pregunta_seguridad_actualizar").value =
+      preguntaSeguridad;
+    document.getElementById("respuesta_seguridad_actualizar").value =
+      respuestaSeguridad;
+
+    document.getElementById("modal-actualizar").style.display = "block";
   }
 
-  const fila = filaSeleccionada.closest("tr");
-  const empleadoId = fila.cells[1].textContent;
-  const nombre = fila.cells[2].textContent;
-  const cedula = fila.cells[3].textContent;
-  const rol = fila.cells[4].textContent;
-  const preguntaSeguridad = fila.getAttribute("data-pregunta-seguridad");
-  const respuestaSeguridad = fila.getAttribute("data-respuesta-seguridad");
-
-  document.getElementById("empleado_id_actualizar").value = empleadoId;
-  document.getElementById("nombre_actualizar").value = nombre;
-  document.getElementById("cedula_actualizar").value = cedula;
-  document.getElementById("rol_actualizar").value = rol;  // Asumiendo que el rol esté en la tabla
-  document.getElementById("pregunta_seguridad_actualizar").value = preguntaSeguridad;
-  document.getElementById("respuesta_seguridad_actualizar").value = respuestaSeguridad;
-
-  document.getElementById("modal-actualizar").style.display = "block";
-}
-
-function cerrarModalActualizar() {
-  document.getElementById("modal-actualizar").style.display = "none";
-}
-
+  function cerrarModalActualizar() {
+    document.getElementById("modal-actualizar").style.display = "none";
+  }
 
   function searchTable() {
     let input, filter, table, tr, td, i, txtValue;

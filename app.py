@@ -842,9 +842,13 @@ def actualizar_empleado():
     cedula = request.form["cedula_actualizar"]
     nombre = request.form["nombre_actualizar"]
     rol = request.form["rol_actualizar"]
-    hash_contrasena = bcrypt.generate_password_hash(request.form["hash_contrasena_actualizar"]).decode("utf-8")
+    hash_contrasena = bcrypt.generate_password_hash(
+        request.form["hash_contrasena_actualizar"]
+    ).decode("utf-8")
     pregunta_seguridad = request.form["pregunta_seguridad_actualizar"]
-    respuesta_seguridad = bcrypt.generate_password_hash(request.form["respuesta_seguridad_actualizar"]).decode("utf-8")
+    respuesta_seguridad = bcrypt.generate_password_hash(
+        request.form["respuesta_seguridad_actualizar"]
+    ).decode("utf-8")
     status = request.form["status_actualizar"]
 
     try:
@@ -856,12 +860,19 @@ def actualizar_empleado():
                 respuesta_seguridad = %s, status = %s
             WHERE id = %s
             """,
-            (cedula, nombre, rol, hash_contrasena, pregunta_seguridad, respuesta_seguridad, status, empleado_id)
+            (
+                cedula,
+                nombre,
+                rol,
+                hash_contrasena,
+                pregunta_seguridad,
+                respuesta_seguridad,
+                status,
+                empleado_id,
+            ),
         )
         mysql.connection.commit()
         cursor.close()
-
-        
 
         flash("Empleado actualizado correctamente", "success")
         return redirect(url_for("herramientas"))
@@ -872,7 +883,6 @@ def actualizar_empleado():
 
     finally:
         cursor.close()
-
 
 
 @app.route("/eliminar_usuarios", methods=["POST"])
@@ -909,7 +919,6 @@ def eliminar_usuarios():
 
     finally:
         cursor.close()
-
 
 
 @app.route("/listar_empleados", methods=["GET", "POST"])

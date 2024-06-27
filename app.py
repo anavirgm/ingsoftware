@@ -108,7 +108,7 @@ def login():
         else:
             flash("Usuario o contraseña incorrectos")
 
-    return render_template("index.html")
+    return render_template("login.html")
 
 
 @app.route("/dashboard")
@@ -842,9 +842,13 @@ def actualizar_empleado():
     cedula = request.form["cedula_actualizar"]
     nombre = request.form["nombre_actualizar"]
     rol = request.form["rol_actualizar"]
-    hash_contrasena = bcrypt.generate_password_hash(request.form["hash_contrasena_actualizar"]).decode("utf-8")
+    hash_contrasena = bcrypt.generate_password_hash(
+        request.form["hash_contrasena_actualizar"]
+    ).decode("utf-8")
     pregunta_seguridad = request.form["pregunta_seguridad_actualizar"]
-    respuesta_seguridad = bcrypt.generate_password_hash(request.form["respuesta_seguridad_actualizar"]).decode("utf-8")
+    respuesta_seguridad = bcrypt.generate_password_hash(
+        request.form["respuesta_seguridad_actualizar"]
+    ).decode("utf-8")
     status = request.form["status_actualizar"]
 
     try:
@@ -856,12 +860,19 @@ def actualizar_empleado():
                 respuesta_seguridad = %s, status = %s
             WHERE id = %s
             """,
-            (cedula, nombre, rol, hash_contrasena, pregunta_seguridad, respuesta_seguridad, status, empleado_id)
+            (
+                cedula,
+                nombre,
+                rol,
+                hash_contrasena,
+                pregunta_seguridad,
+                respuesta_seguridad,
+                status,
+                empleado_id,
+            ),
         )
         mysql.connection.commit()
         cursor.close()
-
-        
 
         flash("Empleado actualizado correctamente", "success")
         return redirect(url_for("herramientas"))
@@ -872,7 +883,6 @@ def actualizar_empleado():
 
     finally:
         cursor.close()
-
 
 
 @app.route("/eliminar_usuarios", methods=["POST"])
@@ -909,7 +919,6 @@ def eliminar_usuarios():
 
     finally:
         cursor.close()
-
 
 
 @app.route("/listar_empleados", methods=["GET", "POST"])
@@ -1084,7 +1093,6 @@ def productos_reporte():
     cursor.close()
 
     if not productos:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1163,7 +1171,6 @@ def clientes_reporte():
     cursor.close()
 
     if not clientes:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1232,7 +1239,6 @@ def proveedores_reporte():
     cursor.close()
 
     if not proveedores:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1300,7 +1306,6 @@ def usuarios_reporte():
     cursor.close()
 
     if not usuarios:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1367,7 +1372,6 @@ def ventas_reporte():
     ventas = cursor.fetchall()
 
     if not ventas:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1451,7 +1455,6 @@ def compras_reporte():
     compras = cursor.fetchall()
 
     if not compras:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine

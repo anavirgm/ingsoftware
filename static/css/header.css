@@ -2,8 +2,13 @@ body.dark header {
   background: #152937;
 }
 
+.separator {
+  flex: 1;
+}
+
 header {
-  width: 100%;
+  left: 100px;
+  right: 0;
   height: 80px;
   background: #08245f;
   display: flex;
@@ -68,4 +73,57 @@ header {
 .logout img:hover {
   transform: scale(1.1);
   opacity: 0.8;
+}
+
+/* estética del botón de tema */
+.switch {
+  background: #343d5b;
+  border-radius: 1000px;
+  border: none;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  outline: none;
+}
+
+body.dark .switch {
+  background: #1c1c1c;
+}
+
+body.dark .switch.active {
+  background: #ffa500;
+}
+
+.switch span {
+  width: 30px;
+  height: 30px;
+  line-height: 40px;
+  display: block;
+  background: none;
+  color: #fff;
+}
+
+.switch::after {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  background: #f1f1f1;
+  top: 0;
+  left: 0;
+  right: unset;
+  border-radius: 100px;
+  transition: 0.3s ease all;
+  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+.switch.active {
+  background: orange;
+  color: #000;
+}
+
+.switch.active::after {
+  right: 0;
+  left: unset;
 }

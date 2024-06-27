@@ -96,3 +96,8 @@ a.selector {
   top: 10%;
   left: -30px;
 }
+
+.menu__side_move {
+  width: 250px;
+  left: 0;
+}

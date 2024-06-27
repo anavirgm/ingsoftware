@@ -108,7 +108,7 @@ def login():
         else:
             flash("Usuario o contraseña incorrectos")
 
-    return render_template("index.html")
+    return render_template("login.html")
 
 
 @app.route("/dashboard")
@@ -1093,7 +1093,6 @@ def productos_reporte():
     cursor.close()
 
     if not productos:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1172,7 +1171,6 @@ def clientes_reporte():
     cursor.close()
 
     if not clientes:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1241,7 +1239,6 @@ def proveedores_reporte():
     cursor.close()
 
     if not proveedores:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1309,7 +1306,6 @@ def usuarios_reporte():
     cursor.close()
 
     if not usuarios:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1376,7 +1372,6 @@ def ventas_reporte():
     ventas = cursor.fetchall()
 
     if not ventas:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine
@@ -1460,7 +1455,6 @@ def compras_reporte():
     compras = cursor.fetchall()
 
     if not compras:
-        flash("No existen registros en la base de datos")
         return redirect(url_for("reportes"))
 
     # init pdf engine

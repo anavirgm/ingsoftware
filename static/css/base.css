@@ -1,0 +1,143 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  text-decoration: none;
+  font-family: sans-serif;
+}
+
+body {
+  margin-left: 100px;
+  transition: margin-left 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  margin-top: 100px;
+  margin-bottom: 20px;
+  background: #ececee;
+}
+
+.body_move {
+  margin-left: 250px;
+}
+
+/* Clases para tema oscuro */
+body.dark {
+  background: #2c2c2c;
+  color: white;
+  transition:
+    background 0.3s,
+    color 0.3s;
+}
+
+body.dark header {
+  background: #152937;
+  color: w;
+}
+
+body.dark .menu__side {
+  width: 100px;
+  height: 100%;
+  background: #152937;
+  position: fixed;
+  top: 0;
+  left: 0;
+  color: white;
+  font-size: 18px;
+  z-index: 300;
+  overflow: hidden;
+  border-right: 40px solid#152937;
+  transition: 0.3s ease all;
+}
+
+body.dark .container_productos_buscar {
+  background-color: #3a3a3a;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .container_productos_buscar input {
+  background-color: #555;
+  border: 1px solid #444;
+  color: white;
+}
+
+body.dark .container_productos_buscar input:focus {
+  border-color: #ff9800;
+}
+
+body.dark .container_productos_buscar button.Actualizar {
+  background-color: #8e63dd;
+}
+
+body.dark .container_productos_buscar button.Actualizar:hover {
+  background-color: #7352b6;
+}
+
+body.dark .container_productos_buscar button.Eliminar {
+  background-color: #ff6f61;
+}
+
+body.dark .container_productos_buscar button.Eliminar:hover {
+  background-color: #e55a4f;
+}
+
+body.dark .container_productos {
+  background-color: #3a3a3a;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .table_de_productos thead th {
+  background-color: #4a90e2;
+}
+
+body.dark .table_de_productos tbody tr:hover {
+  background-color: #555;
+}
+
+/* clases para tema oscuro */
+/* Dark mode styles */
+body.dark {
+  background-color: #121212;
+  color: #ffffff;
+  margin-top: 100px;
+}
+
+body.dark .card,
+body.dark .large-card {
+  background-color: #313131;
+  color: #bbb;
+}
+
+body.dark .card p,
+body.dark .large-card p {
+  color: #888;
+}
+
+.large-card {
+  height: 256px;
+}
+
+body.dark * {
+  color: white;
+}
+
+body.dark button,
+body.dark input {
+  background: #000;
+  color: white;
+}
+
+body.dark {
+  margin-left: 100px;
+  transition: margin-left 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  margin-top: 80px;
+  background: #2c2c2c;
+  margin-top: 100px;
+}
+
+@media screen and (max-width: 768px) {
+  .menu__side {
+    width: 100px;
+  }
+
+  main {
+    margin-left: 100px;
+  }
+}

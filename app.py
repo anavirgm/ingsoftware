@@ -874,6 +874,7 @@ def actualizar_empleado():
         cursor.close()
 
 
+
 @app.route("/eliminar_usuarios", methods=["POST"])
 def eliminar_usuarios():
     # Verificar si el usuario está logueado
@@ -1525,7 +1526,6 @@ def compras_reporte():
     pdf.output(filepath)
 
     return send_file(filepath, as_attachment=True, mimetype="application/pdf")
-
 
 
 if __name__ == "__main__":

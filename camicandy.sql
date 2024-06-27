@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-06-2024 a las 23:11:27
+-- Tiempo de generación: 22-06-2024 a las 18:07:48
 -- Versión del servidor: 11.2.0-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -44,8 +44,7 @@ INSERT INTO `clientes` (`id`, `nombre`, `direccion`, `telefono`, `cedula`, `stat
 (1, 'Antonio Villalobos', 'Maracaibo', '04145555556', '30643276', 1),
 (2, 'Samuel Rincon', 'Los Olivos', '04125555555', '29888888', 1),
 (3, 'Juan Urdaneta', 'C2', '04146074412', '29999999', 1),
-(6, 'Jesus Apolinar', 'Maracaibo', '04145555555', '30999999', 1),
-(8, 'Adis Luzardo', 'Mara', '04121716029', 'V6885972', 0);
+(6, 'Jesus Apolinar', 'Maracaibo', '04145555555', '30999999', 1);
 
 -- --------------------------------------------------------
 
@@ -68,10 +67,10 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `nombre`, `fecha_de_vencimiento`, `cantidad_disponible`, `imagen`, `precio_en_dolares`, `status`) VALUES
-(1, 'Vainilla', '2024-12-31', 50, NULL, 3.99, 1),
+(1, 'Vainilla', '2024-12-31', 70, NULL, 3.99, 1),
 (2, 'Chocolate', '2024-12-31', 85, NULL, 4.99, 1),
 (3, 'Limón', '2024-12-31', 62, NULL, 3.49, 1),
-(4, 'Fresa', '2024-12-31', 76, NULL, 4.50, 1),
+(4, 'Fresa', '2024-12-31', 74, NULL, 4.50, 1),
 (5, 'Menta', '2024-12-31', 60, NULL, 4.49, 0);
 
 -- --------------------------------------------------------
@@ -147,11 +146,7 @@ INSERT INTO `transacciones` (`id`, `marca_de_tiempo`, `importe_en_dolares`, `tas
 (39, '2024-06-20 17:08:00', 11.58, 36.38, 6, NULL, 1),
 (40, '2024-06-20 17:12:00', 63.09, 36.38, 1, NULL, 1),
 (41, '2024-06-21 00:26:00', 23.14, 36.38, 3, NULL, 1),
-(42, '2024-06-22 16:05:00', 5.22, 36.38, 1, NULL, 1),
-(43, '2024-06-24 03:00:29', 138.85, 38.00, NULL, 1, 1),
-(44, '2024-06-24 03:10:56', 92.57, 38.00, NULL, 3, 1),
-(45, '2024-06-24 03:13:10', 46.28, 36.39, NULL, 2, 1),
-(46, '2024-06-24 05:09:00', 10.44, 36.38, NULL, 1, 1);
+(42, '2024-06-22 16:05:00', 5.22, 36.38, 1, NULL, 1);
 
 --
 -- Disparadores `transacciones`
@@ -264,42 +259,33 @@ INSERT INTO `transacciones_tiene_productos` (`transacciones_id`, `productos_id`,
 (40, 2, 3),
 (40, 1, 5),
 (41, 1, 5),
-(42, 4, 1),
-(43, 1, 30),
-(44, 1, 5),
-(44, 1, 5),
-(44, 1, 10),
-(45, 1, 10),
-(46, 4, 2);
+(42, 4, 1);
 
 --
 -- Disparadores `transacciones_tiene_productos`
 --
 DELIMITER $$
 CREATE TRIGGER `actualizar_stock_monto` AFTER INSERT ON `transacciones_tiene_productos` FOR EACH ROW BEGIN
+
     DECLARE total_amount DECIMAL(10, 2);
-    DECLARE es_compra BOOLEAN;
 
-    -- Determinar si es una compra o una venta
-    SELECT (t.clientes_id IS NULL) INTO es_compra FROM transacciones t WHERE t.id = NEW.transacciones_id;
+    
+    UPDATE productos 
+    SET cantidad_disponible = cantidad_disponible - NEW.cantidad 
+    WHERE id = NEW.productos_id;
 
-    -- Actualizar el stock de productos
-    IF es_compra THEN
-        -- Compra: incrementar stock
-        UPDATE productos SET cantidad_disponible = cantidad_disponible + NEW.cantidad WHERE id = NEW.productos_id;
-    ELSE
-        -- Venta: decrementar stock
-        UPDATE productos SET cantidad_disponible = cantidad_disponible - NEW.cantidad WHERE id = NEW.productos_id;
-    END IF;
+    
+    SELECT SUM(transacciones_tiene_productos.cantidad * productos.precio_en_dolares) * 1.16
+    INTO total_amount
+    FROM transacciones_tiene_productos
+    JOIN productos ON transacciones_tiene_productos.productos_id = productos.id
+    WHERE transacciones_tiene_productos.transacciones_id = NEW.transacciones_id;
 
-    -- Calcular el importe total en dólares con IVA (16%)
-    SELECT SUM(tp.cantidad * p.precio_en_dolares) * 1.16 INTO total_amount
-    FROM transacciones_tiene_productos tp
-    JOIN productos p ON tp.productos_id = p.id
-    WHERE tp.transacciones_id = NEW.transacciones_id;
+    
+    UPDATE transacciones
+    SET importe_en_dolares = total_amount
+    WHERE id = NEW.transacciones_id;
 
-    -- Actualizar el importe en dólares de la transacción
-    UPDATE transacciones SET importe_en_dolares = total_amount WHERE id = NEW.transacciones_id;
 END
 $$
 DELIMITER ;
@@ -327,7 +313,7 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`id`, `cedula`, `nombre`, `rol`, `hash_de_contrasena`, `pregunta_seguridad`, `respuesta_seguridad`, `status`) VALUES
 (1, '30597012', 'Ana Mota', 'administrador', '$2b$12$TB07LX0M/Ipz7ikFDt/OJeHmZ.ePzPS6wz.7KGnQC.aHAkEtohM0C', '¿Cuál es tu postre favorito?', '$2y$10$wdKk9e/y5sSN2tTwMQ0ux.q9cwkhsfwTo4nO1Zt4dK9Dmv0Qn/.1S', 1),
-(2, '29877987', 'Samuel Rincon', 'empleado', '$2b$12$uih8uU8KTNDgoUSuFn5Ut.xI23DgmAAsjFC6UMxsFFU8XmIM4Vriy', '¿Cuál es tu postre favorito?', '$2b$12$TQyO444QlwweNif77I7i7./C1NpsX2CSpxRN0x/p1pBlZXWzbswEm', 1);
+(2, '29877987', 'Samuel Rincon', 'empleado', '$2y$10$IsiNfgnLdHIvvf2GlVzegOBINWykVFtxiklJrt/2m7aeZgJ6PYsVS', '¿Cuál es tu postre favorito?', '$2y$10$KUcsOLOw6C8MzL5oNoOcwuJCbGuTiLQN9Dr7ykcqTRGh2oqiFN15e', 1);
 
 --
 -- Índices para tablas volcadas
@@ -382,7 +368,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -400,7 +386,7 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT de la tabla `transacciones`
 --
 ALTER TABLE `transacciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`

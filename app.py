@@ -83,6 +83,8 @@ class PDF(FPDF):
         self.cell(0, 12, f"Página {self.page_no()}/{{nb}}", align="C")
 
 
+#region Login
+
 @app.route("/", methods=["GET", "POST"])
 def login():
     if (
@@ -110,6 +112,7 @@ def login():
 
     return render_template("login.html")
 
+#region Dashboard
 
 @app.route("/dashboard")
 def dashboard():
@@ -166,6 +169,7 @@ def dashboard():
         )
     return redirect(url_for("login"))
 
+#region Productos
 
 ############################# PRODUCTOS ################################
 @app.route("/productos", methods=["GET", "POST"])
@@ -301,8 +305,10 @@ def eliminar_productos():
     # Redirigir a la página de productos con un mensaje flash
     flash("Productos eliminados correctamente")
     return redirect(url_for("productos"))
+#endregion
 
 
+#region Clientes
 #################################### CLIENTES ################################################
 
 
@@ -324,7 +330,7 @@ def clientes():
         )
         mysql.connection.commit()
         cursor.close()
-        flash("Cliente agregado correctamente")
+        flash("Cliente agregado correctamente" , 'success')
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM clientes WHERE status = 1")
@@ -842,13 +848,6 @@ def actualizar_empleado():
     cedula = request.form["cedula_actualizar"]
     nombre = request.form["nombre_actualizar"]
     rol = request.form["rol_actualizar"]
-    hash_contrasena = bcrypt.generate_password_hash(
-        request.form["hash_contrasena_actualizar"]
-    ).decode("utf-8")
-    pregunta_seguridad = request.form["pregunta_seguridad_actualizar"]
-    respuesta_seguridad = bcrypt.generate_password_hash(
-        request.form["respuesta_seguridad_actualizar"]
-    ).decode("utf-8")
     status = request.form["status_actualizar"]
 
     try:
@@ -856,23 +855,15 @@ def actualizar_empleado():
         cursor.execute(
             """
             UPDATE usuarios
-            SET cedula = %s, nombre = %s, rol = %s, hash_de_contrasena = %s, pregunta_seguridad = %s,
-                respuesta_seguridad = %s, status = %s
+            SET cedula = %s, nombre = %s, rol = %s, status = %s
             WHERE id = %s
             """,
-            (
-                cedula,
-                nombre,
-                rol,
-                hash_contrasena,
-                pregunta_seguridad,
-                respuesta_seguridad,
-                status,
-                empleado_id,
-            ),
+            (cedula, nombre, rol, status, empleado_id)
         )
         mysql.connection.commit()
         cursor.close()
+
+        
 
         flash("Empleado actualizado correctamente", "success")
         return redirect(url_for("herramientas"))

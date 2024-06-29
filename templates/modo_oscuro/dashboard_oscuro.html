@@ -1,0 +1,101 @@
+{% extends "base.html" %} {% block title %}Dashboard{% endblock %} {% block head
+    %} {{ super() }}
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/dashboard_oscuro.css') }}"
+    />
+    {% endblock %} {% block content %} {% include "header.html" %} {% include
+    "sidebar.html" %}
+    <h1>¡Bienvenido, {{ username or rol }}!</h1>
+    
+    <main class="container">
+      <div class="grid cards-section">
+        <div class="card">
+          <h2>Productos</h2>
+          <p>Almacén: {{ total_productos }}</p>
+        </div>
+    
+        <div class="card">
+          <h2>Clientes</h2>
+          <p>Registrados: {{ total_clientes }}</p>
+        </div>
+    
+        <div class="card">
+          <h2>Proveedores</h2>
+          <p>Registrados: {{ total_proveedores }}</p>
+        </div>
+    
+        <div class="card">
+          <h2>Transacciones</h2>
+          <p>Movimientos: {{ total_transacciones }}</p>
+        </div>
+      </div>
+    
+      <div class="grid large-cards-section">
+        <div class="large-card">
+          <canvas id="grafico-ventas"></canvas>
+        </div>
+    
+        <div class="large-card">
+          <canvas id="grafico-ingreso"></canvas>
+        </div>
+      </div>
+    </main>
+    
+    {% endblock %} {% block scripts %}
+    <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+    <script
+      src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"
+      integrity="sha512-ZwR1/gSZM3ai6vCdI+LVF1zSq/5HznD3ZSTk7kajkaj4D292NLuduDCO1c/NT8Id+jE58KYLKT7hXnbtryGmMg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    ></script>
+    <script>
+      // gráfico de cantidad de ventas de la última semana
+      (async function(data) {
+        new Chart(
+          document.getElementById('grafico-ventas').getContext('2d'),
+          {
+            type: 'bar',
+            data: {
+              labels: data.map(row => row.fecha),
+              datasets: [
+                {
+                  label: 'Ventas por día (unidades)',
+                  data: data.map(row => row.cantidad)
+                }
+              ]
+            },
+            options: {
+              // no mostrar ventas decimales
+              scales: {
+                y: {
+                  ticks: { precision: 0 },
+                },
+              }
+            }
+          }
+        );
+      })({{ ventas_semana | tojson }});
+    
+      // gráfico de monto total de ingreso de la útlima semana
+      (async function(data) {
+        new Chart(
+          document.getElementById('grafico-ingreso').getContext('2d'),
+          {
+            type: 'bar',
+            data: {
+              labels: data.map(row => row.fecha),
+              datasets: [
+                {
+                  label: 'Ingreso por día ($)',
+                  data: data.map(row => row.importe_en_dolares)
+                }
+              ]
+            },
+          }
+        );
+      })({{ ingreso_semana | tojson }});
+    </script>
+    {% endblock %}
+    

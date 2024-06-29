@@ -13,6 +13,11 @@ body.dark .menu__side {
   transition: 0.3s ease all;
 }
 
+body.dark .menu__side_move {
+  width: 250px;
+  left: 0;
+}
+
 .menu__side {
   width: 100px;
   height: 100%;
@@ -24,8 +29,13 @@ body.dark .menu__side {
   font-size: 18px;
   z-index: 300;
   overflow: hidden;
-  border-right: 40px solid#021f5c;
-  transition: all 300ms cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  border-right: 40px solid #021f5c;
+  transition: 0.3s ease all;
+}
+
+.menu__side_move {
+  width: 250px;
+  left: 0;
 }
 
 .icon__menu .lateral img {
@@ -97,7 +107,143 @@ a.selector {
   left: -30px;
 }
 
-.menu__side_move {
-  width: 250px;
+body.dark header {
+  background: #152937;
+}
+
+.separator {
+  flex: 1;
+}
+
+header {
+  left: 100px;
+  right: 0;
+  height: 80px;
+  background: #08245f;
+  display: flex;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  z-index: 200;
+  transition: 0.3s ease all;
+}
+
+header.header_move {
+  left: 250px;
+}
+
+.icon__menu, .icon__configuracion {
+  width: 50px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(10px);
+  position: relative; /* Ajustado para asegurarse de que la posición sea relativa al contenedor */
+}
+
+.icon__menu img, .icon__configuracion img {
+  cursor: pointer;
+  position: absolute;
+}
+
+.icon__notificacion {
+  width: 50px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(10px);
+}
+
+.icon__menu, .icon__configuracion {
+  width: 50px;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transform: translateX(10px);
+  position: relative; /* Ajustado para asegurarse de que la posición sea relativa al contenedor */
+}
+
+.icon__notificacion img {
+  cursor: pointer;
+  position: absolute;
+  width: 40px;
+  margin-right: 10px;
+}
+
+.separator {
+  flex: 1;
+}
+
+.logout img {
+  cursor: pointer;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+.logout img:hover {
+  transform: scale(1.1);
+  opacity: 0.8;
+}
+
+/* estética del botón de tema */
+.switch {
+  background: #343d5b;
+  border-radius: 1000px;
+  border: none;
+  position: relative;
+  cursor: pointer;
+  display: flex;
+  outline: none;
+}
+
+body.dark .switch {
+  background: #1c1c1c;
+}
+
+body.dark .switch.active {
+  background: #ffa500;
+}
+
+.switch span {
+  width: 30px;
+  height: 30px;
+  line-height: 40px;
+  display: block;
+  background: none;
+  color: #fff;
+}
+
+.switch::after {
+  content: "";
+  display: block;
+  width: 30px;
+  height: 30px;
+  position: absolute;
+  background: #f1f1f1;
+  top: 0;
   left: 0;
+  right: unset;
+  border-radius: 100px;
+  transition: 0.3s ease all;
+  box-shadow: 0px 0px 2px 2px rgba(0, 0, 0, 0.2);
+}
+
+.switch.active {
+  background: orange;
+  color: #000;
+}
+
+.switch.active::after {
+  right: 0;
+  left: unset;
+}
+
+body.dark .menu__side {
+  background: #152937;
+}
+
+body.dark header {
+  background: #152937;
 }

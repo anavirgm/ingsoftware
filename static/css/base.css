@@ -18,6 +18,9 @@ body {
   margin-left: 250px;
 }
 
+.body_move.dark {
+  margin-left: 250px;
+}
 /* Clases para tema oscuro */
 body.dark {
   background: #2c2c2c;

@@ -1,13 +1,15 @@
 document.addEventListener("DOMContentLoaded", () => {
   const btnOpen = document.getElementById("btn_open");
   const sideMenu = document.getElementById("menu_side");
+  const header = document.querySelector("header");
   const body = document.getElementById("body");
   const btnSwitch = document.querySelector("#switch");
 
   // Function to open/close the menu
   function open_close_menu() {
-    body.classList.toggle("body_move");
     sideMenu.classList.toggle("menu__side_move");
+    header.classList.toggle("header_move");
+    body.classList.toggle("body_move");
   }
 
   // Initialize dark mode based on local storage

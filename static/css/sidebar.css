@@ -139,7 +139,7 @@ header.header_move {
   justify-content: center;
   align-items: center;
   transform: translateX(10px);
-  position: relative; /* Ajustado para asegurarse de que la posición sea relativa al contenedor */
+  position: relative;
 }
 
 .icon__menu img, .icon__configuracion img {
@@ -163,7 +163,7 @@ header.header_move {
   justify-content: center;
   align-items: center;
   transform: translateX(10px);
-  position: relative; /* Ajustado para asegurarse de que la posición sea relativa al contenedor */
+  position: relative;
 }
 
 .icon__notificacion img {

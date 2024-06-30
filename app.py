@@ -311,11 +311,12 @@ def eliminar_productos():
 #region Clientes
 #################################### CLIENTES ################################################
 
-
 @app.route("/clientes", methods=["GET", "POST"])
 def clientes():
     if "loggedin" not in session:
         return redirect(url_for("login"))
+
+    error_messages = []
 
     if request.method == "POST":
         nombre = request.form["nombre"]
@@ -324,13 +325,30 @@ def clientes():
         cedula = request.form["cedula"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            "INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
-            (nombre, direccion, telefono, cedula),
-        )
-        mysql.connection.commit()
+
+        # Verificar si la cédula ya existe
+        cursor.execute("SELECT * FROM clientes WHERE cedula = %s", (cedula,))
+        cliente_cedula = cursor.fetchone()
+
+        # Verificar si el teléfono ya existe
+        cursor.execute("SELECT * FROM clientes WHERE telefono = %s", (telefono,))
+        cliente_telefono = cursor.fetchone()
+
+        if cliente_cedula:
+            error_messages.append("La cédula ya existe.")
+        if cliente_telefono:
+            error_messages.append("El teléfono ya existe.")
+
+        if not error_messages:
+            cursor.execute(
+                "INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
+                (nombre, direccion, telefono, cedula),
+            )
+            mysql.connection.commit()
+            flash("Cliente agregado correctamente", 'success')
+            return redirect(url_for('clientes'))
+
         cursor.close()
-        flash("Cliente agregado correctamente" , 'success')
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM clientes WHERE status = 1")
@@ -343,7 +361,84 @@ def clientes():
         username=session["username"],
         rol=session["rol"],
         current_page="clientes",
+        error_messages=error_messages,
     )
+
+
+@app.route("/actualizar_cliente", methods=["POST"])
+def actualizar_cliente():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    cliente_id = request.form["cliente_id_actualizar"]
+    nombre = request.form["nombre_actualizar"]
+    direccion = request.form["direccion_actualizar"]
+    telefono = request.form["telefono_actualizar"]
+    cedula = request.form["cedula_actualizar"]
+
+    error_messages = []
+
+    # Validaciones
+    cursor = mysql.connection.cursor()
+
+    # Verificar si el teléfono ya existe y pertenece a otro cliente
+    cursor.execute("SELECT * FROM clientes WHERE telefono = %s AND id != %s", (telefono, cliente_id))
+    cliente_existente_telefono = cursor.fetchone()
+    if cliente_existente_telefono:
+        error_messages.append("El teléfono ingresado ya pertenece a otro cliente.")
+
+    # Verificar si la cédula ya existe y pertenece a otro cliente
+    cursor.execute("SELECT * FROM clientes WHERE cedula = %s AND id != %s", (cedula, cliente_id))
+    cliente_existente_cedula = cursor.fetchone()
+    if cliente_existente_cedula:
+        error_messages.append("La cédula ingresada ya pertenece a otro cliente.")
+
+    cursor.close()
+
+    if error_messages:
+        for error in error_messages:
+            flash(error, "error")
+       
+        return redirect(url_for("clientes"))
+
+    # Actualizar cliente en la base de datos si no hay errores
+    cursor = mysql.connection.cursor()
+    cursor.execute(
+        """
+        UPDATE clientes
+        SET nombre = %s, direccion = %s, telefono = %s, cedula = %s
+        WHERE id = %s
+        """,
+        (nombre, direccion, telefono, cedula, cliente_id),
+    )
+    mysql.connection.commit()
+    cursor.close()
+
+    flash("Cliente actualizado correctamente", "success")
+    
+    # Redirigir a la lista de clientes después de la actualización
+    return redirect(url_for("clientes"))
+
+
+
+
+@app.route("/eliminar_clientes", methods=["POST"])
+def eliminar_clientes():
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    cliente_ids = request.form.getlist("cliente_ids")
+    cursor = mysql.connection.cursor()
+    for cliente_id in cliente_ids:
+        cursor.execute(
+            "UPDATE clientes SET status = %s WHERE id = %s", (False, cliente_id)
+        )
+    mysql.connection.commit()
+    cursor.close()
+    flash("Clientes eliminados correctamente", 'success')
+
+    return redirect(url_for("clientes"))
+
 
 
 @app.route("/realizar_venta", methods=["GET", "POST"])
@@ -426,49 +521,11 @@ def realizar_venta():
     )
 
 
-@app.route("/actualizar_cliente", methods=["POST"])
-def actualizar_cliente():
-    if "loggedin" not in session:
-        return redirect(url_for("login"))
-
-    cliente_id = request.form["cliente_id_actualizar"]
-    nombre = request.form["nombre_actualizar"]
-    direccion = request.form["direccion_actualizar"]
-    telefono = request.form["telefono_actualizar"]
-    cedula = request.form["cedula_actualizar"]
-
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute(
-        """
-        UPDATE clientes
-        SET nombre = %s, direccion = %s, telefono = %s, cedula = %s
-        WHERE id = %s
-    """,
-        (nombre, direccion, telefono, cedula, cliente_id),
-    )
-    mysql.connection.commit()
-    cursor.close()
-
-    flash("Cliente actualizado correctamente")
-    return redirect(url_for("clientes"))
 
 
-@app.route("/eliminar_clientes", methods=["POST"])
-def eliminar_clientes():
-    if "loggedin" not in session:
-        return redirect(url_for("login"))
 
-    cliente_ids = request.form.getlist("cliente_ids")
-    cursor = mysql.connection.cursor()
-    for cliente_id in cliente_ids:
-        cursor.execute(
-            "UPDATE clientes SET status = %s WHERE id = %s", (False, cliente_id)
-        )
-    mysql.connection.commit()
-    cursor.close()
-    flash("Clientes eliminados correctamente")
 
-    return redirect(url_for("clientes"))
+
 #endregion
 
 

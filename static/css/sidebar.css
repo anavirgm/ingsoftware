@@ -1,3 +1,23 @@
+.menu__side {
+  width: 100px;
+  height: 100%;
+  background: #021f5c;
+  position: fixed;
+  top: 0;
+  left: 0;
+  color: white;
+  font-size: 18px;
+  z-index: 300;
+  overflow: hidden;
+  border-right: 40px solid #021f5c;
+  transition: 0.3s ease all;
+}
+
+.menu__side_move {
+  width: 250px;
+  left: 0;
+}
+
 body.dark .menu__side {
   width: 100px;
   height: 100%;
@@ -18,24 +38,29 @@ body.dark .menu__side_move {
   left: 0;
 }
 
-.menu__side {
-  width: 100px;
-  height: 100%;
-  background: #021f5c;
+header {
+  left: 100px;
+  right: 0;
+  height: 80px;
+  background: #08245f;
+  display: flex;
+  align-items: center;
   position: fixed;
   top: 0;
-  left: 0;
-  color: white;
-  font-size: 18px;
-  z-index: 300;
-  overflow: hidden;
-  border-right: 40px solid #021f5c;
+  z-index: 200;
   transition: 0.3s ease all;
 }
 
-.menu__side_move {
-  width: 250px;
-  left: 0;
+header.header_move {
+  left: 250px;
+}
+
+body.dark header {
+  background: #152937;
+}
+
+.separator {
+  flex: 1;
 }
 
 .icon__menu .lateral img {
@@ -107,31 +132,6 @@ a.selector {
   left: -30px;
 }
 
-body.dark header {
-  background: #152937;
-}
-
-.separator {
-  flex: 1;
-}
-
-header {
-  left: 100px;
-  right: 0;
-  height: 80px;
-  background: #08245f;
-  display: flex;
-  align-items: center;
-  position: fixed;
-  top: 0;
-  z-index: 200;
-  transition: 0.3s ease all;
-}
-
-header.header_move {
-  left: 250px;
-}
-
 .icon__menu, .icon__configuracion {
   width: 50px;
   height: 100%;
@@ -147,15 +147,6 @@ header.header_move {
   position: absolute;
 }
 
-.icon__notificacion {
-  width: 50px;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  transform: translateX(10px);
-}
-
 .icon__menu, .icon__configuracion {
   width: 50px;
   height: 100%;
@@ -164,17 +155,6 @@ header.header_move {
   align-items: center;
   transform: translateX(10px);
   position: relative;
-}
-
-.icon__notificacion img {
-  cursor: pointer;
-  position: absolute;
-  width: 40px;
-  margin-right: 10px;
-}
-
-.separator {
-  flex: 1;
 }
 
 .logout img {

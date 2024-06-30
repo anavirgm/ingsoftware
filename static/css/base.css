@@ -144,3 +144,20 @@ body.dark {
     margin-left: 100px;
   }
 }
+
+
+.footer {
+  background-color: #f8f9fa;
+  color: #495057;
+  padding: 20px; 
+  text-align: center; 
+  position: fixed;
+  width: 100%; 
+  bottom: 0; 
+  left: 0;
+  border-top: 1px solid #dee2e6; 
+}
+
+.footer p {
+  margin: 0; 
+}

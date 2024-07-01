@@ -108,9 +108,92 @@ def login():
             session["rol"] = user["rol"]
             return redirect(url_for("dashboard"))
         else:
-            flash("Usuario o contraseña incorrectos")
+            flash("Usuario o contraseña incorrectos", 'error')
 
     return render_template("login.html")
+
+
+#region Contraseña
+##################### OLVIDASTE TU CONTRASEÑA ##########################################
+
+
+@app.route("/recuperar_contrasena", methods=["GET", "POST"])
+def recuperar_contrasena():
+    if request.method == "POST" and "username" in request.form:
+        username = request.form["username"]
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            "SELECT pregunta_seguridad FROM usuarios WHERE cedula = %s AND status = 1",
+            (username,),
+        )
+        user = cursor.fetchone()
+
+        if user:
+            session["recuperar_username"] = username
+            session["pregunta_seguridad"] = user["pregunta_seguridad"]
+            return redirect(url_for("verificar_respuesta"))
+        else:
+            flash("Usuario no encontrado", 'error')
+
+    return render_template("recuperar_contrasena.html")
+
+
+@app.route("/verificar_respuesta", methods=["GET", "POST"])
+def verificar_respuesta():
+    if "recuperar_username" not in session:
+        return redirect(url_for("recuperar_contrasena"))
+
+    if request.method == "POST" and "respuesta" in request.form:
+        respuesta = request.form["respuesta"]
+        username = session["recuperar_username"]
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            "SELECT * FROM usuarios WHERE cedula = %s AND status = 1;", (username,)
+        )
+        user = cursor.fetchone()
+
+        if user and bcrypt.check_password_hash(user["respuesta_seguridad"], respuesta):
+            return redirect(url_for("cambiar_contrasena"))
+        else:
+            flash("Respuesta incorrecta", 'error')
+
+    return render_template(
+        "verificar_respuesta.html", pregunta_secreta=session["pregunta_seguridad"]
+    )
+
+
+@app.route("/cambiar_contrasena", methods=["GET", "POST"])
+def cambiar_contrasena():
+    if "recuperar_username" not in session:
+        return redirect(url_for("recuperar_contrasena"))
+
+    if request.method == "POST" and "nueva_contrasena" in request.form:
+        nueva_contrasena = request.form["nueva_contrasena"]
+        username = session["recuperar_username"]
+
+        hash_de_nueva_contrasena = bcrypt.generate_password_hash(
+            nueva_contrasena
+        ).decode("utf-8")
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute(
+            "UPDATE usuarios SET hash_de_contrasena = %s WHERE cedula = %s",
+            (hash_de_nueva_contrasena, username),
+        )
+        mysql.connection.commit()
+        cursor.close()
+
+        session.pop("recuperar_username", None)
+        session.pop("pregunta_secreta", None)
+        flash("Contraseña cambiada correctamente", 'success')
+        return redirect(url_for("login"))
+
+    return render_template("cambiar_contrasena.html")
+#endregion
+
+
 
 #region Dashboard
 
@@ -717,86 +800,6 @@ def eliminar_proveedores():
     flash("Proveedores eliminados correctamente", 'success')
     return redirect(url_for("proveedores"))
 
-
-#region Contraseña
-##################### OLVIDASTE TU CONTRASEÑA ##########################################
-
-
-@app.route("/recuperar_contrasena", methods=["GET", "POST"])
-def recuperar_contrasena():
-    if request.method == "POST" and "username" in request.form:
-        username = request.form["username"]
-
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            "SELECT pregunta_seguridad FROM usuarios WHERE cedula = %s AND status = 1",
-            (username,),
-        )
-        user = cursor.fetchone()
-
-        if user:
-            session["recuperar_username"] = username
-            session["pregunta_seguridad"] = user["pregunta_seguridad"]
-            return redirect(url_for("verificar_respuesta"))
-        else:
-            flash("Usuario no encontrado")
-
-    return render_template("recuperar_contrasena.html")
-
-
-@app.route("/verificar_respuesta", methods=["GET", "POST"])
-def verificar_respuesta():
-    if "recuperar_username" not in session:
-        return redirect(url_for("recuperar_contrasena"))
-
-    if request.method == "POST" and "respuesta" in request.form:
-        respuesta = request.form["respuesta"]
-        username = session["recuperar_username"]
-
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            "SELECT * FROM usuarios WHERE cedula = %s AND status = 1;", (username,)
-        )
-        user = cursor.fetchone()
-
-        if user and bcrypt.check_password_hash(user["respuesta_seguridad"], respuesta):
-            return redirect(url_for("cambiar_contrasena"))
-        else:
-            flash("Respuesta incorrecta")
-
-    return render_template(
-        "verificar_respuesta.html", pregunta_secreta=session["pregunta_seguridad"]
-    )
-
-
-@app.route("/cambiar_contrasena", methods=["GET", "POST"])
-def cambiar_contrasena():
-    if "recuperar_username" not in session:
-        return redirect(url_for("recuperar_contrasena"))
-
-    if request.method == "POST" and "nueva_contrasena" in request.form:
-        nueva_contrasena = request.form["nueva_contrasena"]
-        username = session["recuperar_username"]
-
-        hash_de_nueva_contrasena = bcrypt.generate_password_hash(
-            nueva_contrasena
-        ).decode("utf-8")
-
-        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            "UPDATE usuarios SET hash_de_contrasena = %s WHERE cedula = %s",
-            (hash_de_nueva_contrasena, username),
-        )
-        mysql.connection.commit()
-        cursor.close()
-
-        session.pop("recuperar_username", None)
-        session.pop("pregunta_secreta", None)
-        flash("Contraseña cambiada correctamente")
-        return redirect(url_for("login"))
-
-    return render_template("cambiar_contrasena.html")
-#endregion
 
 
 #region Transacciones

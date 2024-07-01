@@ -271,5 +271,35 @@
     document.addEventListener('DOMContentLoaded', function () {
       buscarProducto(); // Mostrar todos los productos y clientes al cargar la página
     });
+
+
+    function cerrarFlashMessage(button) {
+    const flashMessage = button.closest(".flash-message");
+    flashMessage.classList.remove("show");
+    setTimeout(() => {
+      flashMessage.remove();
+    }, 300);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const flashMessages = document.querySelectorAll(".flash-message");
+    flashMessages.forEach((message) => {
+      setTimeout(() => {
+        message.classList.remove("show");
+        setTimeout(() => {
+          message.remove();
+        }, 300);
+      }, 5000);
+    });
+  });
+
+    function checkInternetConnection() {
+        if (!navigator.onLine) {
+            window.location.href = "{{ url_for('no_connection') }}";
+        }
+    }
+
+    window.addEventListener('load', checkInternetConnection);
+    window.addEventListener('offline', checkInternetConnection);
   </script>
 {% endblock %}

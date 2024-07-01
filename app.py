@@ -509,11 +509,14 @@ def eliminar_clientes():
     return redirect(url_for("clientes"))
 
 
-
 @app.route("/realizar_venta", methods=["GET", "POST"])
 def realizar_venta():
     if "loggedin" not in session:
         return redirect(url_for("login"))
+
+    if not check_internet_connection():
+        flash("No hay conexión a internet. Por favor, comprueba tu conexión.", 'error')
+        return render_template("no_connection.html") 
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
@@ -533,6 +536,9 @@ def realizar_venta():
 
     tasa_bcv = get_tasa_bcv()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if 'success' in request.args:
+        flash("Conexión restablecida correctamente", 'success')
 
     if request.method == "POST":
         try:
@@ -662,13 +668,17 @@ def realizar_compra():
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
+    if not check_internet_connection():
+        flash("No hay conexión a internet. Por favor, comprueba tu conexión.", 'error')
+        return render_template("no_connection.html")
+
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
     # Obtener productos activos
     cursor.execute("SELECT * FROM productos WHERE status = 1")
     productos_activos = cursor.fetchall()
 
-    # Obtener clientes activos
+    # Obtener proveedores activos
     cursor.execute("SELECT * FROM proveedores WHERE status = 1")
     proveedores_activos = cursor.fetchall()
 
@@ -680,6 +690,9 @@ def realizar_compra():
 
     tasa_bcv = get_tasa_bcv()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    if 'success' in request.args:
+        flash("Conexión restablecida correctamente", 'success')
 
     if request.method == "POST":
         try:
@@ -736,6 +749,7 @@ def realizar_compra():
         usuario=session["username"],
         current_page="proveedores",
     )
+
 
 
 @app.route("/actualizar_proveedor", methods=["POST"])
@@ -1689,6 +1703,14 @@ def buscar_productos():
         rol=session["rol"],
     )
 
+def check_internet_connection():
+    url = "http://www.google.com"
+    timeout = 5
+    try:
+        requests.get(url, timeout=timeout)
+        return True
+    except requests.ConnectionError:
+        return False
 
 #region AYUDA
 @app.route("/ayuda")
@@ -1704,6 +1726,10 @@ def ayuda():
 
     return redirect(url_for("dashboard"))
 # endregion
+
+@app.route("/no_connection")
+def no_connection():
+    return render_template("no_connection.html")
 
 
 #region CERRAR SESION

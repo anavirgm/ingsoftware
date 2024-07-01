@@ -323,5 +323,25 @@ function validarNombre(event) {
       const alertaEliminar = document.getElementById("alerta-eliminar");
       alertaEliminar.classList.remove("show");
     }
+
+    function cerrarFlashMessage(button) {
+    const flashMessage = button.closest(".flash-message");
+    flashMessage.classList.remove("show");
+    setTimeout(() => {
+      flashMessage.remove();
+    }, 300);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const flashMessages = document.querySelectorAll(".flash-message");
+    flashMessages.forEach((message) => {
+      setTimeout(() => {
+        message.classList.remove("show");
+        setTimeout(() => {
+          message.remove();
+        }, 300);
+      }, 5000);
+    });
+  });
   </script>
   {% endblock %}

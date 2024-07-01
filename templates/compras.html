@@ -253,5 +253,15 @@
     document.addEventListener('DOMContentLoaded', function () {
       buscarProducto(); // Mostrar todos los productos y proveedores al cargar la página
     });
+
+    
+    function checkInternetConnection() {
+        if (!navigator.onLine) {
+            window.location.href = "{{ url_for('no_connection') }}";
+        }
+    }
+
+    window.addEventListener('load', checkInternetConnection);
+    window.addEventListener('offline', checkInternetConnection);
   </script>
 {% endblock %}

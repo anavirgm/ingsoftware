@@ -197,16 +197,18 @@ def productos():
                         (fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, nombre),
                     )
                     mysql.connection.commit()
-                    flash("Producto actualizado y reactivado correctamente", 'success')
+                    flash("Producto agregado correctamente.", 'success')
+                    return redirect(url_for("productos"))
                 else:
-                    flash("El producto ya existe y está activo.", 'warning')
+                    flash("El producto ya existe.", 'warning')
             else:
                 cursor.execute(
                     "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, status) VALUES (%s, %s, %s, %s, 1)",
                     (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares),
                 )
                 mysql.connection.commit()
-                flash("Producto agregado correctamente", 'success')
+                flash("Producto agregado correctamente.", 'success')
+                return redirect(url_for("productos"))
 
             cursor.close()
         else:
@@ -318,16 +320,18 @@ def clientes():
                     (nombre, direccion, telefono, cedula),
                 )
                 mysql.connection.commit()
-                flash("Cliente actualizado y reactivado correctamente", 'success')
+                flash("Cliente agregado correctamente.", 'success')
+                return redirect(url_for("clientes"))
             else:
-                error_messages.append("El cliente ya existe y está activo.")
+                error_messages.append("El cliente ya existe.")
         else:
             cursor.execute(
                 "INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
                 (nombre, direccion, telefono, cedula),
             )
             mysql.connection.commit()
-            flash("Cliente agregado correctamente", 'success')
+            flash("Cliente agregado correctamente.", 'success')
+            return redirect(url_for("clientes"))
 
         cursor.close()
 
@@ -540,16 +544,18 @@ def proveedores():
                     (nombre, direccion, rif),
                 )
                 mysql.connection.commit()
-                flash("Proveedor actualizado y reactivado correctamente", 'success')
+                flash("Proveedor añadido correctamente.", 'success')
+                return redirect(url_for("proveedores"))
             else:
-                error_messages.append("El RIF ya pertenece a un proveedor activo.")
+                error_messages.append("El RIF ya pertenece a un proveedor.")
         else:
             cursor.execute(
                 "INSERT INTO proveedores (nombre, direccion, rif, status) VALUES (%s, %s, %s, 1)",
                 (nombre, direccion, rif),
             )
             mysql.connection.commit()
-            flash("Proveedor añadido correctamente", 'success')
+            flash("Proveedor añadido correctamente.", 'success')
+            return redirect(url_for("proveedores"))
 
         cursor.close()
 

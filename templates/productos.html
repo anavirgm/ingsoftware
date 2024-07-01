@@ -58,7 +58,7 @@
       <div class="modal-content">
         <span class="close" onclick="cerrarFormulario()">&times;</span>
         <h2>Agregar Nuevo Producto</h2>
-        <form id="formulario" action="{{ url_for('clientes') }}" method="POST" onsubmit="return validarFormulario()">
+        <form id="formulario" action="{{ url_for('productos') }}" method="POST" onsubmit="return validarFormulario()">
         
           <label for="nombre">Nombre:</label>
           <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required /><br />

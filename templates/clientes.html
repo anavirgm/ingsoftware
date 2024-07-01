@@ -94,14 +94,15 @@
     <form id="formulario" action="{{ url_for('clientes') }}" method="POST" onsubmit="return validarFormulario()">
       
       <label for="nombre">Nombre:</label>
-      <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required /><br />
+      <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required onkeydown="return validarNombre(event)" /><br />
+
       <label for="direccion">Dirección:</label>
       <input type="text" id="direccion" name="direccion" value="{{ request.form.direccion or '' }}" required /><br />
       <label for="telefono">Teléfono:</label>
       <input type="text" id="telefono" name="telefono" value="{{ request.form.telefono or '' }}" required onkeydown="return validarNumero(event)" /><br />
       <label for="cedula">Cédula:</label>
       <input type="text" id="cedula" name="cedula" value="{{ request.form.cedula or '' }}" required onkeydown="return validarNumero(event)" /><br />
-      
+  
       {% if error_messages %}
       <div class="error-messages">
         {% for message in error_messages %}
@@ -123,13 +124,13 @@
       <input type="hidden" id="cliente_id_actualizar" name="cliente_id_actualizar" />
      
       <label for="nombre_actualizar">Nombre:</label>
-      <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
+      <input type="text" id="nombre_actualizar" name="nombre_actualizar" required onkeydown="return validarNombre(event)"/><br />
       <label for="direccion_actualizar">Dirección:</label>
       <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
       <label for="telefono_actualizar">Teléfono:</label>
-      <input type="text" id="telefono_actualizar" name="telefono_actualizar" required /><br />
+      <input type="text" id="telefono_actualizar" name="telefono_actualizar" required onkeydown="return validarNumero(event)" /><br />
       <label for="cedula_actualizar">Cédula:</label>
-      <input type="text" id="cedula_actualizar" name="cedula_actualizar" required /><br />
+      <input type="text" id="cedula_actualizar" name="cedula_actualizar" required onkeydown="return validarNumero(event)"/><br />
 
       <button type="submit">Actualizar</button>
     </form>
@@ -149,6 +150,20 @@
 {% block scripts %}
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 <script>
+  function validarNombre(event) {
+  // Permitir solo letras y espacios
+  if (
+    (event.key >= "a" && event.key <= "z") ||
+    (event.key >= "A" && event.key <= "Z") ||
+    event.key === " "
+  ) {
+    return true;
+  } else {
+    event.preventDefault();
+    return false;
+  }
+}
+
   
   function validarNumero(event) {
     // Permitir: backspace, delete, tab, escape, enter y .
@@ -397,5 +412,7 @@
       }, 5000);
     });
   });
+
+  
 </script>
 {% endblock %}

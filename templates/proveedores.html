@@ -86,12 +86,12 @@
       <h2>Agregar Nuevo Proveedor</h2>
       <form id="formulario" action="{{ url_for('proveedores') }}" method="POST">
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required /><br />
+        <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required onkeydown="return validarNombre(event)" /><br />
         <label for="direccion">Dirección:</label>
         <input type="text" id="direccion" name="direccion" value="{{ request.form.direccion or '' }}" required /><br />
         <label for="rif">RIF:</label>
-        <input type="text" id="rif" name="rif" value="{{ request.form.rif or '' }}" required /><br />
-  
+        <input type="text" id="rif" name="rif" value="{{ request.form.rif or '' }}" required placeholder="Ej. J123456789" onkeydown="return validarRIF(event)" />
+
         {% if error_messages %}
         <div class="error-messages">
           {% for message in error_messages %}
@@ -113,11 +113,11 @@
       <form id="formulario-actualizar" method="POST" action="{{ url_for('actualizar_proveedor') }}">
         <input type="hidden" id="proveedor_id_actualizar" name="proveedor_id_actualizar" />
         <label for="nombre_actualizar">Nombre:</label>
-        <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
+        <input type="text" id="nombre_actualizar" name="nombre_actualizar" required onkeydown="return validarNombre(event)" /><br />
         <label for="direccion_actualizar">Dirección:</label>
         <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
         <label for="rif_actualizar">RIF:</label>
-        <input type="text" id="rif_actualizar" name="rif_actualizar" required /><br />
+        <input type="text" id="rif_actualizar" name="rif_actualizar" required placeholder="Ej. J123456789" onkeydown="return validarRIF(event)"  /><br />
         <button type="submit">Actualizar</button>
       </form>
     </div>
@@ -126,47 +126,44 @@
   {% endblock %} {% block scripts %}
   <script src="{{ url_for('static', filename='js/component.js') }}"></script>
   <script>
-    function validarNumero(event) {
-      // Permitir: backspace, delete, tab, escape, enter y .
-      if (
-        ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
-          event.key,
-        ) !== -1 ||
-        ((event.ctrlKey || event.metaKey) &&
-          ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
-        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !==
-        -1
-      ) {
-        return true;
-      }
-      // Asegurarse de que es un número
-      if (!/^[0-9]$/.test(event.key)) {
-        event.preventDefault();
-        return false;
-      }
-      return true;
+    function validarRIF(event) {
+  // Permitir: backspace, delete, tab, escape, enter y J
+  if (
+    ["Backspace", "Delete", "Tab", "Escape", "Enter", "J"].indexOf(event.key) !== -1 ||
+    ((event.ctrlKey || event.metaKey) && ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+    // Permitir: numeros del 0 al 9
+    (event.key >= "0" && event.key <= "9")
+  ) {
+    // Solo permitir un J al inicio
+    if (event.key === "J" && event.target.value !== "") {
+      event.preventDefault();
+      return false;
     }
+    // Permitir solo números después de J
+    if (event.target.value.startsWith("J") && !(event.key >= "0" && event.key <= "9")) {
+      event.preventDefault();
+      return false;
+    }
+  } else {
+    event.preventDefault();
+    return false;
+  }
+  return true;
+}
   
-    function validarNumeros(event) {
-      // Permitir: backspace, delete, tab, escape, enter y .
-      if (
-        ["Backspace", "Delete", "Tab", "Escape", "Enter"].indexOf(event.key) !==
-        -1 ||
-        ((event.ctrlKey || event.metaKey) &&
-          ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
-        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !==
-        -1
-      ) {
-        return true;
-      }
-      // Asegurarse de que es un número
-      if (/^[0-9]$/.test(event.key)) {
-        return true;
-      } else {
-        event.preventDefault();
-        return false;
-      }
-    }
+function validarNombre(event) {
+  // Permitir solo letras y espacios
+  if (
+    (event.key >= "a" && event.key <= "z") ||
+    (event.key >= "A" && event.key <= "Z") ||
+    event.key === " "
+  ) {
+    return true;
+  } else {
+    event.preventDefault();
+    return false;
+  }
+}
   
     function mostrarFormulario() {
       document.getElementById("modal").style.display = "block";

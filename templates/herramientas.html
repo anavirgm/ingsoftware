@@ -32,7 +32,7 @@ head %} {{ super() }}
       <h3>Agregar Nuevo Empleado</h3>
       <form action="{{ url_for('agregar_empleado') }}" method="POST">
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required /><br />
+        <input type="text" id="nombre" name="nombre" required onkeydown="return validarNombre(event)" /><br />
 
         <label for="cedula">Cédula:</label>
         <input type="text" id="cedula" name="cedula" required onkeypress="return validarNumero(event)" /><br />
@@ -138,195 +138,209 @@ head %} {{ super() }}
     <h2>Actualizar Empleado</h2>
     <form id="formulario-actualizar" method="POST" action="{{ url_for('actualizar_empleado') }}">
       <input type="hidden" id="empleado_id_actualizar" name="empleado_id_actualizar" />
-      
+
       <label for="nombre_actualizar">Nombre:</label>
-      <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
-      
+      <input type="text" id="nombre_actualizar" name="nombre_actualizar" required onkeydown="return validarNombre(event)" /><br />
+
       <label for="cedula_actualizar">Cédula:</label>
-      <input type="text" id="cedula_actualizar" name="cedula_actualizar" required /><br />
-      
+      <input type="text" id="cedula_actualizar" name="cedula_actualizar" required onkeydown="return validarNumero(event)" /><br />
+
       <label for="rol_actualizar">Rol:</label>
       <select id="rol_actualizar" name="rol_actualizar" required>
         <option value="empleado">Empleado</option>
         <option value="administrador">Administrador</option>
       </select><br />
-      
+
       <label for="status_actualizar">Status:</label>
       <select id="status_actualizar" name="status_actualizar" required>
         <option value="1">Activo</option>
         <option value="0">Inactivo</option>
       </select><br />
-      
+
       <button type="submit" class="btn-primary">Actualizar Empleado</button>
     </form>
   </div>
 
-{% endblock %} {% block scripts %}
-<script src="{{ url_for('static', filename='js/component.js') }}"></script>
-<script>
-  function validarNumero(event) {
-    if (
-      ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
-        event.key,
-      ) !== -1 ||
-      ((event.ctrlKey || event.metaKey) &&
-        ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
-      ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !==
-      -1
-    ) {
+  {% endblock %} {% block scripts %}
+  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+  <script>
+
+    function validarNombre(event) {
+      // Permitir solo letras y espacios
+      if (
+        (event.key >= "a" && event.key <= "z") ||
+        (event.key >= "A" && event.key <= "Z") ||
+        event.key === " "
+      ) {
+        return true;
+      } else {
+        event.preventDefault();
+        return false;
+      }
+    }
+    function validarNumero(event) {
+      if (
+        ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
+          event.key,
+        ) !== -1 ||
+        ((event.ctrlKey || event.metaKey) &&
+          ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+        ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"].indexOf(event.key) !==
+        -1
+      ) {
+        return true;
+      }
+      if (!/^[0-9]$/.test(event.key)) {
+        event.preventDefault();
+        return false;
+      }
       return true;
     }
-    if (!/^[0-9]$/.test(event.key)) {
-      event.preventDefault();
-      return false;
-    }
-    return true;
-  }
 
-  function mostrarFormulario() {
-    document.getElementById("modal").style.display = "block";
-  }
-
-  function cerrarFormulario() {
-    document.getElementById("modal").style.display = "none";
-    limpiarCampos();
-  }
-
-  function limpiarCampos() {
-    document.getElementById("formulario").reset();
-  }
-
-  function obtenerEmpleadosSeleccionados() {
-    const checkboxes = document.querySelectorAll(".empleado-checkbox:checked");
-    const ids = Array.from(checkboxes).map((checkbox) =>
-      checkbox.getAttribute("data-id"),
-    );
-    return ids;
-  }
-
-  function eliminarEmpleados() {
-    const ids = obtenerEmpleadosSeleccionados();
-    if (ids.length === 0) {
-      mostrarAlertaEliminar("Seleccione al menos un empleado para eliminar.");
-      return;
+    function mostrarFormulario() {
+      document.getElementById("modal").style.display = "block";
     }
 
-    const confirmacion = confirm(
-      "¿Está seguro de que desea eliminar los empleados seleccionados?",
-    );
-    if (!confirmacion) {
-      return;
+    function cerrarFormulario() {
+      document.getElementById("modal").style.display = "none";
+      limpiarCampos();
     }
 
-    const form = document.createElement("form");
-    form.method = "POST";
-    form.action = "{{ url_for('eliminar_usuarios') }}";
+    function limpiarCampos() {
+      document.getElementById("formulario").reset();
+    }
 
-    ids.forEach((id) => {
-      const input = document.createElement("input");
-      input.type = "hidden";
-      input.name = "empleado_ids";
-      input.value = id;
-      form.appendChild(input);
+    function obtenerEmpleadosSeleccionados() {
+      const checkboxes = document.querySelectorAll(".empleado-checkbox:checked");
+      const ids = Array.from(checkboxes).map((checkbox) =>
+        checkbox.getAttribute("data-id"),
+      );
+      return ids;
+    }
+
+    function eliminarEmpleados() {
+      const ids = obtenerEmpleadosSeleccionados();
+      if (ids.length === 0) {
+        mostrarAlertaEliminar("Seleccione al menos un empleado para eliminar.");
+        return;
+      }
+
+      const confirmacion = confirm(
+        "¿Está seguro de que desea eliminar los empleados seleccionados?",
+      );
+      if (!confirmacion) {
+        return;
+      }
+
+      const form = document.createElement("form");
+      form.method = "POST";
+      form.action = "{{ url_for('eliminar_usuarios') }}";
+
+      ids.forEach((id) => {
+        const input = document.createElement("input");
+        input.type = "hidden";
+        input.name = "empleado_ids";
+        input.value = id;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
+    }
+
+    const selectAllCheckbox = document.getElementById("select-all");
+    const checkboxes = document.querySelectorAll(".empleado-checkbox");
+
+    selectAllCheckbox.addEventListener("change", function () {
+      checkboxes.forEach(function (checkbox) {
+        checkbox.checked = selectAllCheckbox.checked;
+      });
     });
 
-    document.body.appendChild(form);
-    form.submit();
-  }
+    function abrirModalActualizar() {
+      const filaSeleccionada = document.querySelector("input.empleado-checkbox:checked");
+      if (!filaSeleccionada) {
+        mostrarAlerta("Debe seleccionar un empleado para actualizar.");
+        return;
+      }
 
-  const selectAllCheckbox = document.getElementById("select-all");
-  const checkboxes = document.querySelectorAll(".empleado-checkbox");
+      const fila = filaSeleccionada.closest("tr");
+      const empleadoId = fila.cells[1].textContent;
+      const nombre = fila.cells[2].textContent;
+      const cedula = fila.cells[3].textContent;
+      const rol = fila.cells[4].textContent;
 
-  selectAllCheckbox.addEventListener("change", function () {
-    checkboxes.forEach(function (checkbox) {
-      checkbox.checked = selectAllCheckbox.checked;
-    });
-  });
-
-  function abrirModalActualizar() {
-    const filaSeleccionada = document.querySelector("input.empleado-checkbox:checked");
-    if (!filaSeleccionada) {
-      mostrarAlerta("Debe seleccionar un empleado para actualizar.");
-      return;
+      document.getElementById("empleado_id_actualizar").value = empleadoId;
+      document.getElementById("nombre_actualizar").value = nombre;
+      document.getElementById("cedula_actualizar").value = cedula;
+      document.getElementById("rol_actualizar").value = rol;  // Asumiendo que el rol esté en la tabla
+      document.getElementById("modal-actualizar").style.display = "block";
     }
 
-    const fila = filaSeleccionada.closest("tr");
-    const empleadoId = fila.cells[1].textContent;
-    const nombre = fila.cells[2].textContent;
-    const cedula = fila.cells[3].textContent;
-    const rol = fila.cells[4].textContent;
+    function cerrarModalActualizar() {
+      document.getElementById("modal-actualizar").style.display = "none";
+    }
 
-    document.getElementById("empleado_id_actualizar").value = empleadoId;
-    document.getElementById("nombre_actualizar").value = nombre;
-    document.getElementById("cedula_actualizar").value = cedula;
-    document.getElementById("rol_actualizar").value = rol;  // Asumiendo que el rol esté en la tabla
-    document.getElementById("modal-actualizar").style.display = "block";
-  }
-
-  function cerrarModalActualizar() {
-    document.getElementById("modal-actualizar").style.display = "none";
-  }
-
-  function searchTable() {
-    let input, filter, table, tr, td, i, txtValue;
-    input = document.getElementById("searchInput");
-    filter = input.value.toUpperCase();
-    table = document.querySelector(".table_de_clientes");
-    tr = table.getElementsByTagName("tr");
-    for (i = 0; i < tr.length; i++) {
-      td = tr[i].getElementsByTagName("td");
-      for (let j = 1; j < td.length; j++) {
-        let cell = td[j];
-        if (cell) {
-          txtValue = cell.textContent || cell.innerText;
-          if (txtValue.toUpperCase().indexOf(filter) > -1) {
-            tr[i].style.display = "";
-            break;
-          } else {
-            tr[i].style.display = "none";
+    function searchTable() {
+      let input, filter, table, tr, td, i, txtValue;
+      input = document.getElementById("searchInput");
+      filter = input.value.toUpperCase();
+      table = document.querySelector(".table_de_clientes");
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td");
+        for (let j = 1; j < td.length; j++) {
+          let cell = td[j];
+          if (cell) {
+            txtValue = cell.textContent || cell.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+              tr[i].style.display = "";
+              break;
+            } else {
+              tr[i].style.display = "none";
+            }
           }
         }
       }
     }
-  }
 
-  // Alertas
-  function mostrarAlerta(mensaje) {
-    const alerta = document.getElementById("alerta");
-    const alertaMensaje = document.getElementById("alerta-mensaje");
-    alertaMensaje.textContent = mensaje;
-    // Cerrar la alerta de eliminar si está abierta
-    cerrarAlertaEliminar();
-    alerta.classList.add("show");
-    setTimeout(() => {
+    // Alertas
+    function mostrarAlerta(mensaje) {
+      const alerta = document.getElementById("alerta");
+      const alertaMensaje = document.getElementById("alerta-mensaje");
+      alertaMensaje.textContent = mensaje;
+      // Cerrar la alerta de eliminar si está abierta
+      cerrarAlertaEliminar();
+      alerta.classList.add("show");
+      setTimeout(() => {
+        alerta.classList.remove("show");
+      }, 5000);
+    }
+
+    function cerrarAlerta() {
+      const alerta = document.getElementById("alerta");
       alerta.classList.remove("show");
-    }, 5000);
-  }
+    }
 
-  function cerrarAlerta() {
-    const alerta = document.getElementById("alerta");
-    alerta.classList.remove("show");
-  }
+    function mostrarAlertaEliminar(mensaje) {
+      const alertaEliminar = document.getElementById("alerta-eliminar");
+      const alertaEliminarMensaje = document.getElementById(
+        "alerta-mensaje-eliminar",
+      );
+      alertaEliminarMensaje.textContent = mensaje;
 
-  function mostrarAlertaEliminar(mensaje) {
-    const alertaEliminar = document.getElementById("alerta-eliminar");
-    const alertaEliminarMensaje = document.getElementById(
-      "alerta-mensaje-eliminar",
-    );
-    alertaEliminarMensaje.textContent = mensaje;
+      // Cerrar la alerta de actualizar si está abierta
+      cerrarAlerta();
 
-    // Cerrar la alerta de actualizar si está abierta
-    cerrarAlerta();
+      alertaEliminar.classList.add("show");
+      setTimeout(() => {
+        alertaEliminar.classList.remove("show");
+      }, 5000);
+    }
 
-    alertaEliminar.classList.add("show");
-    setTimeout(() => {
+    function cerrarAlertaEliminar() {
+      const alertaEliminar = document.getElementById("alerta-eliminar");
       alertaEliminar.classList.remove("show");
-    }, 5000);
-  }
-
-  function cerrarAlertaEliminar() {
-    const alertaEliminar = document.getElementById("alerta-eliminar");
-    alertaEliminar.classList.remove("show");
-  }
-</script>
-{% endblock %}
+    }
+  </script>
+  {% endblock %}

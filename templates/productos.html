@@ -1,309 +1,367 @@
 {% extends "base.html" %} {% block title %}Productos{% endblock %} {% block head
-  %} {{ super() }}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/productos.css') }}" />
-  {% endblock %} {% block content %} {% include
-  'sidebar.html' %}
-  <main>
-    <div class="container_productos">
-      <h1>Productos</h1>
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-        <div class="flash-message {{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %}
-      {% endwith %}
-      <div class="container_productos_buscar">
-        <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
-        <button onclick="mostrarFormulario()">Añadir producto</button>
-        <button class="Actualizar" onclick="abrirModalActualizar()">Actualizar</button>
-  
-        <button class="Eliminar" onclick="eliminarProductos()">Eliminar</button>
-      </div>
-      <div class="productos">
-        <table class="table_de_productos">
-          <thead>
-            <tr>
-              <th><input type="checkbox" id="select-all" /></th>
-              <th>ID</th>
-              <th>Nombre</th>
-              <th>Fecha de Vencimiento</th>
-              <th>Cantidad Disponible</th>
-              <th>Precio ($)</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-productos-body">
-            <!-- Aquí se mostrarán los datos de los productos -->
-            {% for producto in productos %}
-            <tr>
-              <td>
-                <input type="checkbox" class="producto-checkbox" data-id="{{ producto.id }}" />
-              </td>
-              <td>{{ producto.id }}</td>
-              <td>{{ producto.nombre }}</td>
-              <td>{{ producto.fecha_de_vencimiento }}</td>
-              <td>{{ producto.cantidad_disponible }}</td>
-              <td>{{ producto.precio_en_dolares }}</td>
-            </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      </div>
+%} {{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/productos.css') }}" />
+{% endblock %} {% block content %} {% include
+'sidebar.html' %}
+<main>
+  <div class="container_productos">
+    <h1>Productos</h1>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+    <div class="flash-messages">
+      {% for category, message in messages %}
+      <div class="flash-message {{ category }}">{{ message }}</div>
+      {% endfor %}
     </div>
-  
-    <!-- Ventana emergente para agregar un nuevo producto -->
-    <div id="modal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="cerrarFormulario()">&times;</span>
-        <h2>Agregar Nuevo Producto</h2>
-        <form id="formulario" action="{{ url_for('productos') }}" method="POST" onsubmit="return validarFormulario()">
-        
-          <label for="nombre">Nombre:</label>
-          <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required /><br />
-          <label for="fecha_de_vencimiento">Fecha de Vencimiento:</label>
-          <input type="date" id="fecha_de_vencimiento" name="fecha_de_vencimiento" value="{{ request.form.fecha_de_vencimiento or '' }}" required /><br />
-          <label for="cantidad_disponible">Cantidad Disponible:</label>
-          <input type="number" id="cantidad_disponible" name="cantidad_disponible" value="{{ request.form.cantidad_disponible or '' }}" required /><br />
-          <label for="precio_en_dolares">Precio ($):</label>
-          <input type="text" id="precio_en_dolares" name="precio_en_dolares" value="{{ request.form.precio_en_dolares or '' }}" required /><br />
-  
-          {% if error_messages %}
+    {% endif %}
+    {% endwith %}
+    <div class="container_productos_buscar">
+      <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
+      <button onclick="mostrarFormulario()">Añadir producto</button>
+      <button class="Actualizar" onclick="abrirModalActualizar()">Actualizar</button>
+
+      <button class="Eliminar" onclick="eliminarProductos()">Eliminar</button>
+    </div>
+    <div class="productos">
+      <table class="table_de_productos">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="select-all" /></th>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Fecha de Vencimiento</th>
+            <th>Cantidad Disponible</th>
+            <th>Precio ($)</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-productos-body">
+          <!-- Aquí se mostrarán los datos de los productos -->
+          {% for producto in productos %}
+          <tr>
+            <td>
+              <input type="checkbox" class="producto-checkbox" data-id="{{ producto.id }}" />
+            </td>
+            <td>{{ producto.id }}</td>
+            <td>{{ producto.nombre }}</td>
+            <td>{{ producto.fecha_de_vencimiento }}</td>
+            <td>{{ producto.cantidad_disponible }}</td>
+            <td>{{ producto.precio_en_dolares }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Ventana emergente para agregar un nuevo producto -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarFormulario()">&times;</span>
+      <h2>Agregar Nuevo Producto</h2>
+      <form id="formulario" action="{{ url_for('productos') }}" method="POST" onsubmit="return validarFormulario()">
+
+        <label for="nombre">Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required
+          onkeydown="return validarNombre(event)" /><br />
+        <label for="fecha_de_vencimiento">Fecha de Vencimiento:</label>
+        <input type="date" id="fecha_de_vencimiento" name="fecha_de_vencimiento"
+          value="{{ request.form.fecha_de_vencimiento or '' }}" required /><br />
+        <label for="cantidad_disponible">Cantidad Disponible:</label>
+        <input type="number" id="cantidad_disponible" name="cantidad_disponible"
+          value="{{ request.form.cantidad_disponible or '' }}" required /><br />
+        <label for="precio_en_dolares">Precio ($):</label>
+        <input type="text" id="precio_en_dolares" name="precio_en_dolares"
+          value="{{ request.form.precio_en_dolares or '' }}" required onkeydown="return validarNumero(event)" /><br />
+
+        {% if error_messages %}
         <div class="error-messages">
           {% for message in error_messages %}
           <div class="error-message">{{ message }}</div>
           {% endfor %}
         </div>
         {% endif %}
-  
-          <input type="submit" value="Agregar" />
-        </form>
-      </div>
+
+        <input type="submit" value="Agregar" />
+      </form>
     </div>
-  
-    <!-- Ventana emergente para actualizar un producto -->
-    <div id="modal-actualizar" class="modal" style="display: none">
-      <div class="modal-content">
-        <span class="close" onclick="cerrarModalActualizar()">&times;</span>
-        <h2>Actualizar Producto</h2>
-        <form id="formulario-actualizar" action="{{ url_for('actualizar_producto') }}" method="POST">
-          <input type="hidden" id="producto_id_actualizar" name="producto_id_actualizar" />
-          <label for="nombre_actualizar">Nombre:</label>
-          <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
-          <label for="fecha_de_vencimiento_actualizar">Fecha de Vencimiento:</label>
-          <input type="date" id="fecha_de_vencimiento_actualizar" name="fecha_de_vencimiento_actualizar" required /><br />
-          <label for="cantidad_disponible_actualizar">Cantidad Disponible:</label>
-          <input type="number" id="cantidad_disponible_actualizar" name="cantidad_disponible_actualizar" required /><br />
-          <label for="precio_en_dolares_actualizar">Precio ($):</label>
-          <input type="text" id="precio_en_dolares_actualizar" name="precio_en_dolares_actualizar" required /><br />
-  
-          <button type="submit">Actualizar</button>
-        </form>
-      </div>
+  </div>
+
+  <!-- Ventana emergente para actualizar un producto -->
+  <div id="modal-actualizar" class="modal" style="display: none">
+    <div class="modal-content">
+      <span class="close" onclick="cerrarModalActualizar()">&times;</span>
+      <h2>Actualizar Producto</h2>
+      <form id="formulario-actualizar" action="{{ url_for('actualizar_producto') }}" method="POST">
+        <input type="hidden" id="producto_id_actualizar" name="producto_id_actualizar" />
+        <label for="nombre_actualizar">Nombre:</label>
+        <input type="text" id="nombre_actualizar" name="nombre_actualizar" required
+          onkeydown="return validarNombre(event)" /><br />
+        <label for="fecha_de_vencimiento_actualizar">Fecha de Vencimiento:</label>
+        <input type="date" id="fecha_de_vencimiento_actualizar" name="fecha_de_vencimiento_actualizar" required /><br />
+        <label for="cantidad_disponible_actualizar">Cantidad Disponible:</label>
+        <input type="number" id="cantidad_disponible_actualizar" name="cantidad_disponible_actualizar" required /><br />
+        <label for="precio_en_dolares_actualizar">Precio ($):</label>
+        <input type="text" id="precio_en_dolares_actualizar" name="precio_en_dolares_actualizar" required
+          onkeydown="return validarNumero(event)" /><br />
+
+        <button type="submit">Actualizar</button>
+      </form>
     </div>
-  
-    <div id="alerta" class="alert alert-primary d-flex align-items-center" role="alert">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-        class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
-        <path
-          d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-      </svg>
-      <div id="alerta-mensaje">Debe seleccionar un producto para actualizar.</div>
-      <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlerta()"></button>
+  </div>
+
+  <div id="alerta" class="alert alert-primary d-flex align-items-center" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+      class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+      <path
+        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+    </svg>
+    <div id="alerta-mensaje">Debe seleccionar un producto para actualizar.</div>
+    <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlerta()"></button>
+  </div>
+
+  <div id="alerta-eliminar" class="alert alert-eliminar d-flex align-items-center" role="alert">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
+      class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
+      <path
+        d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
+    </svg>
+    <div id="alerta-mensaje-eliminar">
+      Debe seleccionar al menos un producto para eliminar.
     </div>
-  
-    <div id="alerta-eliminar" class="alert alert-eliminar d-flex align-items-center" role="alert">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor"
-        class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2" viewBox="0 0 16 16" role="img" aria-label="Warning:">
-        <path
-          d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z" />
-      </svg>
-      <div id="alerta-mensaje-eliminar">
-        Debe seleccionar al menos un producto para eliminar.
-      </div>
-      <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlertaEliminar()"></button>
-    </div>
-  </main>
-  {% endblock %} {% block scripts %}
-  
-  <script src="{{ url_for('static', filename='js/component.js') }}"></script>
-  <script>
-    function mostrarFormulario() {
-      limpiarCampos(); // Limpia los campos del formulario
-      const modal = document.getElementById('modal');
-      modal.style.display = 'block';
-    }
-  
-    function cerrarFormulario() {
-      const modal = document.getElementById("modal");
-      modal.style.display = "none";
-    }
-  
-    function limpiarCampos() {
-      document.getElementById("formulario").reset();
-    }
-  
-    function eliminarProductos() {
-      const ids = obtenerProductosSeleccionados();
-      if (ids.length === 0) {
-        mostrarAlertaEliminar("Seleccione al menos un producto para eliminar.");
-        return;
+    <button type="button" class="btn-close" aria-label="Close" onclick="cerrarAlertaEliminar()"></button>
+  </div>
+</main>
+{% endblock %} {% block scripts %}
+
+<script src="{{ url_for('static', filename='js/component.js') }}"></script>
+<script>
+
+  function validarNumero(event) {
+    // Permitir: backspace, delete, tab, escape, enter y .
+    if (
+      ["Backspace", "Delete", "Tab", "Escape", "Enter", "."].indexOf(
+        event.key,
+      ) !== -1 ||
+      ((event.ctrlKey || event.metaKey) &&
+        ["a", "c", "v", "x"].indexOf(event.key) !== -1) ||
+      // Permitir: numeros del 0 al 9
+      (event.key >= "0" && event.key <= "9")
+    ) {
+      // Solo permitir un .
+      if (event.key === "." && event.target.value.includes(".")) {
+        event.preventDefault();
+        return false;
       }
-      const confirmacion = confirm(
-        "¿Está seguro de que desea eliminar los productos seleccionados?",
-      );
-      if (!confirmacion) {
-        return;
+      // Permitir numeros y puntos
+      if (event.key === "." && event.target.value === "") {
+        event.preventDefault();
+        return false;
       }
-      const form = document.createElement("form");
-      form.method = "POST";
-      form.action = "{{ url_for('eliminar_productos') }}";
-      ids.forEach((id) => {
-        const input = document.createElement("input");
-        input.type = "hidden";
-        input.name = "producto_ids";
-        input.value = id;
-        form.appendChild(input);
-      });
-      document.body.appendChild(form);
-      form.submit();
+      // Solo permitir dos decimales
+      if (
+        event.key === "." &&
+        event.target.value.split(".").length > 1 &&
+        event.target.value.split(".")[1].length >= 2
+      ) {
+        event.preventDefault();
+        return false;
+      }
+    } else {
+      event.preventDefault();
+      return false;
     }
-  
-    const selectAllCheckbox = document.getElementById("select-all");
-    const checkboxes = document.querySelectorAll(".producto-checkbox");
-    selectAllCheckbox.addEventListener("change", function () {
-      checkboxes.forEach(function (checkbox) {
-        checkbox.checked = selectAllCheckbox.checked;
-      });
+    return true;
+  }
+
+  function validarNombre(event) {
+    // Permitir solo letras y espacios
+    if (
+      (event.key >= "a" && event.key <= "z") ||
+      (event.key >= "A" && event.key <= "Z") ||
+      event.key === " "
+    ) {
+      return true;
+    } else {
+      event.preventDefault();
+      return false;
+    }
+  }
+
+  function mostrarFormulario() {
+    limpiarCampos(); // Limpia los campos del formulario
+    const modal = document.getElementById('modal');
+    modal.style.display = 'block';
+  }
+
+  function cerrarFormulario() {
+    const modal = document.getElementById("modal");
+    modal.style.display = "none";
+  }
+
+  function limpiarCampos() {
+    document.getElementById("formulario").reset();
+  }
+
+  function eliminarProductos() {
+    const ids = obtenerProductosSeleccionados();
+    if (ids.length === 0) {
+      mostrarAlertaEliminar("Seleccione al menos un producto para eliminar.");
+      return;
+    }
+    const confirmacion = confirm(
+      "¿Está seguro de que desea eliminar los productos seleccionados?",
+    );
+    if (!confirmacion) {
+      return;
+    }
+    const form = document.createElement("form");
+    form.method = "POST";
+    form.action = "{{ url_for('eliminar_productos') }}";
+    ids.forEach((id) => {
+      const input = document.createElement("input");
+      input.type = "hidden";
+      input.name = "producto_ids";
+      input.value = id;
+      form.appendChild(input);
     });
-  
-    function obtenerProductosSeleccionados() {
-      const checkboxes = document.querySelectorAll(".producto-checkbox:checked");
-      const ids = Array.from(checkboxes).map((checkbox) =>
-        checkbox.getAttribute("data-id"),
-      );
-      return ids;
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  const selectAllCheckbox = document.getElementById("select-all");
+  const checkboxes = document.querySelectorAll(".producto-checkbox");
+  selectAllCheckbox.addEventListener("change", function () {
+    checkboxes.forEach(function (checkbox) {
+      checkbox.checked = selectAllCheckbox.checked;
+    });
+  });
+
+  function obtenerProductosSeleccionados() {
+    const checkboxes = document.querySelectorAll(".producto-checkbox:checked");
+    const ids = Array.from(checkboxes).map((checkbox) =>
+      checkbox.getAttribute("data-id"),
+    );
+    return ids;
+  }
+
+  function abrirModalActualizar() {
+    const filaSeleccionada = document.querySelector(
+      "input.producto-checkbox:checked"
+    );
+
+    if (!filaSeleccionada) {
+      mostrarAlerta("Debe seleccionar un producto para actualizar.");
+      return;
     }
-  
-    function abrirModalActualizar() {
-      const filaSeleccionada = document.querySelector(
-          "input.producto-checkbox:checked"
-      );
-  
-      if (!filaSeleccionada) {
-          mostrarAlerta("Debe seleccionar un producto para actualizar.");
-          return;
-      }
-  
-      const fila = filaSeleccionada.closest("tr");
-      const celdas = fila.getElementsByTagName("td");
-      const productoId = celdas[1].textContent;
-      const nombre = celdas[2].textContent;
-      const fechaDeVencimiento = celdas[3].textContent;
-      const cantidadDisponible = celdas[4].textContent;
-      const precioEnDolares = celdas[5].textContent;
-  
-      document.getElementById("producto_id_actualizar").value = productoId;
-      document.getElementById("nombre_actualizar").value = nombre;
-      document.getElementById("fecha_de_vencimiento_actualizar").value =
-          fechaDeVencimiento;
-      document.getElementById("cantidad_disponible_actualizar").value =
-          cantidadDisponible;
-      document.getElementById("precio_en_dolares_actualizar").value =
-          precioEnDolares;
-      document.getElementById("modal-actualizar").style.display = "block";
+
+    const fila = filaSeleccionada.closest("tr");
+    const celdas = fila.getElementsByTagName("td");
+    const productoId = celdas[1].textContent;
+    const nombre = celdas[2].textContent;
+    const fechaDeVencimiento = celdas[3].textContent;
+    const cantidadDisponible = celdas[4].textContent;
+    const precioEnDolares = celdas[5].textContent;
+
+    document.getElementById("producto_id_actualizar").value = productoId;
+    document.getElementById("nombre_actualizar").value = nombre;
+    document.getElementById("fecha_de_vencimiento_actualizar").value =
+      fechaDeVencimiento;
+    document.getElementById("cantidad_disponible_actualizar").value =
+      cantidadDisponible;
+    document.getElementById("precio_en_dolares_actualizar").value =
+      precioEnDolares;
+    document.getElementById("modal-actualizar").style.display = "block";
   }
-  
+
   function cerrarModalActualizar() {
-      document.getElementById("modal-actualizar").style.display = "none";
+    document.getElementById("modal-actualizar").style.display = "none";
   }
-  
-  
-    function buscarProducto() {
-      var input, filter, table, tbody, tr, td, i, txtValue;
-      input = document.getElementById("buscar-producto");
-      filter = input.value.toUpperCase();
-      table = document.querySelector(".table_de_productos");
-      tbody = document.getElementById("tabla-productos-body");
-      tr = tbody.getElementsByTagName("tr");
-  
-      // Recorrer todas las filas de la tabla y ocultar las que no coincidan con la búsqueda
-      for (i = 0; i < tr.length; i++) {
-        td_id = tr[i].getElementsByTagName("td")[1]; // Columna de ID
-        td_nombre = tr[i].getElementsByTagName("td")[2]; // Columna de nombre
-        if (td_id || td_nombre) {
-          txtValue_id = td_id.textContent || td_id.innerText;
-          txtValue_nombre = td_nombre.textContent || td_nombre.innerText;
-          if (
-            txtValue_id.toUpperCase().indexOf(filter) > -1 ||
-            txtValue_nombre.toUpperCase().indexOf(filter) > -1
-          ) {
-            tr[i].style.display = "";
-          } else {
-            tr[i].style.display = "none";
-          }
+
+
+  function buscarProducto() {
+    var input, filter, table, tbody, tr, td, i, txtValue;
+    input = document.getElementById("buscar-producto");
+    filter = input.value.toUpperCase();
+    table = document.querySelector(".table_de_productos");
+    tbody = document.getElementById("tabla-productos-body");
+    tr = tbody.getElementsByTagName("tr");
+
+    // Recorrer todas las filas de la tabla y ocultar las que no coincidan con la búsqueda
+    for (i = 0; i < tr.length; i++) {
+      td_id = tr[i].getElementsByTagName("td")[1]; // Columna de ID
+      td_nombre = tr[i].getElementsByTagName("td")[2]; // Columna de nombre
+      if (td_id || td_nombre) {
+        txtValue_id = td_id.textContent || td_id.innerText;
+        txtValue_nombre = td_nombre.textContent || td_nombre.innerText;
+        if (
+          txtValue_id.toUpperCase().indexOf(filter) > -1 ||
+          txtValue_nombre.toUpperCase().indexOf(filter) > -1
+        ) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
         }
       }
     }
-  
-    // Alertas
-    function mostrarAlerta(mensaje) {
-      const alerta = document.getElementById("alerta");
-      const alertaMensaje = document.getElementById("alerta-mensaje");
-      alertaMensaje.textContent = mensaje;
-      // Cerrar la alerta de eliminar si está abierta
-      cerrarAlertaEliminar();
-      alerta.classList.add("show");
-      setTimeout(() => {
-        alerta.classList.remove("show");
-      }, 5000);
-    }
-  
-    function cerrarAlerta() {
-      const alerta = document.getElementById("alerta");
+  }
+
+  // Alertas
+  function mostrarAlerta(mensaje) {
+    const alerta = document.getElementById("alerta");
+    const alertaMensaje = document.getElementById("alerta-mensaje");
+    alertaMensaje.textContent = mensaje;
+    // Cerrar la alerta de eliminar si está abierta
+    cerrarAlertaEliminar();
+    alerta.classList.add("show");
+    setTimeout(() => {
       alerta.classList.remove("show");
-    }
-  
-    function mostrarAlertaEliminar(mensaje) {
-      const alertaEliminar = document.getElementById("alerta-eliminar");
-      const alertaEliminarMensaje = document.getElementById(
-        "alerta-mensaje-eliminar",
-      );
-      alertaEliminarMensaje.textContent = mensaje;
-  
-      // Cerrar la alerta de actualizar si está abierta
-      cerrarAlerta();
-  
-      alertaEliminar.classList.add("show");
-      setTimeout(() => {
-        alertaEliminar.classList.remove("show");
-      }, 5000);
-    }
-  
-    function cerrarAlertaEliminar() {
-      const alertaEliminar = document.getElementById("alerta-eliminar");
+    }, 5000);
+  }
+
+  function cerrarAlerta() {
+    const alerta = document.getElementById("alerta");
+    alerta.classList.remove("show");
+  }
+
+  function mostrarAlertaEliminar(mensaje) {
+    const alertaEliminar = document.getElementById("alerta-eliminar");
+    const alertaEliminarMensaje = document.getElementById(
+      "alerta-mensaje-eliminar",
+    );
+    alertaEliminarMensaje.textContent = mensaje;
+
+    // Cerrar la alerta de actualizar si está abierta
+    cerrarAlerta();
+
+    alertaEliminar.classList.add("show");
+    setTimeout(() => {
       alertaEliminar.classList.remove("show");
-    }
-  
-    function cerrarFlashMessage(button) {
-      const flashMessage = button.closest(".flash-message");
-      flashMessage.classList.remove("show");
+    }, 5000);
+  }
+
+  function cerrarAlertaEliminar() {
+    const alertaEliminar = document.getElementById("alerta-eliminar");
+    alertaEliminar.classList.remove("show");
+  }
+
+  function cerrarFlashMessage(button) {
+    const flashMessage = button.closest(".flash-message");
+    flashMessage.classList.remove("show");
+    setTimeout(() => {
+      flashMessage.remove();
+    }, 300);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const flashMessages = document.querySelectorAll(".flash-message");
+    flashMessages.forEach((message) => {
       setTimeout(() => {
-        flashMessage.remove();
-      }, 300);
-    }
-  
-    document.addEventListener("DOMContentLoaded", function () {
-      const flashMessages = document.querySelectorAll(".flash-message");
-      flashMessages.forEach((message) => {
+        message.classList.remove("show");
         setTimeout(() => {
-          message.classList.remove("show");
-          setTimeout(() => {
-            message.remove();
-          }, 300);
-        }, 5000);
-      });
+          message.remove();
+        }, 300);
+      }, 5000);
     });
-  </script>
-  {% endblock %}
+  });
+</script>
+{% endblock %}

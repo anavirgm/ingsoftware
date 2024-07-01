@@ -808,35 +808,133 @@ def transacciones():
     if "loggedin" not in session:
         return redirect(url_for("login"))
 
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM transacciones;")
+    fecha_inicio = request.form.get("fecha_inicio")
+    fecha_fin = request.form.get("fecha_fin")
+
+    cursor = mysql.connection.cursor()
+
+    if fecha_inicio and fecha_fin:
+        query = """
+        SELECT t.id, t.marca_de_tiempo, t.importe_en_dolares, t.tasa_bcv, 
+               t.clientes_id, t.proveedores_id, t.usuarios_id, 
+               tp.productos_id, tp.cantidad,
+               c.nombre AS cliente, prov.nombre AS proveedor, u.nombre AS usuario
+        FROM transacciones t
+        LEFT JOIN transacciones_tiene_productos tp ON t.id = tp.transacciones_id
+        LEFT JOIN clientes c ON t.clientes_id = c.id
+        LEFT JOIN proveedores prov ON t.proveedores_id = prov.id
+        LEFT JOIN usuarios u ON t.usuarios_id = u.id
+        WHERE t.marca_de_tiempo BETWEEN %s AND %s
+        ORDER BY t.marca_de_tiempo DESC;
+        """
+        cursor.execute(query, (fecha_inicio, fecha_fin))
+    else:
+        query = """
+        SELECT t.id, t.marca_de_tiempo, t.importe_en_dolares, t.tasa_bcv, 
+               t.clientes_id, t.proveedores_id, t.usuarios_id, 
+               tp.productos_id, tp.cantidad,
+               c.nombre AS cliente, prov.nombre AS proveedor, u.nombre AS usuario
+        FROM transacciones t
+        LEFT JOIN transacciones_tiene_productos tp ON t.id = tp.transacciones_id
+        LEFT JOIN clientes c ON t.clientes_id = c.id
+        LEFT JOIN proveedores prov ON t.proveedores_id = prov.id
+        LEFT JOIN usuarios u ON t.usuarios_id = u.id
+        ORDER BY t.marca_de_tiempo DESC;
+        """
+        cursor.execute(query)
+
+    # Obtener los resultados como tuplas
     transacciones = cursor.fetchall()
+
+    # Convertir las tuplas a diccionarios si es necesario
+    transacciones_dict = []
     for transaccion in transacciones:
-        usuario = transaccion["usuarios_id"]
-        cursor.execute("SELECT nombre FROM usuarios WHERE id = %s", (usuario,))
-        transaccion["usuario"] = cursor.fetchone()["nombre"]
+        transaccion_dict = {
+            "id": transaccion[0],
+            "marca_de_tiempo": transaccion[1],
+            "importe_en_dolares": transaccion[2],
+            "tasa_bcv": transaccion[3],
+            "clientes_id": transaccion[4],
+            "proveedores_id": transaccion[5],
+            "usuarios_id": transaccion[6],
+            "productos_id": transaccion[7],
+            "cantidad": transaccion[8],
+            "cliente": transaccion[9],
+            "proveedor": transaccion[10],
+            "usuario": transaccion[11],
+        }
+        transacciones_dict.append(transaccion_dict)
 
-        if transaccion["clientes_id"]:
-            cliente = transaccion["clientes_id"]
-            cursor.execute("SELECT nombre FROM clientes WHERE id = %s", (cliente,))
-            transaccion["cliente"] = cursor.fetchone()["nombre"]
-        else:
-            proveedor = transaccion["proveedores_id"]
-            cursor.execute("SELECT nombre FROM proveedores WHERE id = %s", (proveedor,))
-            transaccion["proveedor"] = cursor.fetchone()["nombre"]
-
-    transacciones = sorted(
-        transacciones, key=lambda x: x["marca_de_tiempo"], reverse=True
-    )
     cursor.close()
 
     return render_template(
         "transacciones.html",
         username=session["username"],
         rol=session["rol"],
-        transacciones=transacciones,
+        transacciones=transacciones_dict,
         current_page="transacciones",
     )
+
+
+def generar_reporte_pdf(transaccion, productos):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=12)
+
+    # Encabezado del reporte
+    pdf.cell(200, 10, f"Transacción ID: {transaccion[0]}", ln=True)
+    pdf.cell(200, 10, f"Marca de tiempo: {transaccion[1]}", ln=True)
+    pdf.cell(200, 10, f"Importe en dólares: {transaccion[2]}", ln=True)
+    pdf.cell(200, 10, f"Tasa BCV: {transaccion[3]}", ln=True)
+    pdf.cell(200, 10, f"Cliente: {transaccion[4] if transaccion[4] else 'N/A'}", ln=True)
+    pdf.cell(200, 10, f"Proveedor: {transaccion[5] if transaccion[5] else 'N/A'}", ln=True)
+    pdf.cell(200, 10, f"Realizada por: {transaccion[6]}", ln=True)
+    pdf.ln(10)
+
+    # Detalles de los productos
+    pdf.set_font("Arial", "B", 12)
+    pdf.cell(200, 10, "Productos Comprados:", ln=True)
+    pdf.set_font("Arial", size=12)
+
+    for producto in productos:
+        pdf.cell(200, 10, f"Producto ID: {producto[0]}", ln=True)
+        pdf.cell(200, 10, f"Cantidad: {producto[1]}", ln=True)
+        pdf.ln(5)
+
+    # Guardar y devolver el archivo PDF
+    filename = f"reporte_transaccion_{transaccion[0]}.pdf"
+    pdf.output(filename)
+
+    return filename
+
+
+@app.route("/generar_reporte/<int:transaccion_id>", methods=["POST"])
+def generar_reporte(transaccion_id):
+    if "loggedin" not in session:
+        return redirect(url_for("login"))
+
+    cursor = mysql.connection.cursor()
+
+    # Obtener detalles de la transacción
+    cursor.execute("SELECT * FROM transacciones WHERE id = %s", (transaccion_id,))
+    transaccion = cursor.fetchone()
+
+    # Obtener detalles de los productos comprados en esa transacción
+    cursor.execute("""
+        SELECT tp.productos_id, tp.cantidad 
+        FROM transacciones_tiene_productos tp
+        WHERE tp.transacciones_id = %s
+    """, (transaccion_id,))
+    productos = cursor.fetchall()
+
+    cursor.close()
+
+    # Generar el reporte PDF
+    pdf = generar_reporte_pdf(transaccion, productos)
+
+    # Enviar el archivo PDF como una descarga
+    return send_file(pdf, as_attachment=True, mimetype="application/pdf")
+
 
 
 #region Reportes

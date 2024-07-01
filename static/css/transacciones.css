@@ -16,17 +16,22 @@
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.container_proveedores_buscar input {
+.container_proveedores_buscar label {
+  margin-left: 10px;
+}
+
+.container_proveedores_buscar input[type="text"],
+.container_proveedores_buscar input[type="date"] {
   flex: 1;
   padding: 10px 15px;
   border-radius: 25px;
   border: 1px solid #ddd;
   outline: none;
-  margin-right: 10px;
   transition: border-color 0.3s;
 }
 
-.container_proveedores_buscar input:focus {
+.container_proveedores_buscar input[type="text"]:focus,
+.container_proveedores_buscar input[type="date"]:focus {
   border-color: #007bff;
 }
 
@@ -57,50 +62,67 @@
   background-color: #f1f1f1;
 }
 
-.table_de_proveedores td:first-child {
-  text-align: center;
+@media (prefers-color-scheme: dark) {
+  body.dark .container_proveedores_buscar {
+    background-color: #3a3a3a;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  body.dark .container_proveedores_buscar input[type="text"],
+  body.dark .container_proveedores_buscar input[type="date"] {
+    background-color: #555;
+    border: 1px solid #444;
+    color: white;
+  }
+
+  body.dark .container_proveedores_buscar input[type="text"]:focus,
+  body.dark .container_proveedores_buscar input[type="date"]:focus {
+    border-color: #ff9800;
+  }
+
+  body.dark .container_proveedores {
+    background-color: #3a3a3a;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+  }
+
+  body.dark .table_de_proveedores thead th {
+    background-color: #4a90e2;
+  }
+
+  body.dark .table_de_proveedores tbody tr:hover {
+    background-color: #555;
+  }
 }
 
-body.dark .container_proveedores_buscar {
-  background-color: #3a3a3a;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+.table_de_proveedores td form {
+  display: inline-block; 
 }
 
-body.dark .container_proveedores_buscar input {
-  background-color: #555;
-  border: 1px solid #444;
-  color: white;
+.table_de_proveedores td form button {
+  padding: 8px 16px;
+  background-color: #BAF4B1;
+  color: black;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-body.dark .container_proveedores_buscar input:focus {
-  border-color: #ff9800;
+.table_de_proveedores td form button:hover {
+  background-color:#7db175;
 }
 
-body.dark .container_proveedores_buscar button.Actualizar {
-  background-color: #8e63dd;
+.table_de_proveedores td form button:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.5);
 }
 
-body.dark .container_proveedores_buscar button.Actualizar:hover {
-  background-color: #7352b6;
-}
+@media (prefers-color-scheme: dark) {
+  body.dark .table_de_proveedores td form button {
+    background-color: #BAF4B1;
+  }
 
-body.dark .container_proveedores_buscar button.Eliminar {
-  background-color: #ff6f61;
-}
-
-body.dark .container_proveedores_buscar button.Eliminar:hover {
-  background-color: #e55a4f;
-}
-
-body.dark .container_proveedores {
-  background-color: #3a3a3a;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
-}
-
-body.dark .table_de_proveedores thead th {
-  background-color: #4a90e2;
-}
-
-body.dark .table_de_proveedores tbody tr:hover {
-  background-color: #555;
+  body.dark .table_de_proveedores td form button:hover {
+    background-color:#7db175;
+  }
 }

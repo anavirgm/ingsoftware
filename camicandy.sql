@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Host: localhost
--- Generation Time: Jun 27, 2024 at 02:12 PM
--- Server version: 11.4.2-MariaDB
--- PHP Version: 8.3.8
+-- Servidor: 127.0.0.1
+-- Tiempo de generación: 26-06-2024 a las 23:11:27
+-- Versión del servidor: 11.2.0-MariaDB
+-- Versión de PHP: 8.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `camicandy`
+-- Base de datos: `camicandy`
 --
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `clientes`
+-- Estructura de tabla para la tabla `clientes`
 --
 
 CREATE TABLE `clientes` (
@@ -37,19 +37,20 @@ CREATE TABLE `clientes` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `clientes`
+-- Volcado de datos para la tabla `clientes`
 --
 
 INSERT INTO `clientes` (`id`, `nombre`, `direccion`, `telefono`, `cedula`, `status`) VALUES
 (1, 'Antonio Villalobos', 'Maracaibo', '04145555556', '30643276', 1),
 (2, 'Samuel Rincon', 'Los Olivos', '04125555555', '29888888', 1),
 (3, 'Juan Urdaneta', 'C2', '04146074412', '29999999', 1),
-(6, 'Jesus Apolinar', 'Maracaibo', '04145555555', '30999999', 1);
+(6, 'Jesus Apolinar', 'Maracaibo', '04145555555', '30999999', 1),
+(8, 'Adis Luzardo', 'Mara', '04121716029', 'V6885972', 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `productos`
+-- Estructura de tabla para la tabla `productos`
 --
 
 CREATE TABLE `productos` (
@@ -63,20 +64,20 @@ CREATE TABLE `productos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `productos`
+-- Volcado de datos para la tabla `productos`
 --
 
 INSERT INTO `productos` (`id`, `nombre`, `fecha_de_vencimiento`, `cantidad_disponible`, `imagen`, `precio_en_dolares`, `status`) VALUES
-(1, 'Vainilla', '2024-12-31', 70, NULL, 3.99, 1),
+(1, 'Vainilla', '2024-12-31', 50, NULL, 3.99, 1),
 (2, 'Chocolate', '2024-12-31', 85, NULL, 4.99, 1),
 (3, 'Limón', '2024-12-31', 62, NULL, 3.49, 1),
-(4, 'Fresa', '2024-12-31', 74, NULL, 4.50, 1),
+(4, 'Fresa', '2024-12-31', 76, NULL, 4.50, 1),
 (5, 'Menta', '2024-12-31', 60, NULL, 4.49, 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `proveedores`
+-- Estructura de tabla para la tabla `proveedores`
 --
 
 CREATE TABLE `proveedores` (
@@ -88,7 +89,7 @@ CREATE TABLE `proveedores` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `proveedores`
+-- Volcado de datos para la tabla `proveedores`
 --
 
 INSERT INTO `proveedores` (`id`, `nombre`, `rif`, `direccion`, `status`) VALUES
@@ -99,7 +100,7 @@ INSERT INTO `proveedores` (`id`, `nombre`, `rif`, `direccion`, `status`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `transacciones`
+-- Estructura de tabla para la tabla `transacciones`
 --
 
 CREATE TABLE `transacciones` (
@@ -110,10 +111,10 @@ CREATE TABLE `transacciones` (
   `clientes_id` int(11) DEFAULT NULL,
   `proveedores_id` int(11) DEFAULT NULL,
   `usuarios_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci COMMENT='* Falta añadir un trigger o un CHECK para revisar que sólo clientes_id o proveedores_id es NULL pero no ambos\\\\n* También falta verificar que sólo el administrador puede registrar una compra\\\\n* columna monto: Si es positivo la transacción fue una venta a un cliente, si es negativo fue una compra a un proveedor';
 
 --
--- Dumping data for table `transacciones`
+-- Volcado de datos para la tabla `transacciones`
 --
 
 INSERT INTO `transacciones` (`id`, `marca_de_tiempo`, `importe_en_dolares`, `tasa_bcv`, `clientes_id`, `proveedores_id`, `usuarios_id`) VALUES
@@ -146,10 +147,14 @@ INSERT INTO `transacciones` (`id`, `marca_de_tiempo`, `importe_en_dolares`, `tas
 (39, '2024-06-20 17:08:00', 11.58, 36.38, 6, NULL, 1),
 (40, '2024-06-20 17:12:00', 63.09, 36.38, 1, NULL, 1),
 (41, '2024-06-21 00:26:00', 23.14, 36.38, 3, NULL, 1),
-(42, '2024-06-22 16:05:00', 5.22, 36.38, 1, NULL, 1);
+(42, '2024-06-22 16:05:00', 5.22, 36.38, 1, NULL, 1),
+(43, '2024-06-24 03:00:29', 138.85, 38.00, NULL, 1, 1),
+(44, '2024-06-24 03:10:56', 92.57, 38.00, NULL, 3, 1),
+(45, '2024-06-24 03:13:10', 46.28, 36.39, NULL, 2, 1),
+(46, '2024-06-24 05:09:00', 10.44, 36.38, NULL, 1, 1);
 
 --
--- Triggers `transacciones`
+-- Disparadores `transacciones`
 --
 DELIMITER $$
 CREATE TRIGGER `check_admin_compra` BEFORE INSERT ON `transacciones` FOR EACH ROW BEGIN
@@ -197,7 +202,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `transacciones_tiene_productos`
+-- Estructura de tabla para la tabla `transacciones_tiene_productos`
 --
 
 CREATE TABLE `transacciones_tiene_productos` (
@@ -207,7 +212,7 @@ CREATE TABLE `transacciones_tiene_productos` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `transacciones_tiene_productos`
+-- Volcado de datos para la tabla `transacciones_tiene_productos`
 --
 
 INSERT INTO `transacciones_tiene_productos` (`transacciones_id`, `productos_id`, `cantidad`) VALUES
@@ -259,33 +264,42 @@ INSERT INTO `transacciones_tiene_productos` (`transacciones_id`, `productos_id`,
 (40, 2, 3),
 (40, 1, 5),
 (41, 1, 5),
-(42, 4, 1);
+(42, 4, 1),
+(43, 1, 30),
+(44, 1, 5),
+(44, 1, 5),
+(44, 1, 10),
+(45, 1, 10),
+(46, 4, 2);
 
 --
--- Triggers `transacciones_tiene_productos`
+-- Disparadores `transacciones_tiene_productos`
 --
 DELIMITER $$
 CREATE TRIGGER `actualizar_stock_monto` AFTER INSERT ON `transacciones_tiene_productos` FOR EACH ROW BEGIN
-
     DECLARE total_amount DECIMAL(10, 2);
+    DECLARE es_compra BOOLEAN;
 
-    
-    UPDATE productos 
-    SET cantidad_disponible = cantidad_disponible - NEW.cantidad 
-    WHERE id = NEW.productos_id;
+    -- Determinar si es una compra o una venta
+    SELECT (t.clientes_id IS NULL) INTO es_compra FROM transacciones t WHERE t.id = NEW.transacciones_id;
 
-    
-    SELECT SUM(transacciones_tiene_productos.cantidad * productos.precio_en_dolares) * 1.16
-    INTO total_amount
-    FROM transacciones_tiene_productos
-    JOIN productos ON transacciones_tiene_productos.productos_id = productos.id
-    WHERE transacciones_tiene_productos.transacciones_id = NEW.transacciones_id;
+    -- Actualizar el stock de productos
+    IF es_compra THEN
+        -- Compra: incrementar stock
+        UPDATE productos SET cantidad_disponible = cantidad_disponible + NEW.cantidad WHERE id = NEW.productos_id;
+    ELSE
+        -- Venta: decrementar stock
+        UPDATE productos SET cantidad_disponible = cantidad_disponible - NEW.cantidad WHERE id = NEW.productos_id;
+    END IF;
 
-    
-    UPDATE transacciones
-    SET importe_en_dolares = total_amount
-    WHERE id = NEW.transacciones_id;
+    -- Calcular el importe total en dólares con IVA (16%)
+    SELECT SUM(tp.cantidad * p.precio_en_dolares) * 1.16 INTO total_amount
+    FROM transacciones_tiene_productos tp
+    JOIN productos p ON tp.productos_id = p.id
+    WHERE tp.transacciones_id = NEW.transacciones_id;
 
+    -- Actualizar el importe en dólares de la transacción
+    UPDATE transacciones SET importe_en_dolares = total_amount WHERE id = NEW.transacciones_id;
 END
 $$
 DELIMITER ;
@@ -293,7 +307,7 @@ DELIMITER ;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `usuarios`
+-- Estructura de tabla para la tabla `usuarios`
 --
 
 CREATE TABLE `usuarios` (
@@ -308,19 +322,19 @@ CREATE TABLE `usuarios` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
--- Dumping data for table `usuarios`
+-- Volcado de datos para la tabla `usuarios`
 --
 
 INSERT INTO `usuarios` (`id`, `cedula`, `nombre`, `rol`, `hash_de_contrasena`, `pregunta_seguridad`, `respuesta_seguridad`, `status`) VALUES
 (1, '30597012', 'Ana Mota', 'administrador', '$2b$12$TB07LX0M/Ipz7ikFDt/OJeHmZ.ePzPS6wz.7KGnQC.aHAkEtohM0C', '¿Cuál es tu postre favorito?', '$2y$10$wdKk9e/y5sSN2tTwMQ0ux.q9cwkhsfwTo4nO1Zt4dK9Dmv0Qn/.1S', 1),
-(2, '29877987', 'Samuel Rincon', 'empleado', '$2y$10$IsiNfgnLdHIvvf2GlVzegOBINWykVFtxiklJrt/2m7aeZgJ6PYsVS', '¿Cuál es tu postre favorito?', '$2y$10$KUcsOLOw6C8MzL5oNoOcwuJCbGuTiLQN9Dr7ykcqTRGh2oqiFN15e', 1);
+(2, '29877987', 'Samuel Rincon', 'empleado', '$2b$12$uih8uU8KTNDgoUSuFn5Ut.xI23DgmAAsjFC6UMxsFFU8XmIM4Vriy', '¿Cuál es tu postre favorito?', '$2b$12$TQyO444QlwweNif77I7i7./C1NpsX2CSpxRN0x/p1pBlZXWzbswEm', 1);
 
 --
--- Indexes for dumped tables
+-- Índices para tablas volcadas
 --
 
 --
--- Indexes for table `clientes`
+-- Indices de la tabla `clientes`
 --
 ALTER TABLE `clientes`
   ADD PRIMARY KEY (`id`),
@@ -328,14 +342,14 @@ ALTER TABLE `clientes`
   ADD UNIQUE KEY `cedula_UNIQUE` (`cedula`);
 
 --
--- Indexes for table `productos`
+-- Indices de la tabla `productos`
 --
 ALTER TABLE `productos`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `id_UNIQUE` (`id`);
 
 --
--- Indexes for table `proveedores`
+-- Indices de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
   ADD PRIMARY KEY (`id`),
@@ -343,7 +357,7 @@ ALTER TABLE `proveedores`
   ADD UNIQUE KEY `rif_UNIQUE` (`rif`);
 
 --
--- Indexes for table `transacciones`
+-- Indices de la tabla `transacciones`
 --
 ALTER TABLE `transacciones`
   ADD PRIMARY KEY (`id`,`usuarios_id`),
@@ -353,7 +367,7 @@ ALTER TABLE `transacciones`
   ADD KEY `fk_transacciones_usuarios1_idx` (`usuarios_id`);
 
 --
--- Indexes for table `usuarios`
+-- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id`),
@@ -361,45 +375,45 @@ ALTER TABLE `usuarios`
   ADD UNIQUE KEY `cedula_UNIQUE` (`cedula`);
 
 --
--- AUTO_INCREMENT for dumped tables
+-- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT for table `clientes`
+-- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
--- AUTO_INCREMENT for table `productos`
+-- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- AUTO_INCREMENT for table `proveedores`
+-- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
--- AUTO_INCREMENT for table `transacciones`
+-- AUTO_INCREMENT de la tabla `transacciones`
 --
 ALTER TABLE `transacciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
 
 --
--- AUTO_INCREMENT for table `usuarios`
+-- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
--- Constraints for dumped tables
+-- Restricciones para tablas volcadas
 --
 
 --
--- Constraints for table `transacciones`
+-- Filtros para la tabla `transacciones`
 --
 ALTER TABLE `transacciones`
   ADD CONSTRAINT `fk_transacciones_clientes1` FOREIGN KEY (`clientes_id`) REFERENCES `clientes` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,

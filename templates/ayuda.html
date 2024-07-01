@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block title %}Ayuda{% endblock %} {% block head
+    %} {{ super() }}
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='css/reportes.css') }}"
+    />
+    <link
+      rel="shortcut icon"
+      href="{{ url_for('static', filename='favicon.ico') }}"
+    />
+    {% endblock %} {% block content %} {% include
+    'sidebar.html' %}
+    <main class="container">
+      <h1 class="main-title">Ayuda</h1>
+      <div class="grid cards-section">
+        
+        <div class="card" id="productos-card">
+          <h2>Productos</h2>
+          
+        </div>
+    
+        <div class="card" id="clientes-card">
+          <h2>Clientes</h2>
+          
+        </div>
+    
+    </main>
+    {% endblock %} {% block scripts %}
+    <script src="{{ url_for('static', filename='js/component.js') }}"></script>
+    {% endblock %}

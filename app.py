@@ -1689,6 +1689,23 @@ def buscar_productos():
         rol=session["rol"],
     )
 
+
+#region AYUDA
+@app.route("/ayuda")
+def ayuda():
+    if "loggedin" in session:
+        return render_template(
+            "ayuda.html",
+            username=session["username"],
+            rol=session["rol"],
+            ayuda=ayuda,
+            current_page="ayuda",
+        )
+
+    return redirect(url_for("dashboard"))
+# endregion
+
+
 #region CERRAR SESION
 @app.route("/logout")
 def logout():

@@ -183,31 +183,37 @@ def productos():
         cantidad_disponible = request.form["cantidad_disponible"]
         precio_en_dolares = request.form["precio_en_dolares"]
 
-        # Validate that none of the values are None
-        if (
-            nombre
-            and fecha_de_vencimiento
-            and cantidad_disponible
-            and precio_en_dolares
-        ):
+        if nombre and fecha_de_vencimiento and cantidad_disponible and precio_en_dolares:
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute(
-                "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, status) VALUES (%s, %s, %s, %s, 1)",
-                (
-                    nombre,
-                    fecha_de_vencimiento,
-                    cantidad_disponible,
-                    precio_en_dolares,
-                ),
-            )
-            mysql.connection.commit()
+
+            # Verificar si el producto ya existe
+            cursor.execute("SELECT * FROM productos WHERE nombre = %s", (nombre,))
+            producto_existente = cursor.fetchone()
+
+            if producto_existente:
+                if producto_existente["status"] == 0:
+                    cursor.execute(
+                        "UPDATE productos SET fecha_de_vencimiento = %s, cantidad_disponible = %s, precio_en_dolares = %s, status = 1 WHERE nombre = %s",
+                        (fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, nombre),
+                    )
+                    mysql.connection.commit()
+                    flash("Producto actualizado y reactivado correctamente", 'success')
+                else:
+                    flash("El producto ya existe y está activo.", 'warning')
+            else:
+                cursor.execute(
+                    "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, status) VALUES (%s, %s, %s, %s, 1)",
+                    (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares),
+                )
+                mysql.connection.commit()
+                flash("Producto agregado correctamente", 'success')
+
             cursor.close()
-            flash("Producto agregado correctamente", 'success')
         else:
             flash("Por favor, complete todos los campos del formulario", 'warning')
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM productos WHERE status = %s", (True,))
+    cursor.execute("SELECT * FROM productos WHERE status = 1")
     all_products = cursor.fetchall()
     cursor.close()
 
@@ -301,27 +307,27 @@ def clientes():
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-        # Verificar si la cédula ya existe
+        # Verificar si el cliente ya existe
         cursor.execute("SELECT * FROM clientes WHERE cedula = %s", (cedula,))
-        cliente_cedula = cursor.fetchone()
+        cliente_existente = cursor.fetchone()
 
-        # Verificar si el teléfono ya existe
-        cursor.execute("SELECT * FROM clientes WHERE telefono = %s", (telefono,))
-        cliente_telefono = cursor.fetchone()
-
-        if cliente_cedula:
-            error_messages.append("La cédula ya existe.")
-        if cliente_telefono:
-            error_messages.append("El teléfono ya existe.")
-
-        if not error_messages:
+        if cliente_existente:
+            if cliente_existente["status"] == 0:
+                cursor.execute(
+                    "UPDATE clientes SET nombre = %s, direccion = %s, telefono = %s, status = 1 WHERE cedula = %s",
+                    (nombre, direccion, telefono, cedula),
+                )
+                mysql.connection.commit()
+                flash("Cliente actualizado y reactivado correctamente", 'success')
+            else:
+                error_messages.append("El cliente ya existe y está activo.")
+        else:
             cursor.execute(
                 "INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
                 (nombre, direccion, telefono, cedula),
             )
             mysql.connection.commit()
             flash("Cliente agregado correctamente", 'success')
-            return redirect(url_for('clientes'))
 
         cursor.close()
 
@@ -338,6 +344,7 @@ def clientes():
         current_page="clientes",
         error_messages=error_messages,
     )
+
 
 
 @app.route("/actualizar_cliente", methods=["POST"])
@@ -522,12 +529,20 @@ def proveedores():
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-        # Verificar si el RIF ya existe
+        # Verificar si el proveedor ya existe
         cursor.execute("SELECT * FROM proveedores WHERE rif = %s", (rif,))
         proveedor_existente = cursor.fetchone()
 
         if proveedor_existente:
-            error_messages.append("El RIF ingresado ya pertenece a otro proveedor.")
+            if proveedor_existente["status"] == 0:
+                cursor.execute(
+                    "UPDATE proveedores SET nombre = %s, direccion = %s, status = 1 WHERE rif = %s",
+                    (nombre, direccion, rif),
+                )
+                mysql.connection.commit()
+                flash("Proveedor actualizado y reactivado correctamente", 'success')
+            else:
+                error_messages.append("El RIF ya pertenece a un proveedor activo.")
         else:
             cursor.execute(
                 "INSERT INTO proveedores (nombre, direccion, rif, status) VALUES (%s, %s, %s, 1)",
@@ -535,7 +550,6 @@ def proveedores():
             )
             mysql.connection.commit()
             flash("Proveedor añadido correctamente", 'success')
-            return redirect(url_for("proveedores"))
 
         cursor.close()
 
@@ -1314,40 +1328,43 @@ def herramientas():
 @app.route("/agregar_empleado", methods=["GET", "POST"])
 def agregar_empleado():
     if request.method == "POST":
-
         cedula = request.form["cedula"]
         nombre = request.form["nombre"]
         rol = request.form["rol"]
-        hash_de_contrasena = bcrypt.generate_password_hash(
-            request.form["hash_contrasena"]
-        ).decode(
-            "utf-8"
-        )  # Hashear la contraseña
+        hash_de_contrasena = bcrypt.generate_password_hash(request.form["hash_contrasena"]).decode("utf-8")
         pregunta_seguridad = request.form["pregunta_seguridad"]
-        respuesta_seguridad = bcrypt.generate_password_hash(
-            request.form["respuesta_seguridad"]
-        ).decode("utf-8")
+        respuesta_seguridad = bcrypt.generate_password_hash(request.form["respuesta_seguridad"]).decode("utf-8")
 
-        # agregar el empleado a la base
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-        cursor.execute(
-            "INSERT INTO usuarios (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad, status) VALUES (%s, %s, %s, %s, %s, %s, 1)",
-            (
-                cedula,
-                nombre,
-                rol,
-                hash_de_contrasena,
-                pregunta_seguridad,
-                respuesta_seguridad,
-            ),
-        )
-        mysql.connection.commit()
+
+        # Verificar si el empleado ya existe
+        cursor.execute("SELECT * FROM usuarios WHERE cedula = %s", (cedula,))
+        empleado_existente = cursor.fetchone()
+
+        if empleado_existente:
+            if empleado_existente["status"] == 0:
+                cursor.execute(
+                    "UPDATE usuarios SET nombre = %s, rol = %s, hash_de_contrasena = %s, pregunta_seguridad = %s, respuesta_seguridad = %s, status = 1 WHERE cedula = %s",
+                    (nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad, cedula),
+                )
+                mysql.connection.commit()
+                flash("Empleado actualizado y reactivado correctamente", 'success')
+            else:
+                flash("El empleado ya existe y está activo.", 'warning')
+        else:
+            cursor.execute(
+                "INSERT INTO usuarios (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad, status) VALUES (%s, %s, %s, %s, %s, %s, 1)",
+                (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad),
+            )
+            mysql.connection.commit()
+            flash("Empleado agregado correctamente", 'success')
+
         cursor.close()
 
-        flash("Empleado agregado correctamente")
         return redirect(url_for("herramientas"))
 
     return render_template("herramientas.html")
+
 
 
 @app.route("/actualizar_empleado", methods=["POST"])

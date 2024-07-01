@@ -202,9 +202,9 @@ def productos():
             )
             mysql.connection.commit()
             cursor.close()
-            flash("Producto agregado correctamente", 'success')
+            flash("Producto agregado correctamente")
         else:
-            flash("Por favor, complete todos los campos del formulario", 'warning')
+            flash("Por favor, complete todos los campos del formulario")
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM productos WHERE status = %s", (True,))
@@ -219,6 +219,31 @@ def productos():
         current_page="productos",
     )
 
+
+@app.route("/insertar_producto", methods=["POST"])
+def insertar_producto():
+    if "loggedin" in session:
+        if request.method == "POST":
+            nombre = request.form["nombre"]
+            fecha_vencimiento = request.form["fecha_vencimiento"]
+            cantidad_disponible = request.form["cantidad_disponible"]
+            precio_en_dolares = request.form["precio_en_dolares"]
+
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute(
+                "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares) VALUES (%s, %s, %s, %s)",
+                (
+                    nombre,
+                    fecha_vencimiento,
+                    cantidad_disponible,
+                    precio_en_dolares,
+                ),
+            )
+            mysql.connection.commit()
+            cursor.close()
+            flash("Producto agregado correctamente")
+            return redirect(url_for("productos"))
+    return redirect(url_for("login"))
 
 
 @app.route("/actualizar_producto", methods=["POST"])
@@ -255,7 +280,7 @@ def actualizar_producto():
     cursor.close()
 
     # Redirigir a la página de productos con un mensaje flash
-    flash("Producto actualizado correctamente", 'success')
+    flash("Producto actualizado correctamente")
     return redirect(url_for("productos"))
 
 
@@ -278,7 +303,7 @@ def eliminar_productos():
     cursor.close()
 
     # Redirigir a la página de productos con un mensaje flash
-    flash("Productos eliminados correctamente", 'success')
+    flash("Productos eliminados correctamente")
     return redirect(url_for("productos"))
 #endregion
 
@@ -475,11 +500,11 @@ def realizar_venta():
                 mysql.connection.commit()
 
             cursor.close()
-            flash("Venta realizada correctamente", 'success')
+            flash("Venta realizada correctamente")
             return redirect(url_for("clientes"))
 
         except Exception as e:
-            flash(f"Ocurrió un error: {str(e)}", 'error')
+            flash(f"Ocurrió un error: {str(e)}")
             return redirect(url_for("realizar_venta"))
 
     return render_template(
@@ -513,31 +538,20 @@ def proveedores():
     if "loggedin" not in session or session["rol"] != "administrador":
         return redirect(url_for("dashboard"))
 
-    error_messages = []
-
     if request.method == "POST":
         nombre = request.form["nombre"]
         direccion = request.form["direccion"]
         rif = request.form["rif"]
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
-        # Verificar si el RIF ya existe
-        cursor.execute("SELECT * FROM proveedores WHERE rif = %s", (rif,))
-        proveedor_existente = cursor.fetchone()
-
-        if proveedor_existente:
-            error_messages.append("El RIF ingresado ya pertenece a otro proveedor.")
-        else:
-            cursor.execute(
-                "INSERT INTO proveedores (nombre, direccion, rif, status) VALUES (%s, %s, %s, 1)",
-                (nombre, direccion, rif),
-            )
-            mysql.connection.commit()
-            flash("Proveedor añadido correctamente", 'success')
-            return redirect(url_for("proveedores"))
-
+        cursor.execute(
+            "INSERT INTO proveedores (nombre, direccion, rif, status) VALUES (%s, %s, %s, 1)",
+            (nombre, direccion, rif),
+        )
+        mysql.connection.commit()
         cursor.close()
+        flash("Proveedor añadido correctamente", "success")
+        return redirect(url_for("proveedores"))
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM proveedores WHERE status = 1")
@@ -550,7 +564,6 @@ def proveedores():
         username=session["username"],
         rol=session["rol"],
         current_page="proveedores",
-        error_messages=error_messages,
     )
 
 
@@ -614,11 +627,11 @@ def realizar_compra():
             mysql.connection.commit()  # Commit final después del bucle
 
             cursor.close()
-            flash("Compra realizada correctamente", 'success')
+            flash("Compra realizada correctamente")
             return redirect(url_for("proveedores"))
 
         except Exception as e:
-            flash(f"Ocurrió un error: {str(e)}", 'error')
+            flash(f"Ocurrió un error: {str(e)}")
             return redirect(url_for("realizar_compra"))
 
     return render_template(
@@ -647,18 +660,8 @@ def actualizar_proveedor():
     direccion = request.form["direccion_actualizar"]
     rif = request.form["rif_actualizar"]
 
-    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-
-    # Verificar si el RIF ya existe y pertenece a otro proveedor
-    cursor.execute("SELECT * FROM proveedores WHERE rif = %s AND id != %s", (rif, proveedor_id))
-    proveedor_existente = cursor.fetchone()
-
-    if proveedor_existente:
-        flash("El RIF ingresado ya pertenece a otro proveedor.", 'error')
-        cursor.close()
-        return redirect(url_for("proveedores"))
-
     # Actualizar la información en la base de datos
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute(
         """
         UPDATE proveedores
@@ -671,7 +674,7 @@ def actualizar_proveedor():
     cursor.close()
 
     # Redirigir a la página de proveedores con un mensaje flash
-    flash("Proveedor actualizado correctamente", 'success')
+    flash("Proveedor actualizado correctamente")
     return redirect(url_for("proveedores"))
 
 
@@ -694,7 +697,7 @@ def eliminar_proveedores():
     cursor.close()
 
     # Redirigir a la página de proveedores con un mensaje flash
-    flash("Proveedores eliminados correctamente", 'success')
+    flash("Proveedores eliminados correctamente")
     return redirect(url_for("proveedores"))
 
 

@@ -6,15 +6,6 @@
 <main>
   <div class="container_productos">
     <h1>Productos</h1>
-    {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="flash-messages">
-      {% for category, message in messages %}
-      <div class="flash-message {{ category }}">{{ message }}</div>
-      {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
     <div class="container_productos_buscar">
       <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
       <button onclick="mostrarFormulario()">Añadir producto</button>
@@ -58,24 +49,15 @@
     <div class="modal-content">
       <span class="close" onclick="cerrarFormulario()">&times;</span>
       <h2>Agregar Nuevo Producto</h2>
-      <form id="formulario" action="{{ url_for('clientes') }}" method="POST" onsubmit="return validarFormulario()">
-      
+      <form id="formulario" action="{{ url_for('productos') }}" method="POST">
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required /><br />
+        <input type="text" id="nombre" name="nombre" required /><br />
         <label for="fecha_de_vencimiento">Fecha de Vencimiento:</label>
-        <input type="date" id="fecha_de_vencimiento" name="fecha_de_vencimiento" value="{{ request.form.fecha_de_vencimiento or '' }}" required /><br />
+        <input type="date" id="fecha_de_vencimiento" name="fecha_de_vencimiento" required /><br />
         <label for="cantidad_disponible">Cantidad Disponible:</label>
-        <input type="number" id="cantidad_disponible" name="cantidad_disponible" value="{{ request.form.cantidad_disponible or '' }}" required /><br />
+        <input type="number" id="cantidad_disponible" name="cantidad_disponible" required /><br />
         <label for="precio_en_dolares">Precio ($):</label>
-        <input type="text" id="precio_en_dolares" name="precio_en_dolares" value="{{ request.form.precio_en_dolares or '' }}" required /><br />
-
-        {% if error_messages %}
-      <div class="error-messages">
-        {% for message in error_messages %}
-        <div class="error-message">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %}
+        <input type="text" id="precio_en_dolares" name="precio_en_dolares" required /><br />
 
         <input type="submit" value="Agregar" />
       </form>
@@ -130,14 +112,12 @@
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 <script>
   function mostrarFormulario() {
-    limpiarCampos(); // Limpia los campos del formulario
-    const modal = document.getElementById('modal');
-    modal.style.display = 'block';
+    document.getElementById("modal").style.display = "block";
   }
 
   function cerrarFormulario() {
-    const modal = document.getElementById("modal");
-    modal.style.display = "none";
+    document.getElementById("modal").style.display = "none";
+    limpiarCampos();
   }
 
   function limpiarCampos() {
@@ -285,25 +265,5 @@ function cerrarModalActualizar() {
     const alertaEliminar = document.getElementById("alerta-eliminar");
     alertaEliminar.classList.remove("show");
   }
-
-  function cerrarFlashMessage(button) {
-    const flashMessage = button.closest(".flash-message");
-    flashMessage.classList.remove("show");
-    setTimeout(() => {
-      flashMessage.remove();
-    }, 300);
-  }
-
-  document.addEventListener("DOMContentLoaded", function () {
-    const flashMessages = document.querySelectorAll(".flash-message");
-    flashMessages.forEach((message) => {
-      setTimeout(() => {
-        message.classList.remove("show");
-        setTimeout(() => {
-          message.remove();
-        }, 300);
-      }, 5000);
-    });
-  });
 </script>
 {% endblock %}

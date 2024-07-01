@@ -9,17 +9,6 @@
     <div class="container_productos">
       
       <h1>Realizar Venta</h1>
-
-      {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-      <div class="flash-messages">
-        {% for category, message in messages %}
-        <div class="flash-message {{ category }}">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %}
-      {% endwith %}
-      
       <div class="container_productos_buscar">
         <input type="text" placeholder="Buscar" id="buscar-producto" onkeyup="buscarProducto()" />
       </div>

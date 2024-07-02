@@ -12,9 +12,8 @@
 h1.main-title {
   font-weight: 700;
   margin-bottom: 20px;
-  color: #333;
+  color: #ffa500;
 }
-
 
 .cards-section {
   grid-template-columns: repeat(1, 1fr);
@@ -45,6 +44,7 @@ h1.main-title {
   font-size: 1.7rem;
   font-weight: 600;
   margin-bottom: 16px;
+  color: black;
 }
 
 .card p {
@@ -60,7 +60,7 @@ h1.main-title {
 }
 
 #clientes-card {
-  background-color:  #f7e2be;
+  background-color: #f7e2be;
 }
 
 #proveedores-card {
@@ -72,7 +72,7 @@ h1.main-title {
 }
 
 #usuarios-card {
-  background-color: #dec7fa ;
+  background-color: #dec7fa;
 }
 
 #ventas-card {

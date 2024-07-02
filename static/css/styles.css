@@ -7,7 +7,7 @@
 }
 
 body {
-  background-color:  #E6F6FF;
+  background-color: #e6f6ff;
 }
 
 .background {
@@ -29,7 +29,7 @@ body {
 form {
   max-width: 400px; /* Establecemos un ancho máximo para el formulario */
   width: 90%; /* Cambiamos el ancho a 90% para que sea responsivo */
-  background-color:#021f5cd3;
+  background-color: #021f5cd3;
   position: absolute;
   transform: translate(-50%, -50%);
   top: 50%;

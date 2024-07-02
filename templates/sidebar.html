@@ -7,30 +7,23 @@
     />
   </div>
 
+  <a href="{{ url_for('herramientas') }}">
+    <div class="icon__configuracion">
+      <img
+        src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+        title=""
+      />
+    </div>
+  </a>
 
-  <a
-  href="{{ url_for('herramientas') }}"
->
-  <div class="icon__configuracion">
-    <img
-      src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
-      title=""
-    />
-  </div>
-</a>
-
-
-  <a
-  href="{{ url_for('ayuda') }}"
->
-  <div class="icon__configuracion">
-    <img
-      src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
-      title=""
-    />
-  </div>
-</a>
-
+  <a href="{{ url_for('ayuda') }}">
+    <div class="icon__configuracion">
+      <img
+        src="{{ url_for('static', filename='imagenes/icons/ayuda.png') }}"
+        title=""
+      />
+    </div>
+  </a>
 
   <div class="separator"></div>
   <div class="boton">
@@ -58,7 +51,6 @@
     </a>
   </div>
 </header>
-
 
 <div class="menu__side" id="menu_side">
   <div class="name_page">
@@ -153,7 +145,6 @@
         <h4>Herramientas</h4>
       </div>
     </a>
-
 
     {% endif %}
   </div>

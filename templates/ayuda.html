@@ -1,56 +1,31 @@
-{% extends "base.html" %}
-
-{% block title %}Ayuda{% endblock %}
-
-{% block head %}
+{% extends "base.html" %} {% block title %}Ayuda{% endblock %} {% block head %}
 {{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/ayuda.css') }}" />
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" />
-{% endblock %}
-
-{% block content %}
-{% include 'sidebar.html' %}
+<link
+  rel="stylesheet"
+  href="{{ url_for('static', filename='css/ayuda.css') }}"
+/>
+<link
+  rel="shortcut icon"
+  href="{{ url_for('static', filename='favicon.ico') }}"
+/>
+{% endblock %} {% block content %} {% include 'sidebar.html' %}
 <main class="container">
   <h1 class="main-title">Ayuda</h1>
   <div class="grid cards-section">
     <div class="grid large-cards-section">
       <div class="large-card">
         <h2>Manual de Usuario</h2>
-          <h3>
-            Este documento incluye instrucciones paso a paso, capturas de pantalla y ejemplos prácticos que facilitan el
-            aprendizaje y la solución de problemas comunes. El manual está disponible para descarga en la página de
-            ayuda
-            del sistema, ofreciendo un recurso invaluable tanto para nuevos usuarios como para aquellos que buscan
-            aprovechar al máximo todas las características disponibles.
-          </h3>
-        <button class="imprimir-btn">
-          Imprimir
-        </button>
+        <button class="imprimir-btn" onclick="window.location.href = '{{ url_for('manual_de_usuario') }}'"">Imprimir</button>
       </div>
       {% if rol == 'administrador' %}
       <div class="large-card">
         <h2>Manual del Sistema</h2>
-        <button class="imprimir-btn">
-          Imprimir
-        </button>
+        <button class="imprimir-btn" onclick="window.location.href = '{{ url_for('manual_del_sistema') }}'">Imprimir</button>
       </div>
       {% endif %}
     </div>
   </div>
 </main>
-{% endblock %}
-
-{% block scripts %}
+{% endblock %} {% block scripts %}
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 {% endblock %}
-<!--
-        <div class="card" id="productos-card">
-          <h2>Manual del Sistema</h2>
-          
-        </div>
-    
-        <div class="card" id="clientes-card">
-          <h2>Manual de Usuario</h2>
-          
-        </div>
-        -->

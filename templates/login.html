@@ -51,15 +51,14 @@
     >¿Olvidó su contraseña?</a
   >
 
-  {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-    <div class="flash-messages">
-      {% for category, message in messages %}
-      <div class="flash-message {{ category }}">{{ message }}</div>
-      {% endfor %}
-    </div>
-    {% endif %}
-    {% endwith %}
+  {% with messages = get_flashed_messages(with_categories=true) %} {% if
+  messages %}
+  <div class="flash-messages">
+    {% for category, message in messages %}
+    <div class="flash-message {{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  {% endif %} {% endwith %}
 </form>
 {% endblock %} {% block scripts %}
 <script>
@@ -82,7 +81,7 @@
       }, 5000);
     });
   });
-  
+
   function validarNumero(event) {
     // permitir backspace, delete, tab, escape, enter y .
     if (

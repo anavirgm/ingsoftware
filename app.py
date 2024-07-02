@@ -1488,7 +1488,7 @@ def herramientas():
         return redirect(url_for("dashboard"))
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute("SELECT * FROM usuarios")
+    cursor.execute("SELECT * FROM usuarios WHERE rol = 'empleado'")
     all_users = cursor.fetchall()
     cursor.close()
 

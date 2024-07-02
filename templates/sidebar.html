@@ -7,14 +7,25 @@
     />
   </div>
 
+  {% if rol == "administrador" %}
   <a href="{{ url_for('herramientas') }}">
     <div class="icon__configuracion">
       <img
-        src="{{ url_for('static', filename='imagenes/icons/herramientas.png') }}"
+        src="{{ url_for('static', filename='imagenes/icons/admin.png') }}"
         title=""
       />
     </div>
   </a>
+  {% else %}
+  <a href="{{ url_for('herramientas') }}">
+    <div class="icon__configuracion">
+      <img
+        src="{{ url_for('static', filename='imagenes/icons/empleado.png') }}"
+        title=""
+      />
+    </div>
+  </a>
+  {% endif %}
 
   <a href="{{ url_for('ayuda') }}">
     <div class="icon__configuracion">
@@ -53,10 +64,15 @@
 </header>
 
 <div class="menu__side" id="menu_side">
+  <a
+  href="{{ url_for('dashboard') }}"
+  class="{{ 'selector' if current_page == 'dashboard' else '' }}"
+>
   <div class="name_page">
     <img src="{{ url_for('static', filename='imagenes/logo.png') }}" alt="" />
     <h4>CamiCandy</h4>
   </div>
+</a>
 
   <div class="options__menu">
     <a

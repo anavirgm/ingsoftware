@@ -22,6 +22,7 @@ import requests
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "uploads"
+app.config["MANUALES_FOLDER"] = "manuales"
 app.config["REPORTES_FOLDER"] = "reportes"
 app.secret_key = "your_secret_key"
 bcrypt = Bcrypt(app)
@@ -1802,6 +1803,22 @@ def check_internet_connection():
         return True
     except requests.ConnectionError:
         return False
+
+
+# region MANUALES
+@app.route("/manual_de_usuario", methods=["GET"])
+def manual_de_usuario():
+    filepath = f"{app.config['MANUALES_FOLDER']}/manual_de_usuario.pdf"
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
+@app.route("/manual_del_sistema", methods=["GET"])
+def manual_del_sistema():
+    filepath = f"{app.config['MANUALES_FOLDER']}/manual_del_sistema.pdf"
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+
+
+# endregion
 
 
 # region AYUDA

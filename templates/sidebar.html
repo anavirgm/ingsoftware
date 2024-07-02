@@ -8,7 +8,7 @@
   </div>
 
   {% if rol == "administrador" %}
-  <a href="{{ url_for('herramientas') }}">
+  <a href="{{ url_for('perfil') }}">
     <div class="icon__configuracion">
       <img
         src="{{ url_for('static', filename='imagenes/icons/admin.png') }}"
@@ -17,7 +17,7 @@
     </div>
   </a>
   {% else %}
-  <a href="{{ url_for('herramientas') }}">
+  <a href="{{ url_for('perfil') }}">
     <div class="icon__configuracion">
       <img
         src="{{ url_for('static', filename='imagenes/icons/empleado.png') }}"

@@ -1800,6 +1800,23 @@ def ayuda():
     return redirect(url_for("dashboard"))
 # endregion
 
+
+#region Perfil
+@app.route("/perfil")
+def perfil():
+    if "loggedin" in session:
+        return render_template(
+            "perfil.html",
+            username=session["username"],
+            rol=session["rol"],
+            ayuda=ayuda,
+            current_page="perfil",
+        )
+
+    return redirect(url_for("dashboard"))
+# endregion
+
+
 @app.route("/no_connection")
 def no_connection():
     return render_template("no_connection.html")

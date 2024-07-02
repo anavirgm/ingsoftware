@@ -107,6 +107,7 @@ def login():
         if user and bcrypt.check_password_hash(user["hash_de_contrasena"], password):
             session["loggedin"] = True
             session["id"] = user["id"]
+            session["cedula"] = user["cedula"]  # Add cedula to session
             session["username"] = user["nombre"]
             session["rol"] = user["rol"]
             return redirect(url_for("dashboard"))
@@ -1802,18 +1803,59 @@ def ayuda():
 
 
 #region Perfil
-@app.route("/perfil")
+@app.route("/perfil", methods=["GET", "POST"])
 def perfil():
     if "loggedin" in session:
+        if "cedula" not in session:
+            flash("Cedula not found in session.", "error")
+            return redirect(url_for("dashboard"))
+
+        if request.method == "POST":
+            nombre = request.form["nombre"]
+            pregunta_seguridad = request.form["pregunta_seguridad"]
+            respuesta_seguridad = request.form["respuesta_seguridad"]
+            new_password = request.form["new_password"]
+
+            cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+            cursor.execute("SELECT hash_de_contrasena FROM usuarios WHERE cedula = %s", (session["cedula"],))
+            current_password_hash = cursor.fetchone()["hash_de_contrasena"]
+
+            if bcrypt.check_password_hash(current_password_hash, request.form["current_password"]):
+                hashed_respuesta_seguridad = bcrypt.generate_password_hash(respuesta_seguridad).decode('utf-8')
+                
+                if new_password:
+                    new_password_hash = bcrypt.generate_password_hash(new_password).decode('utf-8')
+                    cursor.execute(
+                        "UPDATE usuarios SET nombre=%s, pregunta_seguridad=%s, respuesta_seguridad=%s, hash_de_contrasena=%s WHERE cedula=%s",
+                        (nombre, pregunta_seguridad, hashed_respuesta_seguridad, new_password_hash, session["cedula"]),
+                    )
+                else:
+                    cursor.execute(
+                        "UPDATE usuarios SET nombre=%s, pregunta_seguridad=%s, respuesta_seguridad=%s WHERE cedula=%s",
+                        (nombre, pregunta_seguridad, hashed_respuesta_seguridad, session["cedula"]),
+                    )
+                mysql.connection.commit()
+                flash("Perfil actualizado correctamente. Se recomienda cerrar e iniciar sesión nuevamente para aplicar los cambios.", 'success')
+                return redirect(url_for("perfil"))
+            else:
+                flash("Contraseña actual incorrecta", 'error') 
+
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        cursor.execute("SELECT * FROM usuarios WHERE cedula = %s", (session["cedula"],))
+        account = cursor.fetchone()
+
         return render_template(
             "perfil.html",
             username=session["username"],
             rol=session["rol"],
-            ayuda=ayuda,
+            account=account,
             current_page="perfil",
         )
 
+    flash("User not logged in.", "error")
     return redirect(url_for("dashboard"))
+
+
 # endregion
 
 

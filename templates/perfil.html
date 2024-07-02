@@ -1,15 +1,87 @@
-{% extends "base.html" %} {% block title %}Perfil{% endblock %} {% block head
-%} {{ super() }}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/reportes.css') }}" />
-<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" />
-{% endblock %} {% block content %} {% include 'sidebar.html' %}
-<main class="container">
-    <h1>Perfil {% if rol == "administrador" %}- Administrador {% else %}- Empleado     {% endif %}</h1>
-    <div class="grid cards-section">
-       <h1> Hola? {{ nombre }} </h1>
+{% extends "base.html" %}
 
-    </div>
-</main>
-{% endblock %} {% block scripts %}
-<script src="{{ url_for('static', filename='js/component.js') }}"></script>
+{% block title %}Perfil{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/perfil.css') }}" />
+<link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" />
 {% endblock %}
+
+{% block content %}
+{% include 'sidebar.html' %}
+
+<main class="container">
+    <h1>Perfil {% if rol == "administrador" %}- Administrador {% else %}- Empleado {% endif %}</h1>
+    <div class="grid cards-section">
+        {% with messages = get_flashed_messages(with_categories=true) %} {% if
+            messages %}
+            <div class="flash-messages">
+              {% for category, message in messages %}
+              <div class="flash-message {{ category }}">{{ message }}</div>
+              {% endfor %}
+            </div>
+            {% endif %} {% endwith %}
+    </div>
+
+    <form method="POST" action="{{ url_for('perfil') }}">
+        <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" id="nombre" name="nombre" value="{{ account['nombre'] }}" required onkeypress="validarNombre(event)" oninput="validarNombreInput(this)">
+
+        </div>
+
+        <div class="form-group">
+            <label for="pregunta_seguridad">Pregunta de seguridad</label>
+            <select id="pregunta_seguridad" name="pregunta_seguridad" required>
+                <option value="¿Cuándo es tu cumpleaños?" {% if account['pregunta_seguridad'] == "¿Cuándo es tu cumpleaños?" %}selected{% endif %}>¿Cuándo es tu cumpleaños?</option>
+                <option value="¿A qué secundaria fuiste?" {% if account['pregunta_seguridad'] == "¿A qué secundaria fuiste?" %}selected{% endif %}>¿A qué secundaria fuiste?</option>
+                <option value="¿Cómo se llamaba tu mamá?" {% if account['pregunta_seguridad'] == "¿Cómo se llamaba tu mamá?" %}selected{% endif %}>¿Cómo se llamaba tu mamá?</option>
+                <option value="¿Cuál es tu postre favorito?" {% if account['pregunta_seguridad'] == "¿Cuál es tu postre favorito?" %}selected{% endif %}>¿Cuál es tu postre favorito?</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="respuesta_seguridad">Respuesta de seguridad</label>
+            <input type="text" id="respuesta_seguridad" name="respuesta_seguridad" value="{{ account['respuesta_seguridad'] }}" required>
+        </div>
+
+        <div class="form-group">
+            <label for="current_password">Contraseña actual</label>
+            <input type="password" id="current_password" name="current_password" required>
+        </div>
+
+        <div class="form-group">
+            <label for="new_password">Nueva contraseña (opcional)</label>
+            <input type="password" id="new_password" name="new_password">
+        </div>
+
+        <button type="submit" class="guardar-cambios">Guardar cambios</button>
+    </form>
+
+  
+
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/component.js') }}"></script>
+
+<script>
+    
+    function validarNombre(event) {
+      // Permitir solo letras y espacios
+      if (
+        (event.key >= "a" && event.key <= "z") ||
+        (event.key >= "A" && event.key <= "Z") ||
+        event.key === " "
+      ) {
+        return true;
+      } else {
+        event.preventDefault();
+        return false;
+      }
+    }
+  </script>
+{% endblock %}
+

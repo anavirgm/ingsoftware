@@ -121,10 +121,14 @@ body.dark * {
   color: white;
 }
 
-body.dark button,
+body.dark button{
+  background:#AED6F1;
+  color: black;
+}
+
 body.dark input {
-  background: #000;
-  color: white;
+  background:#555;
+  color: black;
 }
 
 body.dark {
@@ -200,6 +204,10 @@ body.dark {
   padding: 15px;
   border-radius: 5px;
   margin-bottom: 10px;
+  color: black;
+}
+
+body.dark .flash-message {
   color: black;
 }
 

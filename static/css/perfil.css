@@ -1,0 +1,119 @@
+h1 {
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #000000;
+}
+/* Container for the profile page */
+.container {
+    margin: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Form group styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 10px 15px;
+    border-radius: 25px;
+    border: 1px solid #ddd;
+    outline: none;
+    transition: border-color 0.3s;
+    box-sizing: border-box;
+}
+
+/* Focus state for inputs */
+.form-group input:focus,
+.form-group select:focus {
+    border-color: #007bff;
+}
+
+/* Button styling */
+button.guardar-cambios {
+    padding: 10px 20px;
+    border-radius: 25px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-top: 10px;
+    background-color:#007bff;
+    color: #ffffff;
+    display: block; /* Convertir el botón en bloque para centrarlo */
+    margin: 0 auto;
+}
+
+button.guardar-cambios:hover {
+    background-color: #3921c0;
+}
+
+
+button:hover {
+    background-color: #0056b3;
+}
+
+body.dark button.guardar-cambios {
+    background-color: #007bff;
+    color: #ffffff;
+}
+
+body.dark button.guardar-cambios:hover {
+    background-color: #0056b3;
+}
+
+
+/* Responsive design for small screens */
+@media (max-width: 600px) {
+    .container {
+        padding: 10px;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 8px;
+        border-radius: 20px;
+    }
+
+    button {
+        padding: 8px 16px;
+        border-radius: 20px;
+    }
+}
+
+/* Dark mode styles */
+body.dark .container {
+    background-color: #333;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.4);
+}
+
+body.dark .form-group label {
+    color: #ccc;
+}
+
+body.dark .form-group input,
+body.dark .form-group select {
+    background-color: #555;
+    border: 1px solid #444;
+    color: white;
+}
+
+body.dark button {
+    background-color: #8e63dd;
+}
+
+body.dark button:hover {
+    background-color: #7352b6;
+}

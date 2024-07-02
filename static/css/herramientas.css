@@ -32,9 +32,9 @@
   border: none;
   padding: 10px 20px;
   font-size: 16px;
-  border-radius: 5px;
+  border-radius: 25px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, color 0.3s; /* Transición también para el color del texto */
   margin: 10px 0;
 }
 
@@ -49,8 +49,8 @@
   margin-top: 5px;
   padding: 10px;
   font-size: 16px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  border-radius: 25px;
+  border: 1px solid #ddd;
   width: 100%;
   box-sizing: border-box;
 }
@@ -59,12 +59,15 @@
   padding: 10px;
 }
 
+body.dark .container input[type="file"] {
+  background-color: #333;
+}
+
+
 .container input[type="text"]:focus,
 .container input[type="password"]:focus,
 .container select:focus {
   border-color: #66afe9;
-  outline: none;
-  box-shadow: 0 0 8px rgba(102, 175, 233, 0.6);
 }
 
 h1.main-title {
@@ -116,4 +119,75 @@ body.dark .gestion-empleados {
 body.dark .backup h2,
 body.dark .gestion-empleados h2 {
   color: white;
+}
+
+/* Estilos específicos para inputs y labels dentro del formulario */
+form label {
+  color: #333; /* Color del texto para el modo claro */
+  margin-bottom: 5px;
+}
+
+form input[type="text"],
+form input[type="password"],
+form select {
+
+  color: #000000; /* Color del texto */
+  margin-top: 5px;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 25px;
+  border: 1px solid #ccc;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+form input[type="text"]:focus,
+form input[type="password"]:focus,
+form select:focus {
+  border-color: #66afe9;
+  outline: none;
+}
+
+/* Estilos para botones dentro del formulario */
+form button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s; /* Transición también para el color del texto */
+  margin: 10px 0;
+}
+
+form button:hover {
+  background-color: #0056b3;
+}
+body.dark label {
+  color: #fff;
+}
+
+body.dark input[type="password"],
+body.dark select {
+  background-color: #333;
+  color: #fff;
+  border: 1px solid #666;
+}
+
+body.dark input[type="password"],
+body.dark select {
+  appearance: none;
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%;
+  background: #555;
+  color: #fff;
+  border: 1px solid #ffffff;
+  border-radius: 25px;
+}
+
+body.dark input[type="password"]:focus,
+body.dark select:focus {
+  border-color: #ff9800;
 }

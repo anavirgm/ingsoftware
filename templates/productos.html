@@ -40,24 +40,27 @@
             <th>Fecha de Vencimiento</th>
             <th>Cantidad Disponible</th>
             <th>Precio ($)</th>
+            <th>Imagen</th>
           </tr>
         </thead>
         <tbody id="tabla-productos-body">
-          <!-- Aquí se mostrarán los datos de los productos -->
           {% for producto in productos %}
           <tr>
             <td>
-              <input
-                type="checkbox"
-                class="producto-checkbox"
-                data-id="{{ producto.id }}"
-              />
+              <input type="checkbox" class="producto-checkbox" data-id="{{ producto.id }}" />
             </td>
             <td>{{ producto.id }}</td>
             <td>{{ producto.nombre }}</td>
             <td>{{ producto.fecha_de_vencimiento }}</td>
             <td>{{ producto.cantidad_disponible }}</td>
             <td>{{ producto.precio_en_dolares }}</td>
+            <td>
+              {% if producto.imagen %}
+              <img src="{{ url_for('imagen_producto', producto_id=producto.id) }}" alt="Imagen de {{ producto.nombre }}" style="width: 50px; height: 50px;" />
+              {% else %}
+              No imagen
+              {% endif %}
+            </td>
           </tr>
           {% endfor %}
         </tbody>
@@ -65,51 +68,22 @@
     </div>
   </div>
 
-  <!-- Ventana emergente para agregar un nuevo producto -->
   <div id="modal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="cerrarFormulario()">&times;</span>
       <h2>Agregar Nuevo Producto</h2>
-      <form
-        id="formulario"
-        action="{{ url_for('productos') }}"
-        method="POST"
-        onsubmit="return validarFormulario()"
-      >
+      <form id="formulario" action="{{ url_for('productos') }}" method="POST" enctype="multipart/form-data" onsubmit="return validarFormulario()">
+      
         <label for="nombre">Nombre:</label>
-        <input
-          type="text"
-          id="nombre"
-          name="nombre"
-          value="{{ request.form.nombre or '' }}"
-          required
-          onkeydown="return validarNombre(event)"
-        /><br />
+        <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required /><br />
         <label for="fecha_de_vencimiento">Fecha de Vencimiento:</label>
-        <input
-          type="date"
-          id="fecha_de_vencimiento"
-          name="fecha_de_vencimiento"
-          value="{{ request.form.fecha_de_vencimiento or '' }}"
-          required
-        /><br />
+        <input type="date" id="fecha_de_vencimiento" name="fecha_de_vencimiento" value="{{ request.form.fecha_de_vencimiento or '' }}" required /><br />
         <label for="cantidad_disponible">Cantidad Disponible:</label>
-        <input
-          type="number"
-          id="cantidad_disponible"
-          name="cantidad_disponible"
-          value="{{ request.form.cantidad_disponible or '' }}"
-          required
-        /><br />
+        <input type="number" id="cantidad_disponible" name="cantidad_disponible" value="{{ request.form.cantidad_disponible or '' }}" required /><br />
         <label for="precio_en_dolares">Precio ($):</label>
-        <input
-          type="text"
-          id="precio_en_dolares"
-          name="precio_en_dolares"
-          value="{{ request.form.precio_en_dolares or '' }}"
-          required
-          onkeydown="return validarNumero(event)"
-        /><br />
+        <input type="text" id="precio_en_dolares" name="precio_en_dolares" value="{{ request.form.precio_en_dolares or '' }}" required /><br />
+        <label for="imagen">Imagen:</label>
+        <input type="file" id="imagen" name="imagen" accept="image/*" /><br />
 
         {% if error_messages %}
         <div class="error-messages">
@@ -124,58 +98,28 @@
     </div>
   </div>
 
-  <!-- Ventana emergente para actualizar un producto -->
   <div id="modal-actualizar" class="modal" style="display: none">
     <div class="modal-content">
       <span class="close" onclick="cerrarModalActualizar()">&times;</span>
       <h2>Actualizar Producto</h2>
-      <form
-        id="formulario-actualizar"
-        action="{{ url_for('actualizar_producto') }}"
-        method="POST"
-      >
-        <input
-          type="hidden"
-          id="producto_id_actualizar"
-          name="producto_id_actualizar"
-        />
+      <form id="formulario-actualizar" action="{{ url_for('actualizar_producto') }}" method="POST" enctype="multipart/form-data">
+        <input type="hidden" id="producto_id_actualizar" name="producto_id_actualizar" />
         <label for="nombre_actualizar">Nombre:</label>
-        <input
-          type="text"
-          id="nombre_actualizar"
-          name="nombre_actualizar"
-          required
-          onkeydown="return validarNombre(event)"
-        /><br />
-        <label for="fecha_de_vencimiento_actualizar"
-          >Fecha de Vencimiento:</label
-        >
-        <input
-          type="date"
-          id="fecha_de_vencimiento_actualizar"
-          name="fecha_de_vencimiento_actualizar"
-          required
-        /><br />
+        <input type="text" id="nombre_actualizar" name="nombre_actualizar" required /><br />
+        <label for="fecha_de_vencimiento_actualizar">Fecha de Vencimiento:</label>
+        <input type="date" id="fecha_de_vencimiento_actualizar" name="fecha_de_vencimiento_actualizar" required /><br />
         <label for="cantidad_disponible_actualizar">Cantidad Disponible:</label>
-        <input
-          type="number"
-          id="cantidad_disponible_actualizar"
-          name="cantidad_disponible_actualizar"
-          required
-        /><br />
+        <input type="number" id="cantidad_disponible_actualizar" name="cantidad_disponible_actualizar" required /><br />
         <label for="precio_en_dolares_actualizar">Precio ($):</label>
-        <input
-          type="text"
-          id="precio_en_dolares_actualizar"
-          name="precio_en_dolares_actualizar"
-          required
-          onkeydown="return validarNumero(event)"
-        /><br />
+        <input type="text" id="precio_en_dolares_actualizar" name="precio_en_dolares_actualizar" required /><br />
+        <label for="imagen_actualizar">Imagen:</label>
+        <input type="file" id="imagen_actualizar" name="imagen_actualizar" accept="image/*" /><br />
 
         <button type="submit">Actualizar</button>
       </form>
     </div>
   </div>
+
 
   <div
     id="alerta"
@@ -465,5 +409,6 @@
       }, 5000);
     });
   });
+
 </script>
 {% endblock %}

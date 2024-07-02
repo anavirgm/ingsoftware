@@ -1,33 +1,20 @@
-{% extends "base.html" %} {% block title %}Transacciones{% endblock %} {% block
-head %} {{ super() }}
-<link
-  rel="stylesheet"
-  href="{{ url_for('static', filename='css/transacciones.css') }}"
-/>
-{% endblock %} {% block content %} {% include 'sidebar.html' %}
+{% extends "base.html" %}
+{% block title %}Transacciones{% endblock %}
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/transacciones.css') }}">
+{% endblock %}
+{% block content %}
+{% include 'sidebar.html' %}
 <main>
   <div class="container_proveedores">
     <h1>Transacciones</h1>
     <div class="container_proveedores_buscar">
-      <input
-        type="text"
-        placeholder="Buscar"
-        onkeyup="filtrarTransacciones(this.value)"
-      />
+      <input type="text" placeholder="Buscar" onkeyup="filtrarTransacciones(this.value)">
       <label for="fecha_inicio">Fecha Inicio:</label>
-      <input
-        type="date"
-        id="fecha_inicio"
-        name="fecha_inicio"
-        onchange="filtrarPorFecha()"
-      />
+      <input type="date" id="fecha_inicio" name="fecha_inicio" onchange="filtrarPorFecha()">
       <label for="fecha_fin">Fecha Fin:</label>
-      <input
-        type="date"
-        id="fecha_fin"
-        name="fecha_fin"
-        onchange="filtrarPorFecha()"
-      />
+      <input type="date" id="fecha_fin" name="fecha_fin" onchange="filtrarPorFecha()">
     </div>
 
     <div class="proveedores">
@@ -43,21 +30,16 @@ head %} {{ super() }}
             <th>Proveedor</th>
             <th>Realizada por</th>
             <th>Acciones</th>
-            <!-- Nueva columna para el botón de reporte -->
           </tr>
         </thead>
         <tbody>
-          <!-- Aquí se mostrarán los datos de las transacciones -->
           {% for transaccion in transacciones %}
           <tr>
             <td>{{ transaccion.id }}</td>
             <td>{{ transaccion.marca_de_tiempo }}</td>
             <td>{{ transaccion.importe_en_dolares }}</td>
             <td>{{ transaccion.tasa_bcv }}</td>
-            <td>
-              {{ transaccion.importe_en_dolares * transaccion.tasa_bcv | round
-              }}
-            </td>
+            <td>{{ transaccion.importe_en_dolares * transaccion.tasa_bcv | round }}</td>
             {% if transaccion.clientes_id %}
             <td>{{ transaccion.cliente }}</td>
             <td>N/A</td>
@@ -67,10 +49,7 @@ head %} {{ super() }}
             {% endif %}
             <td>{{ transaccion.usuario }}</td>
             <td>
-              <form
-                action="{{ url_for('generar_reporte', transaccion_id=transaccion.id) }}"
-                method="post"
-              >
+              <form action="{{ url_for('generar_reporte', transaccion_id=transaccion.id) }}" method="post">
                 <button type="submit" class="btn btn-primary">Reporte</button>
               </form>
             </td>
@@ -81,7 +60,8 @@ head %} {{ super() }}
     </div>
   </div>
 </main>
-{% endblock %} {% block scripts %}
+{% endblock %}
+{% block scripts %}
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 <script>
   function filtrarTransacciones(texto) {

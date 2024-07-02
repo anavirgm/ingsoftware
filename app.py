@@ -912,42 +912,6 @@ def transacciones():
     )
 
 
-def generar_reporte_pdf(transaccion, productos):
-    pdf = FPDF()
-    pdf.add_page()
-    pdf.set_font("Arial", size=12)
-
-    # Encabezado del reporte
-    pdf.cell(200, 10, f"Transacción ID: {transaccion[0]}", ln=True)
-    pdf.cell(200, 10, f"Marca de tiempo: {transaccion[1]}", ln=True)
-    pdf.cell(200, 10, f"Importe en dólares: {transaccion[2]}", ln=True)
-    pdf.cell(200, 10, f"Tasa BCV: {transaccion[3]}", ln=True)
-    pdf.cell(
-        200, 10, f"Cliente: {transaccion[4] if transaccion[4] else 'N/A'}", ln=True
-    )
-    pdf.cell(
-        200, 10, f"Proveedor: {transaccion[5] if transaccion[5] else 'N/A'}", ln=True
-    )
-    pdf.cell(200, 10, f"Realizada por: {transaccion[6]}", ln=True)
-    pdf.ln(10)
-
-    # Detalles de los productos
-    pdf.set_font("Arial", "B", 12)
-    pdf.cell(200, 10, "Productos Comprados:", ln=True)
-    pdf.set_font("Arial", size=12)
-
-    for producto in productos:
-        pdf.cell(200, 10, f"Producto ID: {producto[0]}", ln=True)
-        pdf.cell(200, 10, f"Cantidad: {producto[1]}", ln=True)
-        pdf.ln(5)
-
-    # Guardar y devolver el archivo PDF
-    filename = f"reporte_transaccion_{transaccion[0]}.pdf"
-    pdf.output(filename)
-
-    return filename
-
-
 @app.route("/generar_reporte/<int:transaccion_id>", methods=["POST"])
 def generar_reporte(transaccion_id):
     if "loggedin" not in session:
@@ -956,33 +920,119 @@ def generar_reporte(transaccion_id):
     cursor = mysql.connection.cursor()
 
     # Obtener detalles de la transacción
-    cursor.execute("SELECT * FROM transacciones WHERE id = %s", (transaccion_id,))
+    cursor.execute(
+        "SELECT t.id, t.marca_de_tiempo, t.importe_en_dolares, t.tasa_bcv, c.nombre, p.nombre, u.nombre FROM transacciones t LEFT JOIN clientes c ON c.id = t.clientes_id LEFT JOIN proveedores p ON p.id = t.proveedores_id JOIN usuarios u ON u.id = t.usuarios_id WHERE t.id = %s",
+        (transaccion_id,),
+    )
     transaccion = cursor.fetchone()
 
     # Obtener detalles de los productos comprados en esa transacción
     cursor.execute(
-        """
-        SELECT tp.productos_id, tp.cantidad 
-        FROM transacciones_tiene_productos tp
-        WHERE tp.transacciones_id = %s
-    """,
+        "SELECT p.id, tp.cantidad, p.nombre, p.precio_en_dolares, ROUND( p.precio_en_dolares * t.tasa_bcv, 2 ) AS precio_en_bolivares FROM `transacciones_tiene_productos` AS tp LEFT JOIN productos AS p ON p.id = tp.productos_id LEFT JOIN transacciones AS t ON tp.transacciones_id = t.id WHERE tp.transacciones_id = %s",
         (transaccion_id,),
     )
     productos = cursor.fetchall()
 
     cursor.close()
 
-    # Generar el reporte PDF
-    pdf = generar_reporte_pdf(transaccion, productos)
+    if not transaccion:
+        return redirect(url_for("reportes"))
+
+    # init pdf engine
+    pdf = PDF(title="Reporte de transacción")
+    pdf.add_page()
+    pdf.set_font("Times", size=13)
+
+    # tabla de datos de transacción
+    with pdf.table() as table:
+        # orden de columnas
+        desired_order = [
+            "ID",
+            "Marca de tiempo",
+            "Importe en dólares",
+            "Tasa BCV",
+            "Cliente",
+            "Proveedor",
+            "Realizada por",
+        ]
+
+        # header
+        header_row = table.row()
+        for cell in desired_order:
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        row = table.row()
+        # content
+        for i, data_field in enumerate(transaccion):
+            if data_field:
+                if i == 0:
+                    pdf.set_font("Times", "B", 13)
+                    row.cell(
+                        str(data_field),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=13)
+                else:
+                    row.cell(
+                        str(data_field),
+                        align="R",
+                    )
+            else:
+                row.cell("N/A", align="R")
+
+    # espacio entre tablas
+    pdf.ln(30)
+
+    # create report
+    with pdf.table() as table:
+        # orden de columnas
+        desired_order = [
+            "ID Producto",
+            "Cantidad",
+            "Nombre",
+            "Precio en dólares",
+            "Precio en bolívares",
+        ]
+
+        # header
+        header_row = table.row()
+        for cell in desired_order:
+            header_row.cell(
+                str(cell),
+                align="C",
+            )
+
+        # content
+        for producto in productos:
+            row = table.row()
+            for i, datum in enumerate(producto):
+                if i == 0:
+                    pdf.set_font("Times", "B", 13)
+                    row.cell(
+                        str(producto[i]),
+                        align="L",
+                    )
+                    pdf.set_font("Times", size=13)
+                else:
+                    row.cell(
+                        str(producto[i]),
+                        align="R",
+                    )
+
+    # Guardar y devolver el archivo PDF
+    filename = f"{datetime.now().strftime('%Y-%m-%d')}_transaccion.pdf"
+    filepath = f"{app.config['REPORTES_FOLDER']}/{filename}"
+    pdf.output(filepath)
 
     # Enviar el archivo PDF como una descarga
-    return send_file(pdf, as_attachment=True, mimetype="application/pdf")
+    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
 
 
 # region Reportes
 ################################### REPORTES ##########################################
-
-
 @app.route("/reportes")
 def reportes():
     if "loggedin" in session and session["rol"] == "administrador":

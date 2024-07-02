@@ -1,121 +1,127 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>No Conexión</title>
     <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
     />
     <link
-        href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap"
-        rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;600&display=swap"
+      rel="stylesheet"
     />
     <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: #f5f7fa;
-            text-align: center;
-            font-family: 'Poppins', sans-serif;
-            color: #333;
-        }
-        img {
-            max-width: 120px;
-            margin-bottom: 20px;
-        }
+      body {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background: #f5f7fa;
+        text-align: center;
+        font-family: "Poppins", sans-serif;
+        color: #333;
+      }
+      img {
+        max-width: 120px;
+        margin-bottom: 20px;
+      }
+      h1 {
+        font-size: 24px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #2c3e50;
+      }
+      p {
+        font-size: 16px;
+        font-weight: 300;
+        margin-bottom: 30px;
+        color: #7f8c8d;
+      }
+      button {
+        padding: 12px 25px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #fff;
+        background-color: #3498db;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+      }
+      button:hover {
+        background-color: #2980b9;
+      }
+      @media (max-width: 600px) {
         h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #2c3e50;
+          font-size: 20px;
         }
         p {
-            font-size: 16px;
-            font-weight: 300;
-            margin-bottom: 30px;
-            color: #7f8c8d;
+          font-size: 14px;
         }
         button {
-            padding: 12px 25px;
-            font-size: 16px;
-            font-weight: 500;
-            color: #fff;
-            background-color: #3498db;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s;
+          padding: 10px 20px;
+          font-size: 14px;
         }
-        button:hover {
-            background-color: #2980b9;
-        }
-        @media (max-width: 600px) {
-            h1 {
-                font-size: 20px;
-            }
-            p {
-                font-size: 14px;
-            }
-            button {
-                padding: 10px 20px;
-                font-size: 14px;
-            }
-        }
+      }
     </style>
-</head>
-<body>
-    <img src="{{ url_for('static', filename='imagenes/icons/Designer.png') }}" alt="No conexión">
+  </head>
+  <body>
+    <img
+      src="{{ url_for('static', filename='imagenes/icons/Designer.png') }}"
+      alt="No conexión"
+    />
     <h1>No hay conexión a Internet</h1>
-    <p>No se pudo conectar para obtener la tasa BCV. Por favor, inténtelo de nuevo más tarde.</p>
+    <p>
+      No se pudo conectar para obtener la tasa BCV. Por favor, inténtelo de
+      nuevo más tarde.
+    </p>
     <button id="retry-button">Reintentar</button>
 
     <script>
-        document.getElementById('retry-button').addEventListener('click', function() {
-            // Verificar la URL actual y llamar a la función adecuada
-            const currentUrl = window.location.href;
-            if (currentUrl.includes('{{ url_for('realizar_compra') }}')) {
-                checkConnectionCompras();
-            } else if (currentUrl.includes('{{ url_for('realizar_venta') }}')) {
-                checkConnectionVentas();
-            }
-        });
+      document.getElementById('retry-button').addEventListener('click', function() {
+          // Verificar la URL actual y llamar a la función adecuada
+          const currentUrl = window.location.href;
+          if (currentUrl.includes('{{ url_for('realizar_compra') }}')) {
+              checkConnectionCompras();
+          } else if (currentUrl.includes('{{ url_for('realizar_venta') }}')) {
+              checkConnectionVentas();
+          }
+      });
 
-        function checkConnectionVentas() {
-            fetch('{{ url_for('realizar_venta') }}', { method: 'HEAD' })
-                .then(function(response) {
-                    if (response.ok) {
-                        // Si la conexión se restablece, redirigir a realizar_venta
-                        window.location.href = '{{ url_for('realizar_venta') }}';
-                    } else {
-                        // Si no hay conexión, esperar y volver a intentar
-                        setTimeout(checkConnectionVentas, 5000);
-                    }
-                })
-                .catch(function(error) {
-                    // Si hay un error, esperar y volver a intentar
-                    setTimeout(checkConnectionVentas, 5000);
-                });
-        }
+      function checkConnectionVentas() {
+          fetch('{{ url_for('realizar_venta') }}', { method: 'HEAD' })
+              .then(function(response) {
+                  if (response.ok) {
+                      // Si la conexión se restablece, redirigir a realizar_venta
+                      window.location.href = '{{ url_for('realizar_venta') }}';
+                  } else {
+                      // Si no hay conexión, esperar y volver a intentar
+                      setTimeout(checkConnectionVentas, 5000);
+                  }
+              })
+              .catch(function(error) {
+                  // Si hay un error, esperar y volver a intentar
+                  setTimeout(checkConnectionVentas, 5000);
+              });
+      }
 
-        function checkConnectionCompras() {
-            fetch('{{ url_for('realizar_compra') }}', { method: 'HEAD' })
-                .then(function(response) {
-                    if (response.ok) {
-                        window.location.href = '{{ url_for('realizar_compra') }}';
-                    } else {
-                        setTimeout(checkConnectionCompras, 5000);
-                    }
-                })
-                .catch(function(error) {
-                    setTimeout(checkConnectionCompras, 5000);
-                });
-        }
+      function checkConnectionCompras() {
+          fetch('{{ url_for('realizar_compra') }}', { method: 'HEAD' })
+              .then(function(response) {
+                  if (response.ok) {
+                      window.location.href = '{{ url_for('realizar_compra') }}';
+                  } else {
+                      setTimeout(checkConnectionCompras, 5000);
+                  }
+              })
+              .catch(function(error) {
+                  setTimeout(checkConnectionCompras, 5000);
+              });
+      }
     </script>
-</body>
+  </body>
 </html>

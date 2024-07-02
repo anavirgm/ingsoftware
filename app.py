@@ -83,7 +83,8 @@ class PDF(FPDF):
         self.cell(0, 12, f"Página {self.page_no()}/{{nb}}", align="C")
 
 
-#region Login
+# region Login
+
 
 @app.route("/", methods=["GET", "POST"])
 def login():
@@ -108,12 +109,12 @@ def login():
             session["rol"] = user["rol"]
             return redirect(url_for("dashboard"))
         else:
-            flash("Usuario o contraseña incorrectos", 'error')
+            flash("Usuario o contraseña incorrectos", "error")
 
     return render_template("login.html")
 
 
-#region Contraseña
+# region Contraseña
 ##################### OLVIDASTE TU CONTRASEÑA ##########################################
 
 
@@ -134,7 +135,7 @@ def recuperar_contrasena():
             session["pregunta_seguridad"] = user["pregunta_seguridad"]
             return redirect(url_for("verificar_respuesta"))
         else:
-            flash("Usuario no encontrado", 'error')
+            flash("Usuario no encontrado", "error")
 
     return render_template("recuperar_contrasena.html")
 
@@ -157,7 +158,7 @@ def verificar_respuesta():
         if user and bcrypt.check_password_hash(user["respuesta_seguridad"], respuesta):
             return redirect(url_for("cambiar_contrasena"))
         else:
-            flash("Respuesta incorrecta", 'error')
+            flash("Respuesta incorrecta", "error")
 
     return render_template(
         "verificar_respuesta.html", pregunta_secreta=session["pregunta_seguridad"]
@@ -187,15 +188,17 @@ def cambiar_contrasena():
 
         session.pop("recuperar_username", None)
         session.pop("pregunta_secreta", None)
-        flash("Contraseña cambiada correctamente", 'success')
+        flash("Contraseña cambiada correctamente", "success")
         return redirect(url_for("login"))
 
     return render_template("cambiar_contrasena.html")
-#endregion
 
 
+# endregion
 
-#region Dashboard
+
+# region Dashboard
+
 
 @app.route("/dashboard")
 def dashboard():
@@ -252,7 +255,9 @@ def dashboard():
         )
     return redirect(url_for("login"))
 
-#region Productos
+
+# region Productos
+
 
 ############################# PRODUCTOS ################################
 @app.route("/productos", methods=["GET", "POST"])
@@ -266,7 +271,12 @@ def productos():
         cantidad_disponible = request.form["cantidad_disponible"]
         precio_en_dolares = request.form["precio_en_dolares"]
 
-        if nombre and fecha_de_vencimiento and cantidad_disponible and precio_en_dolares:
+        if (
+            nombre
+            and fecha_de_vencimiento
+            and cantidad_disponible
+            and precio_en_dolares
+        ):
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
             # Verificar si el producto ya existe
@@ -277,25 +287,35 @@ def productos():
                 if producto_existente["status"] == 0:
                     cursor.execute(
                         "UPDATE productos SET fecha_de_vencimiento = %s, cantidad_disponible = %s, precio_en_dolares = %s, status = 1 WHERE nombre = %s",
-                        (fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, nombre),
+                        (
+                            fecha_de_vencimiento,
+                            cantidad_disponible,
+                            precio_en_dolares,
+                            nombre,
+                        ),
                     )
                     mysql.connection.commit()
-                    flash("Producto agregado correctamente.", 'success')
+                    flash("Producto agregado correctamente.", "success")
                     return redirect(url_for("productos"))
                 else:
-                    flash("El producto ya existe.", 'warning')
+                    flash("El producto ya existe.", "warning")
             else:
                 cursor.execute(
                     "INSERT INTO productos (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares, status) VALUES (%s, %s, %s, %s, 1)",
-                    (nombre, fecha_de_vencimiento, cantidad_disponible, precio_en_dolares),
+                    (
+                        nombre,
+                        fecha_de_vencimiento,
+                        cantidad_disponible,
+                        precio_en_dolares,
+                    ),
                 )
                 mysql.connection.commit()
-                flash("Producto agregado correctamente.", 'success')
+                flash("Producto agregado correctamente.", "success")
                 return redirect(url_for("productos"))
 
             cursor.close()
         else:
-            flash("Por favor, complete todos los campos del formulario", 'warning')
+            flash("Por favor, complete todos los campos del formulario", "warning")
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute("SELECT * FROM productos WHERE status = 1")
@@ -309,7 +329,6 @@ def productos():
         productos=all_products,
         current_page="productos",
     )
-
 
 
 @app.route("/actualizar_producto", methods=["POST"])
@@ -346,7 +365,7 @@ def actualizar_producto():
     cursor.close()
 
     # Redirigir a la página de productos con un mensaje flash
-    flash("Producto actualizado correctamente", 'success')
+    flash("Producto actualizado correctamente", "success")
     return redirect(url_for("productos"))
 
 
@@ -369,13 +388,16 @@ def eliminar_productos():
     cursor.close()
 
     # Redirigir a la página de productos con un mensaje flash
-    flash("Productos eliminados correctamente", 'success')
+    flash("Productos eliminados correctamente", "success")
     return redirect(url_for("productos"))
-#endregion
 
 
-#region Clientes
+# endregion
+
+
+# region Clientes
 #################################### CLIENTES ################################################
+
 
 @app.route("/clientes", methods=["GET", "POST"])
 def clientes():
@@ -403,7 +425,7 @@ def clientes():
                     (nombre, direccion, telefono, cedula),
                 )
                 mysql.connection.commit()
-                flash("Cliente agregado correctamente.", 'success')
+                flash("Cliente agregado correctamente.", "success")
                 return redirect(url_for("clientes"))
             else:
                 error_messages.append("El cliente ya existe.")
@@ -413,7 +435,7 @@ def clientes():
                 (nombre, direccion, telefono, cedula),
             )
             mysql.connection.commit()
-            flash("Cliente agregado correctamente.", 'success')
+            flash("Cliente agregado correctamente.", "success")
             return redirect(url_for("clientes"))
 
         cursor.close()
@@ -433,7 +455,6 @@ def clientes():
     )
 
 
-
 @app.route("/actualizar_cliente", methods=["POST"])
 def actualizar_cliente():
     if "loggedin" not in session:
@@ -451,13 +472,18 @@ def actualizar_cliente():
     cursor = mysql.connection.cursor()
 
     # Verificar si el teléfono ya existe y pertenece a otro cliente
-    cursor.execute("SELECT * FROM clientes WHERE telefono = %s AND id != %s", (telefono, cliente_id))
+    cursor.execute(
+        "SELECT * FROM clientes WHERE telefono = %s AND id != %s",
+        (telefono, cliente_id),
+    )
     cliente_existente_telefono = cursor.fetchone()
     if cliente_existente_telefono:
         error_messages.append("El teléfono ingresado ya pertenece a otro cliente.")
 
     # Verificar si la cédula ya existe y pertenece a otro cliente
-    cursor.execute("SELECT * FROM clientes WHERE cedula = %s AND id != %s", (cedula, cliente_id))
+    cursor.execute(
+        "SELECT * FROM clientes WHERE cedula = %s AND id != %s", (cedula, cliente_id)
+    )
     cliente_existente_cedula = cursor.fetchone()
     if cliente_existente_cedula:
         error_messages.append("La cédula ingresada ya pertenece a otro cliente.")
@@ -467,7 +493,7 @@ def actualizar_cliente():
     if error_messages:
         for error in error_messages:
             flash(error, "error")
-       
+
         return redirect(url_for("clientes"))
 
     # Actualizar cliente en la base de datos si no hay errores
@@ -484,11 +510,9 @@ def actualizar_cliente():
     cursor.close()
 
     flash("Cliente actualizado correctamente", "success")
-    
+
     # Redirigir a la lista de clientes después de la actualización
     return redirect(url_for("clientes"))
-
-
 
 
 @app.route("/eliminar_clientes", methods=["POST"])
@@ -504,7 +528,7 @@ def eliminar_clientes():
         )
     mysql.connection.commit()
     cursor.close()
-    flash("Clientes eliminados correctamente", 'success')
+    flash("Clientes eliminados correctamente", "success")
 
     return redirect(url_for("clientes"))
 
@@ -515,8 +539,8 @@ def realizar_venta():
         return redirect(url_for("login"))
 
     if not check_internet_connection():
-        flash("No hay conexión a internet. Por favor, comprueba tu conexión.", 'error')
-        return render_template("no_connection.html") 
+        flash("No hay conexión a internet. Por favor, comprueba tu conexión.", "error")
+        return render_template("no_connection.html")
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
@@ -537,8 +561,8 @@ def realizar_venta():
     tasa_bcv = get_tasa_bcv()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    if 'success' in request.args:
-        flash("Conexión restablecida correctamente", 'success')
+    if "success" in request.args:
+        flash("Conexión restablecida correctamente", "success")
 
     if request.method == "POST":
         try:
@@ -575,11 +599,11 @@ def realizar_venta():
                 mysql.connection.commit()
 
             cursor.close()
-            flash("Venta realizada correctamente", 'success')
+            flash("Venta realizada correctamente", "success")
             return redirect(url_for("clientes"))
 
         except Exception as e:
-            flash(f"Ocurrió un error: {str(e)}", 'error')
+            flash(f"Ocurrió un error: {str(e)}", "error")
             return redirect(url_for("realizar_venta"))
 
     return render_template(
@@ -596,15 +620,10 @@ def realizar_venta():
     )
 
 
+# endregion
 
 
-
-
-
-#endregion
-
-
-#region Proveedores
+# region Proveedores
 ################################## PROVEEDORES ########################################
 
 
@@ -633,7 +652,7 @@ def proveedores():
                     (nombre, direccion, rif),
                 )
                 mysql.connection.commit()
-                flash("Proveedor añadido correctamente.", 'success')
+                flash("Proveedor añadido correctamente.", "success")
                 return redirect(url_for("proveedores"))
             else:
                 error_messages.append("El RIF ya pertenece a un proveedor.")
@@ -643,7 +662,7 @@ def proveedores():
                 (nombre, direccion, rif),
             )
             mysql.connection.commit()
-            flash("Proveedor añadido correctamente.", 'success')
+            flash("Proveedor añadido correctamente.", "success")
             return redirect(url_for("proveedores"))
 
         cursor.close()
@@ -669,7 +688,7 @@ def realizar_compra():
         return redirect(url_for("login"))
 
     if not check_internet_connection():
-        flash("No hay conexión a internet. Por favor, comprueba tu conexión.", 'error')
+        flash("No hay conexión a internet. Por favor, comprueba tu conexión.", "error")
         return render_template("no_connection.html")
 
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
@@ -691,8 +710,8 @@ def realizar_compra():
     tasa_bcv = get_tasa_bcv()
     today = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    if 'success' in request.args:
-        flash("Conexión restablecida correctamente", 'success')
+    if "success" in request.args:
+        flash("Conexión restablecida correctamente", "success")
 
     if request.method == "POST":
         try:
@@ -730,11 +749,11 @@ def realizar_compra():
             mysql.connection.commit()  # Commit final después del bucle
 
             cursor.close()
-            flash("Compra realizada correctamente", 'success')
+            flash("Compra realizada correctamente", "success")
             return redirect(url_for("proveedores"))
 
         except Exception as e:
-            flash(f"Ocurrió un error: {str(e)}", 'error')
+            flash(f"Ocurrió un error: {str(e)}", "error")
             return redirect(url_for("realizar_compra"))
 
     return render_template(
@@ -749,7 +768,6 @@ def realizar_compra():
         usuario=session["username"],
         current_page="proveedores",
     )
-
 
 
 @app.route("/actualizar_proveedor", methods=["POST"])
@@ -767,11 +785,13 @@ def actualizar_proveedor():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
     # Verificar si el RIF ya existe y pertenece a otro proveedor
-    cursor.execute("SELECT * FROM proveedores WHERE rif = %s AND id != %s", (rif, proveedor_id))
+    cursor.execute(
+        "SELECT * FROM proveedores WHERE rif = %s AND id != %s", (rif, proveedor_id)
+    )
     proveedor_existente = cursor.fetchone()
 
     if proveedor_existente:
-        flash("El RIF ingresado ya pertenece a otro proveedor.", 'error')
+        flash("El RIF ingresado ya pertenece a otro proveedor.", "error")
         cursor.close()
         return redirect(url_for("proveedores"))
 
@@ -788,7 +808,7 @@ def actualizar_proveedor():
     cursor.close()
 
     # Redirigir a la página de proveedores con un mensaje flash
-    flash("Proveedor actualizado correctamente", 'success')
+    flash("Proveedor actualizado correctamente", "success")
     return redirect(url_for("proveedores"))
 
 
@@ -811,12 +831,11 @@ def eliminar_proveedores():
     cursor.close()
 
     # Redirigir a la página de proveedores con un mensaje flash
-    flash("Proveedores eliminados correctamente", 'success')
+    flash("Proveedores eliminados correctamente", "success")
     return redirect(url_for("proveedores"))
 
 
-
-#region Transacciones
+# region Transacciones
 ################################### TRANSACCIONES #####################################################
 
 
@@ -903,8 +922,12 @@ def generar_reporte_pdf(transaccion, productos):
     pdf.cell(200, 10, f"Marca de tiempo: {transaccion[1]}", ln=True)
     pdf.cell(200, 10, f"Importe en dólares: {transaccion[2]}", ln=True)
     pdf.cell(200, 10, f"Tasa BCV: {transaccion[3]}", ln=True)
-    pdf.cell(200, 10, f"Cliente: {transaccion[4] if transaccion[4] else 'N/A'}", ln=True)
-    pdf.cell(200, 10, f"Proveedor: {transaccion[5] if transaccion[5] else 'N/A'}", ln=True)
+    pdf.cell(
+        200, 10, f"Cliente: {transaccion[4] if transaccion[4] else 'N/A'}", ln=True
+    )
+    pdf.cell(
+        200, 10, f"Proveedor: {transaccion[5] if transaccion[5] else 'N/A'}", ln=True
+    )
     pdf.cell(200, 10, f"Realizada por: {transaccion[6]}", ln=True)
     pdf.ln(10)
 
@@ -937,11 +960,14 @@ def generar_reporte(transaccion_id):
     transaccion = cursor.fetchone()
 
     # Obtener detalles de los productos comprados en esa transacción
-    cursor.execute("""
+    cursor.execute(
+        """
         SELECT tp.productos_id, tp.cantidad 
         FROM transacciones_tiene_productos tp
         WHERE tp.transacciones_id = %s
-    """, (transaccion_id,))
+    """,
+        (transaccion_id,),
+    )
     productos = cursor.fetchall()
 
     cursor.close()
@@ -953,8 +979,7 @@ def generar_reporte(transaccion_id):
     return send_file(pdf, as_attachment=True, mimetype="application/pdf")
 
 
-
-#region Reportes
+# region Reportes
 ################################### REPORTES ##########################################
 
 
@@ -970,8 +995,6 @@ def reportes():
         )
 
     return redirect(url_for("dashboard"))
-
-
 
 
 @app.route("/productos_reporte", methods=["GET"])
@@ -1418,11 +1441,12 @@ def compras_reporte():
     pdf.output(filepath)
 
     return send_file(filepath, as_attachment=True, mimetype="application/pdf")
-#endregion
 
 
+# endregion
 
-#region Herramientas
+
+# region Herramientas
 ################################### HERRAMIENTAS ######################################
 
 
@@ -1452,9 +1476,13 @@ def agregar_empleado():
         cedula = request.form["cedula"]
         nombre = request.form["nombre"]
         rol = request.form["rol"]
-        hash_de_contrasena = bcrypt.generate_password_hash(request.form["hash_contrasena"]).decode("utf-8")
+        hash_de_contrasena = bcrypt.generate_password_hash(
+            request.form["hash_contrasena"]
+        ).decode("utf-8")
         pregunta_seguridad = request.form["pregunta_seguridad"]
-        respuesta_seguridad = bcrypt.generate_password_hash(request.form["respuesta_seguridad"]).decode("utf-8")
+        respuesta_seguridad = bcrypt.generate_password_hash(
+            request.form["respuesta_seguridad"]
+        ).decode("utf-8")
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
@@ -1466,26 +1494,39 @@ def agregar_empleado():
             if empleado_existente["status"] == 0:
                 cursor.execute(
                     "UPDATE usuarios SET nombre = %s, rol = %s, hash_de_contrasena = %s, pregunta_seguridad = %s, respuesta_seguridad = %s, status = 1 WHERE cedula = %s",
-                    (nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad, cedula),
+                    (
+                        nombre,
+                        rol,
+                        hash_de_contrasena,
+                        pregunta_seguridad,
+                        respuesta_seguridad,
+                        cedula,
+                    ),
                 )
                 mysql.connection.commit()
-                flash("Empleado actualizado y reactivado correctamente", 'success')
+                flash("Empleado actualizado y reactivado correctamente", "success")
             else:
-                flash("El empleado ya existe y está activo.", 'warning')
+                flash("El empleado ya existe y está activo.", "warning")
         else:
             cursor.execute(
                 "INSERT INTO usuarios (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad, status) VALUES (%s, %s, %s, %s, %s, %s, 1)",
-                (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad),
+                (
+                    cedula,
+                    nombre,
+                    rol,
+                    hash_de_contrasena,
+                    pregunta_seguridad,
+                    respuesta_seguridad,
+                ),
             )
             mysql.connection.commit()
-            flash("Empleado agregado correctamente", 'success')
+            flash("Empleado agregado correctamente", "success")
 
         cursor.close()
 
         return redirect(url_for("herramientas"))
 
     return render_template("herramientas.html")
-
 
 
 @app.route("/actualizar_empleado", methods=["POST"])
@@ -1507,12 +1548,10 @@ def actualizar_empleado():
             SET cedula = %s, nombre = %s, rol = %s, status = %s
             WHERE id = %s
             """,
-            (cedula, nombre, rol, status, empleado_id)
+            (cedula, nombre, rol, status, empleado_id),
         )
         mysql.connection.commit()
         cursor.close()
-
-        
 
         flash("Empleado actualizado correctamente", "success")
         return redirect(url_for("herramientas"))
@@ -1598,7 +1637,7 @@ def listar_empleados():
     )
 
 
-#region BACKUP
+# region BACKUP
 @app.route("/respaldar_base", methods=["POST"])
 def respaldar_base():
     NOMBRE = "camicandy.sql"
@@ -1614,7 +1653,8 @@ def respaldar_base():
 
     return send_file(NOMBRE, as_attachment=True)
 
-#region RESTORE
+
+# region RESTORE
 @app.route("/recuperar_base", methods=["POST"])
 def recuperar_base():
     if request.method == "GET":
@@ -1703,6 +1743,7 @@ def buscar_productos():
         rol=session["rol"],
     )
 
+
 def check_internet_connection():
     url = "http://www.google.com"
     timeout = 5
@@ -1712,7 +1753,8 @@ def check_internet_connection():
     except requests.ConnectionError:
         return False
 
-#region AYUDA
+
+# region AYUDA
 @app.route("/ayuda")
 def ayuda():
     if "loggedin" in session:
@@ -1725,14 +1767,17 @@ def ayuda():
         )
 
     return redirect(url_for("dashboard"))
+
+
 # endregion
+
 
 @app.route("/no_connection")
 def no_connection():
     return render_template("no_connection.html")
 
 
-#region CERRAR SESION
+# region CERRAR SESION
 @app.route("/logout")
 def logout():
     session.pop("loggedin", None)

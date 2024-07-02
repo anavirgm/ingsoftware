@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 26-06-2024 a las 23:11:27
+-- Tiempo de generación: 02-07-2024 a las 16:45:04
 -- Versión del servidor: 11.2.0-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -41,11 +41,13 @@ CREATE TABLE `clientes` (
 --
 
 INSERT INTO `clientes` (`id`, `nombre`, `direccion`, `telefono`, `cedula`, `status`) VALUES
-(1, 'Antonio Villalobos', 'Maracaibo', '04145555556', '30643276', 1),
+(1, 'Antonio Villalobos', 'Maracaibo', '04145554565', '30643276', 1),
 (2, 'Samuel Rincon', 'Los Olivos', '04125555555', '29888888', 1),
 (3, 'Juan Urdaneta', 'C2', '04146074412', '29999999', 1),
-(6, 'Jesus Apolinar', 'Maracaibo', '04145555555', '30999999', 1),
-(8, 'Adis Luzardo', 'Mara', '04121716029', 'V6885972', 0);
+(6, 'Jesus Apolinar', 'Maracaibo', '04145555555', '30999999', 0),
+(8, 'Adis Luzardo', 'Mara', '04121716029', 'V6885972', 0),
+(9, 'Carlota', 'Maracaibo', '04121716029', '31575257', 0),
+(10, 'Luis Hernandez', 'Fuerzas Armadas', '04145374415', '30527486', 1);
 
 -- --------------------------------------------------------
 
@@ -69,9 +71,9 @@ CREATE TABLE `productos` (
 
 INSERT INTO `productos` (`id`, `nombre`, `fecha_de_vencimiento`, `cantidad_disponible`, `imagen`, `precio_en_dolares`, `status`) VALUES
 (1, 'Vainilla', '2024-12-31', 50, NULL, 3.99, 1),
-(2, 'Chocolate', '2024-12-31', 85, NULL, 4.99, 1),
-(3, 'Limón', '2024-12-31', 62, NULL, 3.49, 1),
-(4, 'Fresa', '2024-12-31', 76, NULL, 4.50, 1),
+(2, 'Chocolate', '2024-12-31', 83, NULL, 4.99, 1),
+(3, 'Limón', '2024-12-31', 65, NULL, 3.49, 1),
+(4, 'Fresa', '2024-12-31', 75, NULL, 4.50, 1),
 (5, 'Menta', '2024-12-31', 60, NULL, 4.49, 0);
 
 -- --------------------------------------------------------
@@ -124,8 +126,6 @@ INSERT INTO `transacciones` (`id`, `marca_de_tiempo`, `importe_en_dolares`, `tas
 (4, '2024-06-11 14:53:03', 213.00, 38.00, 2, NULL, 1),
 (5, '2024-06-13 14:53:49', 46.00, 38.00, 3, NULL, 1),
 (6, '2024-06-13 14:56:33', 24.95, 38.00, 1, NULL, 2),
-(7, '2024-06-30 14:41:00', 24.95, 38.00, 3, NULL, 1),
-(8, '2024-06-30 14:42:00', 9.98, 38.00, 1, NULL, 1),
 (10, '2024-06-18 14:50:00', 23.94, 37.00, 2, NULL, 1),
 (11, '2024-06-18 15:21:00', 7.98, 50.00, 1, NULL, 1),
 (12, '2024-06-14 15:21:00', 4.99, 23.00, 2, NULL, 1),
@@ -151,7 +151,12 @@ INSERT INTO `transacciones` (`id`, `marca_de_tiempo`, `importe_en_dolares`, `tas
 (43, '2024-06-24 03:00:29', 138.85, 38.00, NULL, 1, 1),
 (44, '2024-06-24 03:10:56', 92.57, 38.00, NULL, 3, 1),
 (45, '2024-06-24 03:13:10', 46.28, 36.39, NULL, 2, 1),
-(46, '2024-06-24 05:09:00', 10.44, 36.38, NULL, 1, 1);
+(46, '2024-06-24 05:09:00', 10.44, 36.38, NULL, 1, 1),
+(47, '2024-07-01 17:47:00', 5.22, 36.45, 2, NULL, 1),
+(48, '2024-07-01 17:48:00', 12.15, 36.45, NULL, 1, 1),
+(49, '2024-07-02 14:25:00', 5.22, 36.46, 1, NULL, 1),
+(50, '2024-07-02 14:27:00', 5.22, 36.46, NULL, 2, 1),
+(51, '2024-07-02 14:42:00', 11.58, 36.46, 1, NULL, 1);
 
 --
 -- Disparadores `transacciones`
@@ -270,7 +275,12 @@ INSERT INTO `transacciones_tiene_productos` (`transacciones_id`, `productos_id`,
 (44, 1, 5),
 (44, 1, 10),
 (45, 1, 10),
-(46, 4, 2);
+(46, 4, 2),
+(47, 4, 1),
+(48, 3, 3),
+(49, 4, 1),
+(50, 4, 1),
+(51, 2, 2);
 
 --
 -- Disparadores `transacciones_tiene_productos`
@@ -280,25 +290,25 @@ CREATE TRIGGER `actualizar_stock_monto` AFTER INSERT ON `transacciones_tiene_pro
     DECLARE total_amount DECIMAL(10, 2);
     DECLARE es_compra BOOLEAN;
 
-    -- Determinar si es una compra o una venta
+    
     SELECT (t.clientes_id IS NULL) INTO es_compra FROM transacciones t WHERE t.id = NEW.transacciones_id;
 
-    -- Actualizar el stock de productos
+    
     IF es_compra THEN
-        -- Compra: incrementar stock
+        
         UPDATE productos SET cantidad_disponible = cantidad_disponible + NEW.cantidad WHERE id = NEW.productos_id;
     ELSE
-        -- Venta: decrementar stock
+        
         UPDATE productos SET cantidad_disponible = cantidad_disponible - NEW.cantidad WHERE id = NEW.productos_id;
     END IF;
 
-    -- Calcular el importe total en dólares con IVA (16%)
+    
     SELECT SUM(tp.cantidad * p.precio_en_dolares) * 1.16 INTO total_amount
     FROM transacciones_tiene_productos tp
     JOIN productos p ON tp.productos_id = p.id
     WHERE tp.transacciones_id = NEW.transacciones_id;
 
-    -- Actualizar el importe en dólares de la transacción
+    
     UPDATE transacciones SET importe_en_dolares = total_amount WHERE id = NEW.transacciones_id;
 END
 $$
@@ -326,7 +336,7 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `cedula`, `nombre`, `rol`, `hash_de_contrasena`, `pregunta_seguridad`, `respuesta_seguridad`, `status`) VALUES
-(1, '30597012', 'Ana Mota', 'administrador', '$2b$12$TB07LX0M/Ipz7ikFDt/OJeHmZ.ePzPS6wz.7KGnQC.aHAkEtohM0C', '¿Cuál es tu postre favorito?', '$2y$10$wdKk9e/y5sSN2tTwMQ0ux.q9cwkhsfwTo4nO1Zt4dK9Dmv0Qn/.1S', 1),
+(1, '30597012', 'Ana Mota', 'administrador', '$2b$12$L83bWlRfyz9/KODyRWF1d.uksvrr4O9mX9q0p2Q7RT3xVVNHn55RS', '¿Cuál es tu postre favorito?', '$2y$10$wdKk9e/y5sSN2tTwMQ0ux.q9cwkhsfwTo4nO1Zt4dK9Dmv0Qn/.1S', 1),
 (2, '29877987', 'Samuel Rincon', 'empleado', '$2b$12$uih8uU8KTNDgoUSuFn5Ut.xI23DgmAAsjFC6UMxsFFU8XmIM4Vriy', '¿Cuál es tu postre favorito?', '$2b$12$TQyO444QlwweNif77I7i7./C1NpsX2CSpxRN0x/p1pBlZXWzbswEm', 1);
 
 --
@@ -382,7 +392,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
@@ -400,13 +410,13 @@ ALTER TABLE `proveedores`
 -- AUTO_INCREMENT de la tabla `transacciones`
 --
 ALTER TABLE `transacciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=47;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- Restricciones para tablas volcadas

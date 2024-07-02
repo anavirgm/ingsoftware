@@ -12,7 +12,7 @@
 h1.main-title {
   font-weight: 700;
   margin-bottom: 20px;
-  color: #333;
+  color: #ffa500;
 }
 
 .cards-section {
@@ -44,6 +44,7 @@ h1.main-title {
   font-size: 1.7rem;
   font-weight: 600;
   margin-bottom: 16px;
+  color: black;
 }
 
 .card p {

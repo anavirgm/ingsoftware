@@ -20,7 +20,6 @@
 }
 
 form {
-  background-color: #f9f9f9;
   border-radius: 10px;
   padding: 20px;
   margin: auto;
@@ -42,6 +41,7 @@ form select {
   border: 1px solid #ccc;
   border-radius: 25px;
   box-sizing: border-box;
+
 }
 
 form input[type="datetime-local"]:focus,
@@ -50,6 +50,17 @@ form select:focus {
   outline: none;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
+
+body.dark form input[type="datetime-local"],
+body.dark form select {
+ background-color: #555;
+}
+
+body.dark input[type="datetime-local"]:focus,
+body.dark form select:focus {
+  border-color: #ff9800;
+}
+
 
 form strong {
   color: #007bff;

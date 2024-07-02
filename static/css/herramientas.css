@@ -141,10 +141,25 @@ form select {
   box-sizing: border-box;
 }
 
+body.dark form input[type="text"],
+body.dark form input[type="password"],
+body.dark form select {
+
+  color: #ffffff;
+}
+
 form input[type="text"]:focus,
 form input[type="password"]:focus,
 form select:focus {
   border-color: #66afe9;
+  outline: none;
+}
+
+body.dark form input[type="text"]:focus,
+body.dark form input[type="password"]:focus,
+body.dark form select:focus {
+  border-color: #ff9800;
+
   outline: none;
 }
 

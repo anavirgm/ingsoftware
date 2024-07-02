@@ -76,6 +76,7 @@ body.dark header {
   display: flex;
   align-items: center;
   margin-top: 10px;
+  color: white;
 }
 
 .name_page img {

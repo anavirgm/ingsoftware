@@ -3,7 +3,12 @@ h1 {
     margin-bottom: 20px;
     color: #000000;
 }
-/* Container for the profile page */
+
+h2 {
+    margin-bottom: 20px;
+color: #000000;
+}
+
 .container {
     margin: 20px;
     padding: 20px;
@@ -12,7 +17,6 @@ h1 {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-/* Form group styling */
 .form-group {
     margin-bottom: 15px;
 }
@@ -21,7 +25,6 @@ h1 {
     display: block;
     margin-bottom: 5px;
     font-weight: 500;
-    color: #333;
 }
 
 .form-group input,
@@ -33,15 +36,22 @@ h1 {
     outline: none;
     transition: border-color 0.3s;
     box-sizing: border-box;
+    
 }
 
-/* Focus state for inputs */
+
 .form-group input:focus,
 .form-group select:focus {
     border-color: #007bff;
 }
 
-/* Button styling */
+
+body.dark .form-group input:focus,
+body.dark .form-group select:focus {
+    border-color: #ff9800;
+}
+
+
 button.guardar-cambios {
     padding: 10px 20px;
     border-radius: 25px;
@@ -52,7 +62,7 @@ button.guardar-cambios {
     margin-top: 10px;
     background-color:#007bff;
     color: #ffffff;
-    display: block; /* Convertir el botón en bloque para centrarlo */
+    display: block; 
     margin: 0 auto;
 }
 
@@ -75,7 +85,6 @@ body.dark button.guardar-cambios:hover {
 }
 
 
-/* Responsive design for small screens */
 @media (max-width: 600px) {
     .container {
         padding: 10px;
@@ -100,13 +109,13 @@ body.dark .container {
 }
 
 body.dark .form-group label {
-    color: #ccc;
+    color: #ffffff;
 }
 
 body.dark .form-group input,
 body.dark .form-group select {
     background-color: #555;
-    border: 1px solid #444;
+    border: 1px solid #ccc;
     color: white;
 }
 

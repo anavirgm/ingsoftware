@@ -271,7 +271,18 @@ def productos():
         precio_en_dolares = request.form["precio_en_dolares"]
         imagen = request.files["imagen"].read()
 
-        if nombre and fecha_de_vencimiento and cantidad_disponible and precio_en_dolares:
+        # Validar entradas negativas
+        try:
+            cantidad_disponible = int(cantidad_disponible)
+            precio_en_dolares = float(precio_en_dolares)
+            if cantidad_disponible < 0 or precio_en_dolares < 0:
+                flash("La cantidad disponible y el precio no pueden ser negativos.", 'warning')
+                return redirect(url_for("productos"))
+        except ValueError:
+            flash("La cantidad disponible y el precio deben ser números válidos.", 'warning')
+            return redirect(url_for("productos"))
+
+        if nombre and fecha_de_vencimiento and cantidad_disponible is not None and precio_en_dolares is not None:
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
             # Verificar si el producto ya existe
@@ -315,6 +326,7 @@ def productos():
         productos=all_products,
         current_page="productos",
     )
+
 
 @app.route("/imagen_producto/<int:producto_id>")
 def imagen_producto(producto_id):
@@ -515,7 +527,6 @@ def eliminar_clientes():
 
     return redirect(url_for("clientes"))
 
-
 @app.route("/realizar_venta", methods=["GET", "POST"])
 def realizar_venta():
     if "loggedin" not in session:
@@ -555,6 +566,14 @@ def realizar_venta():
             carrito = json.loads(request.form["carrito"])
 
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+
+            # Verificar cantidades disponibles
+            for producto in carrito:
+                cursor.execute("SELECT cantidad_disponible FROM productos WHERE id = %s", (producto["id"],))
+                resultado = cursor.fetchone()
+                if resultado["cantidad_disponible"] < producto["cantidad"]:
+                    flash(f"No puedes vender más productos del que hay en el stock para el producto ID {producto['id']}", 'error')
+                    return redirect(url_for("realizar_venta"))
 
             # Insertar en la tabla transacciones
             cursor.execute(
@@ -601,7 +620,6 @@ def realizar_venta():
         usuario=session["username"],
         current_page="clientes",
     )
-
 
 
 

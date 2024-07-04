@@ -175,18 +175,24 @@
     }
 
     function añadirAlCarrito(id) {
-      const producto = productos.find(p => p.id === id);
-      if (producto) {
+    const producto = productos.find(p => p.id === id);
+    if (producto) {
         const productoEnCarrito = carrito.find(p => p.id === id);
         if (productoEnCarrito) {
-          productoEnCarrito.cantidad++;
+            if (productoEnCarrito.cantidad < producto.cantidad_disponible) {
+                productoEnCarrito.cantidad++;
+            } else {
+                alert(`No puedes añadir más del producto ${producto.nombre}. Stock disponible: ${producto.cantidad_disponible}`);
+            }
         } else {
-          carrito.push({ ...producto, cantidad: 1 });
+            carrito.push({ ...producto, cantidad: 1 });
         }
         actualizarCarrito();
         actualizarTotales(); // Llamar a la función para actualizar totales
-      }
     }
+}
+
+
 
     function actualizarCarrito() {
       const tbody = document.getElementById("tabla-carrito-body");
@@ -217,13 +223,19 @@
     }
 
     function actualizarCantidad(id, cantidad) {
-      const producto = carrito.find(p => p.id === id);
-      if (producto) {
-        producto.cantidad = parseInt(cantidad);
-        document.getElementById(`precio-total${id}`).textContent = (producto.precio_en_dolares * producto.cantidad).toFixed(2);
-        actualizarTotales(); // Llamar a la función para actualizar totales
-      }
+    const producto = carrito.find(p => p.id === id);
+    if (producto) {
+        if (cantidad > producto.cantidad_disponible) {
+            alert(`No puedes añadir más del producto ${producto.nombre}. Stock disponible: ${producto.cantidad_disponible}`);
+            document.getElementById(`cantidad${id}`).value = producto.cantidad;
+        } else {
+            producto.cantidad = parseInt(cantidad);
+            document.getElementById(`precio-total${id}`).textContent = (producto.precio_en_dolares * producto.cantidad).toFixed(2);
+            actualizarTotales(); // Llamar a la función para actualizar totales
+        }
     }
+}
+
 
     function actualizarTotales() {
       // Calcular subtotal

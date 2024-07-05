@@ -395,7 +395,6 @@ def eliminar_productos():
 
 #region Clientes
 #################################### CLIENTES ################################################
-
 @app.route("/clientes", methods=["GET", "POST"])
 def clientes():
     if "loggedin" not in session:
@@ -411,28 +410,38 @@ def clientes():
 
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
-        # Verificar si el cliente ya existe
+        # Verificar si la cédula ya existe con cualquier estado
         cursor.execute("SELECT * FROM clientes WHERE cedula = %s", (cedula,))
-        cliente_existente = cursor.fetchone()
+        cliente_cedula = cursor.fetchone()
 
-        if cliente_existente:
-            if cliente_existente["status"] == 0:
+        # Verificar si el teléfono ya existe con cualquier estado
+        cursor.execute("SELECT * FROM clientes WHERE telefono = %s", (telefono,))
+        cliente_telefono = cursor.fetchone()
+
+        if cliente_cedula and cliente_cedula['status'] == 1:
+            error_messages.append("La cédula ya existe.")
+        elif cliente_telefono and cliente_telefono['status'] == 1:
+            error_messages.append("El teléfono ya existe.")
+
+        if not error_messages:
+            if cliente_cedula and cliente_cedula['status'] == 0:
                 cursor.execute(
                     "UPDATE clientes SET nombre = %s, direccion = %s, telefono = %s, status = 1 WHERE cedula = %s",
                     (nombre, direccion, telefono, cedula),
                 )
-                mysql.connection.commit()
-                flash("Cliente agregado correctamente.", 'success')
-                return redirect(url_for("clientes"))
+            elif cliente_telefono and cliente_telefono['status'] == 0:
+                cursor.execute(
+                    "UPDATE clientes SET nombre = %s, direccion = %s, cedula = %s, status = 1 WHERE telefono = %s",
+                    (nombre, direccion, cedula, telefono),
+                )
             else:
-                error_messages.append("El cliente ya existe.")
-        else:
-            cursor.execute(
-                "INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
-                (nombre, direccion, telefono, cedula),
-            )
+                cursor.execute(
+                    "INSERT INTO clientes (nombre, direccion, telefono, cedula, status) VALUES (%s, %s, %s, %s, 1)",
+                    (nombre, direccion, telefono, cedula),
+                )
+
             mysql.connection.commit()
-            flash("Cliente agregado correctamente.", 'success')
+            flash("Cliente agregado correctamente", 'success')
             return redirect(url_for("clientes"))
 
         cursor.close()
@@ -450,6 +459,9 @@ def clientes():
         current_page="clientes",
         error_messages=error_messages,
     )
+
+
+
 
 
 
@@ -661,7 +673,9 @@ def proveedores():
                 flash("Proveedor añadido correctamente.", 'success')
                 return redirect(url_for("proveedores"))
             else:
-                error_messages.append("El RIF ya pertenece a un proveedor.")
+                flash("El RIF ya pertenece a un proveedor.", 'warning')
+                return redirect(url_for("proveedores"))
+
         else:
             cursor.execute(
                 "INSERT INTO proveedores (nombre, direccion, rif, status) VALUES (%s, %s, %s, 1)",
@@ -1544,10 +1558,11 @@ def agregar_empleado():
                     (nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad, cedula),
                 )
                 mysql.connection.commit()
-                flash("Empleado actualizado y reactivado correctamente", 'success')
+                flash("Empleado agregado correctamente.", 'success')
                 
             else:
-                flash("El empleado ya existe y está activo.", 'warning')
+                flash("El empleado ya existe.", 'warning')
+                
         else:
             cursor.execute(
                 "INSERT INTO usuarios (cedula, nombre, rol, hash_de_contrasena, pregunta_seguridad, respuesta_seguridad, status) VALUES (%s, %s, %s, %s, %s, %s, 1)",

@@ -16,16 +16,24 @@ head %} {{ super() }}
         <input type="file" name="file" accept=".sql" />
         <button type="submit" class="btn-primary">RESTORE DATABASE</button>
       </form>
-
-      {% with messages = get_flashed_messages() %} {% if messages %}
-      <ul>
-        console: {% for message in messages %}
-        <li>{{ message }}</li>
-        {% endfor %}
-      </ul>
-      {% endif %} {% endwith %}
-    </div>
-
+      {% with messages = get_flashed_messages(with_categories=true) %} {% if
+        messages %}
+        <div class="flash-messages">
+          {% for category, message in messages %}
+          <div class="flash-message {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %} {% endwith %}
+    
+        
+        {% if error_messages %}
+        <div class="error-messages">
+          {% for message in error_messages %}
+          <div class="error-message">{{ message }}</div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        </div>
     <div class="gestion-empleados">
       <h2>Gestión de Empleados</h2>
       <h3>Agregar Nuevo Empleado</h3>
@@ -70,6 +78,16 @@ head %} {{ super() }}
 
   <div class="container_clientes">
     <h1>Empleados</h1>
+ 
+    {% with messages = get_flashed_messages(with_categories=true) %} {% if
+      messages %}
+      <div class="flash-messages">
+        {% for category, message in messages %}
+        <div class="flash-message {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+      {% endif %} {% endwith %}
+
     <div class="container_clientes_buscar">
       <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="Buscar por ID, nombre o cédula..." />
 
@@ -346,6 +364,26 @@ head %} {{ super() }}
       const alertaEliminar = document.getElementById("alerta-eliminar");
       alertaEliminar.classList.remove("show");
     }
+
+    function cerrarFlashMessage(button) {
+    const flashMessage = button.closest(".flash-message");
+    flashMessage.classList.remove("show");
+    setTimeout(() => {
+      flashMessage.remove();
+    }, 300);
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const flashMessages = document.querySelectorAll(".flash-message");
+    flashMessages.forEach((message) => {
+      setTimeout(() => {
+        message.classList.remove("show");
+        setTimeout(() => {
+          message.remove();
+        }, 300);
+      }, 5000);
+    });
+  });
   </script>
   {% endblock %}
 </div>

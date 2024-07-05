@@ -16,6 +16,16 @@ head %} {{ super() }}
       {% endfor %}
     </div>
     {% endif %} {% endwith %}
+
+    
+    {% if error_messages %}
+    <div class="error-messages">
+      {% for message in error_messages %}
+      <div class="error-message">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
     <div class="container_clientes_buscar">
       <input
         type="text"
@@ -157,14 +167,6 @@ head %} {{ super() }}
         placeholder="Ej. J123456789"
         onkeydown="return validarRIF(event)"
       />
-
-      {% if error_messages %}
-      <div class="error-messages">
-        {% for message in error_messages %}
-        <div class="error-message">{{ message }}</div>
-        {% endfor %}
-      </div>
-      {% endif %}
 
       <input type="submit" value="Agregar" />
     </form>

@@ -39,10 +39,10 @@ head %} {{ super() }}
       <h3>Agregar Nuevo Empleado</h3>
       <form action="{{ url_for('agregar_empleado') }}" method="POST">
         <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required onkeydown="return validarNombre(event)" /><br />
+        <input type="text" id="nombre" name="nombre" required onkeydown="return validarNombre(event)" onpaste="validarPegadoLetras(event)"/><br />
 
         <label for="cedula">Cédula:</label>
-        <input type="text" id="cedula" name="cedula" required onkeypress="return validarNumero(event)" /><br />
+        <input type="text" id="cedula" name="cedula" required onkeypress="return validarNumero(event)" onpaste="validarPegadoNumeros(event)"/><br />
 
         <label for="rol">Rol:</label>
         <select id="rol" name="rol" required>
@@ -149,6 +149,13 @@ head %} {{ super() }}
   </div>
 </main>
 
+<div id="modal-seleccion-multiple" class="modal" style="display: none">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalSeleccionMultiple()">&times;</span>
+    <p>Seleccione solo un cliente para actualizar.</p>
+  </div>
+</div>
+
 <div id="modal-actualizar" class="modal" style="display: none">
   <div class="modal-content">
     <span class="close" onclick="cerrarModalActualizar()">&times;</span>
@@ -158,11 +165,11 @@ head %} {{ super() }}
 
       <label for="nombre_actualizar">Nombre:</label>
       <input type="text" id="nombre_actualizar" name="nombre_actualizar" required
-        onkeydown="return validarNombre(event)" /><br />
+        onkeydown="return validarNombre(event)" onpaste="validarPegadoLetras(event)"/><br />
 
       <label for="cedula_actualizar">Cédula:</label>
       <input type="text" id="cedula_actualizar" name="cedula_actualizar" required
-        onkeydown="return validarNumero(event)" /><br />
+        onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)"/><br />
 
       <label for="rol_actualizar">Rol:</label>
       <select id="rol_actualizar" name="rol_actualizar" required>
@@ -224,6 +231,17 @@ head %} {{ super() }}
       limpiarCampos();
     }
 
+    function mostrarModalSeleccionMultiple() {
+    document.getElementById("modal-seleccion-multiple").style.display = "block";
+  }
+
+  function cerrarModalSeleccionMultiple() {
+    document.getElementById("modal-seleccion-multiple").style.display = "none";
+  }
+
+
+
+
     function limpiarCampos() {
       document.getElementById("formulario").reset();
     }
@@ -278,6 +296,8 @@ head %} {{ super() }}
     });
 
     function abrirModalActualizar() {
+      const checkboxes = document.querySelectorAll(".empleado-checkbox:checked");
+
       const filaSeleccionada = document.querySelector(
         "input.empleado-checkbox:checked",
       );
@@ -285,6 +305,14 @@ head %} {{ super() }}
         mostrarAlerta("Debe seleccionar un empleado para actualizar.");
         return;
       }
+
+      if (checkboxes.length !== 1) {
+      mostrarModalSeleccionMultiple();
+      return;
+    }
+
+    
+    const checkbox = checkboxes[0];
 
       const fila = filaSeleccionada.closest("tr");
       const empleadoId = fila.cells[1].textContent;
@@ -384,6 +412,28 @@ head %} {{ super() }}
       }, 5000);
     });
   });
+
+   // Validar que solo se peguen números
+function validarPegadoNumeros(event) {
+  let clipboardData = event.clipboardData || window.clipboardData;
+  let pastedData = clipboardData.getData('Text');
+
+  if (!/^\d+$/.test(pastedData)) {
+    event.preventDefault();
+    mostrarAlertaEliminar('Solo se permiten números en este campo.');
+  }
+}
+
+// Validar que solo se peguen letras
+function validarPegadoLetras(event) {
+  let clipboardData = event.clipboardData || window.clipboardData;
+  let pastedData = clipboardData.getData('Text');
+
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(pastedData)) {
+    event.preventDefault();
+    mostrarAlertaEliminar('Solo se permiten letras en este campo.');
+  }
+}
   </script>
   {% endblock %}
 </div>

@@ -134,48 +134,18 @@
   <div class="modal-content">
     <span class="close" onclick="cerrarFormulario()">&times;</span>
     <h2>Agregar Nuevo Cliente</h2>
-    <form
-      id="formulario"
-      action="{{ url_for('clientes') }}"
-      method="POST"
-      onsubmit="return validarFormulario()"
-    >
+    <form id="formulario" action="{{ url_for('clientes') }}" method="POST" onsubmit="return validarFormulario()">
       <label for="nombre">Nombre:</label>
-      <input
-        type="text"
-        id="nombre"
-        name="nombre"
-        value="{{ request.form.nombre or '' }}"
-        required
-        onkeydown="return validarNombre(event)"
-      /><br />
+      <input type="text" id="nombre" name="nombre" value="{{ request.form.nombre or '' }}" required onkeydown="return validarNombre(event)" onpaste="validarPegadoLetras(event)" /><br />
 
       <label for="direccion">Dirección:</label>
-      <input
-        type="text"
-        id="direccion"
-        name="direccion"
-        value="{{ request.form.direccion or '' }}"
-        required
-      /><br />
+      <input type="text" id="direccion" name="direccion" value="{{ request.form.direccion or '' }}" required /><br />
+
       <label for="telefono">Teléfono:</label>
-      <input
-        type="text"
-        id="telefono"
-        name="telefono"
-        value="{{ request.form.telefono or '' }}"
-        required
-        onkeydown="return validarNumero(event)"
-      /><br />
+      <input type="text" id="telefono" name="telefono" value="{{ request.form.telefono or '' }}" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
+
       <label for="cedula">Cédula:</label>
-      <input
-        type="text"
-        id="cedula"
-        name="cedula"
-        value="{{ request.form.cedula or '' }}"
-        required
-        onkeydown="return validarNumero(event)"
-      /><br />
+      <input type="text" id="cedula" name="cedula" value="{{ request.form.cedula or '' }}" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
 
       {% if error_messages %}
       <div class="error-messages">
@@ -190,52 +160,23 @@
   </div>
 </div>
 
+
+
 <div id="modal-actualizar" class="modal" style="display: none">
   <div class="modal-content">
     <span class="close" onclick="cerrarModalActualizar()">&times;</span>
     <h2>Actualizar Cliente</h2>
-    <form
-      id="formulario-actualizar"
-      method="POST"
-      action="{{ url_for('actualizar_cliente') }}"
-    >
-      <input
-        type="hidden"
-        id="cliente_id_actualizar"
-        name="cliente_id_actualizar"
-      />
+    <form id="formulario-actualizar" method="POST" action="{{ url_for('actualizar_cliente') }}">
+      <input type="hidden" id="cliente_id_actualizar" name="cliente_id_actualizar" />
 
       <label for="nombre_actualizar">Nombre:</label>
-      <input
-        type="text"
-        id="nombre_actualizar"
-        name="nombre_actualizar"
-        required
-        onkeydown="return validarNombre(event)"
-      /><br />
+      <input type="text" id="nombre_actualizar" name="nombre_actualizar" required onkeydown="return validarNombre(event)" onpaste="validarPegadoLetras(event)" /><br />
       <label for="direccion_actualizar">Dirección:</label>
-      <input
-        type="text"
-        id="direccion_actualizar"
-        name="direccion_actualizar"
-        required
-      /><br />
+      <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
       <label for="telefono_actualizar">Teléfono:</label>
-      <input
-        type="text"
-        id="telefono_actualizar"
-        name="telefono_actualizar"
-        required
-        onkeydown="return validarNumero(event)"
-      /><br />
+      <input type="text" id="telefono_actualizar" name="telefono_actualizar" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
       <label for="cedula_actualizar">Cédula:</label>
-      <input
-        type="text"
-        id="cedula_actualizar"
-        name="cedula_actualizar"
-        required
-        onkeydown="return validarNumero(event)"
-      /><br />
+      <input type="text" id="cedula_actualizar" name="cedula_actualizar" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
 
       <button type="submit">Actualizar</button>
     </form>
@@ -302,6 +243,29 @@
     }
     return true;
   }
+
+  // Validar que solo se peguen números
+function validarPegadoNumeros(event) {
+  let clipboardData = event.clipboardData || window.clipboardData;
+  let pastedData = clipboardData.getData('Text');
+
+  if (!/^\d+$/.test(pastedData)) {
+    event.preventDefault();
+    mostrarAlertaEliminar('Solo se permiten números en este campo.');
+  }
+}
+
+// Validar que solo se peguen letras
+function validarPegadoLetras(event) {
+  let clipboardData = event.clipboardData || window.clipboardData;
+  let pastedData = clipboardData.getData('Text');
+
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(pastedData)) {
+    event.preventDefault();
+    mostrarAlertaEliminar('Solo se permiten letras en este campo.');
+  }
+}
+
 
   document.addEventListener("DOMContentLoaded", function () {
     const errorMessages = document.querySelectorAll(".error-message");

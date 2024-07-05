@@ -147,7 +147,7 @@ head %} {{ super() }}
         name="nombre"
         value="{{ request.form.nombre or '' }}"
         required
-        onkeydown="return validarNombre(event)"
+        onkeydown="return validarNombre(event)" onpaste="validarPegadoLetras(event)"
       /><br />
       <label for="direccion">Dirección:</label>
       <input
@@ -162,7 +162,7 @@ head %} {{ super() }}
         type="text"
         id="rif"
         name="rif"
-        value="{{ request.form.rif or '' }}"
+        value="J{{ request.form.rif or '' }}"
         required
         placeholder="Ej. J123456789"
         onkeydown="return validarRIF(event)"
@@ -193,7 +193,7 @@ head %} {{ super() }}
         id="nombre_actualizar"
         name="nombre_actualizar"
         required
-        onkeydown="return validarNombre(event)"
+        onkeydown="return validarNombre(event)" onpaste="validarPegadoLetras(event)"
       /><br />
       <label for="direccion_actualizar">Dirección:</label>
       <input
@@ -216,9 +216,26 @@ head %} {{ super() }}
   </div>
 </div>
 
+<div id="modal-seleccion-multiple" class="modal" style="display: none">
+  <div class="modal-content">
+    <span class="close" onclick="cerrarModalSeleccionMultiple()">&times;</span>
+    <p>Seleccione solo un cliente para actualizar.</p>
+  </div>
+</div>
+
 {% endblock %} {% block scripts %}
 <script src="{{ url_for('static', filename='js/component.js') }}"></script>
 <script>
+  function validarPegadoLetras(event) {
+  let clipboardData = event.clipboardData || window.clipboardData;
+  let pastedData = clipboardData.getData('Text');
+
+  if (!/^[a-zA-ZáéíóúÁÉÍÓÚñÑ\s]+$/.test(pastedData)) {
+    event.preventDefault();
+    mostrarAlertaEliminar('Solo se permiten letras en este campo.');
+  }
+}
+
   function validarRIF(event) {
     // Permitir: backspace, delete, tab, escape, enter y J
     if (
@@ -326,6 +343,8 @@ head %} {{ super() }}
   });
 
   function abrirModalActualizar() {
+    const checkboxes = document.querySelectorAll(".proveedor-checkbox:checked");
+
     const filaSeleccionada = document.querySelector(
       "input.proveedor-checkbox:checked",
     );
@@ -334,6 +353,13 @@ head %} {{ super() }}
       mostrarAlerta("Debe seleccionar un proveedor para actualizar.");
       return;
     }
+
+    if (checkboxes.length !== 1) {
+      mostrarModalSeleccionMultiple();
+      return;
+    }
+
+    const checkbox = checkboxes[0];
 
     const fila = filaSeleccionada.closest("tr");
 
@@ -354,6 +380,14 @@ head %} {{ super() }}
 
   function cerrarModalActualizar() {
     document.getElementById("modal-actualizar").style.display = "none";
+  }
+
+  function mostrarModalSeleccionMultiple() {
+    document.getElementById("modal-seleccion-multiple").style.display = "block";
+  }
+
+  function cerrarModalSeleccionMultiple() {
+    document.getElementById("modal-seleccion-multiple").style.display = "none";
   }
 
   function obtenerProveedoresSeleccionados() {

@@ -1798,14 +1798,14 @@ def buscar_productos():
 # region MANUALES
 @app.route("/manual_de_usuario", methods=["GET"])
 def manual_de_usuario():
-    filepath = f"{app.config['MANUALES_FOLDER']}/manual_de_usuario.pdf"
-    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+    filepath = f"{app.config['MANUALES_FOLDER']}/manual_de_usuario.epub"
+    return send_file(filepath, as_attachment=True, mimetype="application/epub")
 
 
 @app.route("/manual_del_sistema", methods=["GET"])
 def manual_del_sistema():
-    filepath = f"{app.config['MANUALES_FOLDER']}/manual_del_sistema.pdf"
-    return send_file(filepath, as_attachment=True, mimetype="application/pdf")
+    filepath = f"{app.config['MANUALES_FOLDER']}/manual_del_sistema.epub"
+    return send_file(filepath, as_attachment=True, mimetype="application/epub")
 
 
 # endregion

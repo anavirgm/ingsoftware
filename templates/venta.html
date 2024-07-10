@@ -177,20 +177,25 @@
     function añadirAlCarrito(id) {
     const producto = productos.find(p => p.id === id);
     if (producto) {
-        const productoEnCarrito = carrito.find(p => p.id === id);
-        if (productoEnCarrito) {
-            if (productoEnCarrito.cantidad < producto.cantidad_disponible) {
-                productoEnCarrito.cantidad++;
+        if (producto.cantidad_disponible > 0) {
+            const productoEnCarrito = carrito.find(p => p.id === id);
+            if (productoEnCarrito) {
+                if (productoEnCarrito.cantidad < producto.cantidad_disponible) {
+                    productoEnCarrito.cantidad++;
+                } else {
+                    alert(`No puedes añadir más del producto ${producto.nombre}. Stock disponible: ${producto.cantidad_disponible}`);
+                }
             } else {
-                alert(`No puedes añadir más del producto ${producto.nombre}. Stock disponible: ${producto.cantidad_disponible}`);
+                carrito.push({ ...producto, cantidad: 1 });
             }
+            actualizarCarrito();
+            actualizarTotales();
         } else {
-            carrito.push({ ...producto, cantidad: 1 });
+            alert(`El producto ${producto.nombre} está agotado. No se puede añadir al carrito.`);
         }
-        actualizarCarrito();
-        actualizarTotales(); // Llamar a la función para actualizar totales
     }
 }
+
 
 
 

@@ -1,0 +1,36 @@
+Pasos para instalar:
+
+1. Asegúrese de tener instalado Python 3.11 en su computadora. Si no lo tiene,
+puede descargarlo desde https://www.python.org - Asegúrese de marcar la casilla que
+dice "Add Python 3.11 to PATH" durante la instalación.
+
+2. Diríjase a la carpeta ingsoftware-main mediante el CMD proveída en
+el archivo .zip junto a este archivo. Para esto, presione la tecla de Windows + R,
+escriba "cmd" y presione Enter. Luego, escriba el comando:
+cd "ruta\de\la\carpeta\ingsoftware-main". Puede copiar la ruta de la carpeta
+desde la barra de direcciones del explorador de archivos.
+
+3. Cree un entorno virtual en la carpeta ingsoftware-main mediante el comando (Windows):
+py -m venv env
+
+4. Active el entorno virtual mediante el comando (Windows):
+.\env\Scripts\activate.bat
+
+5. Instale las dependencias necesarias mediante el comando:
+py -m pip install -r requirements.txt
+
+6. Asegúrese de tener instalado MySQL en su computadora. Si no lo tiene,
+puede descargarlo mediante XAMPP en el enlace: https://www.apachefriends.org/es/index.html
+
+7. Diríjase en otro CMD a la carpeta de instalación de XAMPP, por defecto (comando cd)
+es C:\xampp\mysql\bin. Luego, cree una base de datos en MySQL o MariaDB con el
+nombre "camicandy", de desearlo puede hacerlo desde la interfaz gráfica de
+PHPMyAdmin o mediante el comando mysqladmin.exe -u root create camicandy.
+Luego importe el archivo "camicandy.sql" que se encuentra en la carpeta ingsoftware-main
+mediante el comando: mysql -u root camicandy < camicandy.sql
+
+7. Ejecute el programa mediante el comando:
+py app.py
+
+8. Diríjase a la dirección http://localhost:5000/ en su navegador para
+acceder a la aplicación web.

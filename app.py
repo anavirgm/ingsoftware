@@ -645,12 +645,13 @@ def realizar_venta():
 ################################## PROVEEDORES ########################################
 
 
+#region Proveedores
+################################## PROVEEDORES ########################################
+
 @app.route("/proveedores", methods=["GET", "POST"])
 def proveedores():
     if "loggedin" not in session or session["rol"] != "administrador":
         return redirect(url_for("dashboard"))
-
-    error_messages = []
 
     if request.method == "POST":
         nombre = request.form["nombre"]
@@ -673,7 +674,7 @@ def proveedores():
                 flash("Proveedor añadido correctamente.", 'success')
                 return redirect(url_for("proveedores"))
             else:
-                flash("El RIF ya pertenece a un proveedor.", 'warning')
+                flash("El RIF ya pertenece a un proveedor.", 'error')
                 return redirect(url_for("proveedores"))
 
         else:
@@ -698,8 +699,8 @@ def proveedores():
         username=session["username"],
         rol=session["rol"],
         current_page="proveedores",
-        error_messages=error_messages,
     )
+
 
 
 @app.route("/realizar_compra", methods=["GET", "POST"])

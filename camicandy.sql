@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 02-07-2024 a las 16:45:04
+-- Tiempo de generación: 10-07-2024 a las 06:06:28
 -- Versión del servidor: 11.2.0-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -44,10 +44,27 @@ INSERT INTO `clientes` (`id`, `nombre`, `direccion`, `telefono`, `cedula`, `stat
 (1, 'Antonio Villalobos', 'Maracaibo', '04145554565', '30643276', 1),
 (2, 'Samuel Rincon', 'Los Olivos', '04125555555', '29888888', 1),
 (3, 'Juan Urdaneta', 'C2', '04146074412', '29999999', 1),
-(6, 'Jesus Apolinar', 'Maracaibo', '04145555555', '30999999', 0),
-(8, 'Adis Luzardo', 'Mara', '04121716029', 'V6885972', 0),
-(9, 'Carlota', 'Maracaibo', '04121716029', '31575257', 0),
-(10, 'Luis Hernandez', 'Fuerzas Armadas', '04145374415', '30527486', 1);
+(4, 'Pedro Pérez', 'Av. Bolívar', '04141234567', '20765432', 1),
+(5, 'María Gómez', 'Calle Principal', '04142222222', '29876543', 1),
+(6, 'José Martínez', 'Urb. El Recreo', '04143333333', '30456789', 1),
+(7, 'Ana Rodríguez', 'Av. Libertador', '04144444444', '30123456', 1),
+(8, 'Carlos Sánchez', 'Calle 8', '04145555555', '30234567', 1),
+(9, 'Laura González', 'Av. Fuerzas Armadas', '04146666666', '30987654', 1),
+(10, 'Miguel López', 'Av. Universidad', '04147777777', '30876543', 1),
+(11, 'Verónica Jiménez', 'Calle 5', '04148888888', '30765432', 1),
+(12, 'Juan Pérez', 'Av. Bella Vista', '04149999999', '30654321', 1),
+(13, 'Martha Suárez', 'Av. El Milagro', '04141010101', '30543210', 1),
+(14, 'Roberto Medina', 'Av. La Limpia', '04141111111', '30432109', 1),
+(15, 'Sofía Ramírez', 'Av. Delicias', '04141222222', '30321098', 1),
+(16, 'Andrés Hernández', 'Av. 5 de Julio', '04141333333', '30210987', 1),
+(17, 'Lucía Castro', 'Av. Goajira', '04141444444', '30109876', 1),
+(18, 'Manuel Vargas', 'Av. Universidad', '04141555555', '31234567', 1),
+(19, 'Daniela Navarro', 'Av. Fuerzas Armadas', '04141666666', '31123456', 1),
+(20, 'Héctor Mendoza', 'Calle 72', '04141777777', '31012345', 1),
+(21, 'Patricia Ruiz', 'Av. Bella Vista', '04141888888', '31987654', 1),
+(22, 'Ramón López', 'Av. El Milagro', '04141999999', '31876543', 1),
+(23, 'Isabel Medina', 'Av. La Limpia', '04142010101', '31765432', 1),
+(24, 'Marcos Ramírez', 'Av. Delicias', '04142111111', '31654321', 1);
 
 -- --------------------------------------------------------
 
@@ -70,11 +87,28 @@ CREATE TABLE `productos` (
 --
 
 INSERT INTO `productos` (`id`, `nombre`, `fecha_de_vencimiento`, `cantidad_disponible`, `imagen`, `precio_en_dolares`, `status`) VALUES
-(1, 'Vainilla', '2024-12-31', 50, NULL, 3.99, 1),
-(2, 'Chocolate', '2024-12-31', 83, NULL, 4.99, 1),
-(3, 'Limón', '2024-12-31', 65, NULL, 3.49, 1),
-(4, 'Fresa', '2024-12-31', 75, NULL, 4.50, 1),
-(5, 'Menta', '2024-12-31', 60, NULL, 4.49, 0);
+(1, 'Vainilla', '2024-07-31', 56, NULL, 3.00, 1),
+(2, 'Chocolate', '2024-07-31', 78, NULL, 3.00, 1),
+(3, 'Fresa', '2024-12-31', 50, NULL, 5.99, 1),
+(4, 'Mango', '2024-12-31', 44, NULL, 6.50, 1),
+(5, 'Limón', '2024-12-31', 55, NULL, 4.75, 1),
+(6, 'Piña', '2024-12-31', 59, NULL, 4.25, 1),
+(7, 'Coco', '2024-12-31', 36, NULL, 7.25, 1),
+(8, 'Cambur', '2024-12-31', 65, NULL, 4.99, 1),
+(9, 'Mora', '2024-12-31', 52, NULL, 6.75, 1),
+(10, 'Uva', '2024-12-31', 48, NULL, 5.50, 1),
+(11, 'Durazno', '2024-12-31', 58, NULL, 5.25, 1),
+(12, 'Manzana', '2024-12-31', 70, NULL, 4.50, 1),
+(13, 'Sandía', '2024-12-31', 30, NULL, 3.99, 1),
+(14, 'Melón', '2024-12-31', 41, NULL, 4.80, 1),
+(15, 'Cereza', '2024-12-31', 53, NULL, 6.20, 1),
+(16, 'Naranja', '2024-12-31', 62, NULL, 4.95, 1),
+(17, 'Kiwi', '2024-12-31', 38, NULL, 6.99, 1),
+(18, 'Pera', '2024-12-31', 55, NULL, 5.75, 1),
+(19, 'Papaya', '2024-12-31', 45, NULL, 5.40, 1),
+(20, 'Guayaba', '2024-12-31', 51, NULL, 6.40, 1),
+(21, 'Granada', '2024-12-31', 57, NULL, 6.60, 1),
+(22, 'Lima', '2024-12-31', 45, NULL, 5.20, 1);
 
 -- --------------------------------------------------------
 
@@ -95,9 +129,29 @@ CREATE TABLE `proveedores` (
 --
 
 INSERT INTO `proveedores` (`id`, `nombre`, `rif`, `direccion`, `status`) VALUES
-(1, 'HELADOS TIO RICO', 'J88888888', 'CARACAS', 1),
-(2, 'HELADOS LA ARGENTINA', 'J99999999', '5 DE JULIO', 1),
-(3, 'HELADOS CARABOBO', 'J-40855439-9', 'Carabobo', 1);
+(1, 'HELADOS TIO RICO', 'J-88888888', 'CARACAS', 1),
+(2, 'HELADOS LA ARGENTINA', 'J-99999999', '5 DE JULIO', 1),
+(3, 'HELADOS CARABOBO', 'J-87654324', 'Carabobo', 1),
+(4, 'Distribuidora Helados del Este', 'J-76543210', 'Av. Libertador', 1),
+(5, 'Helados Hermanos Gómez', 'J-23456789', 'Maracay', 1),
+(6, 'Helados El Criollo', 'J-13579246', 'Valencia', 1),
+(7, 'Frío Gelato C.A.', 'J-98765432', 'Maracaibo', 1),
+(8, 'Helados El Potro', 'J-24680135', 'Barquisimeto', 1),
+(9, 'Helados del Zulia', 'J-67584930', 'San Francisco', 1),
+(10, 'La Heladería Artesanal', 'J-19283746', 'Puerto La Cruz', 1),
+(11, 'Helados Ricos y Sabrosos', 'J-57382910', 'Mérida', 1),
+(12, 'Distribuidora de Helados Guayana', 'J-38475629', 'Ciudad Guayana', 1),
+(13, 'Helados Frescos y Naturales', 'J-10293847', 'Punto Fijo', 1),
+(14, 'El Heladero Venezolano', 'J-29384756', 'Los Teques', 1),
+(15, 'Helados del Cacao', 'J-47582930', 'Cumaná', 1),
+(16, 'Fábrica de Helados Santa Rita', 'J-38592017', 'Santa Rita', 1),
+(17, 'Helados del Táchira', 'J-28374659', 'San Cristóbal', 1),
+(18, 'Helados Sabores del Llano', 'J-50394827', 'Barinas', 1),
+(19, 'La Heladería de la Familia', 'J-83746592', 'Guacara', 1),
+(20, 'Helados Caseros Don José', 'J-12938475', 'La Victoria', 1),
+(21, 'Distribuidora Helados Maracay', 'J-37485920', 'Maracay', 1),
+(22, 'Helados Arcoíris C.A.', 'J-59483720', 'Valencia', 1),
+(23, 'Helados del Pueblo', 'J-47382915', 'San Felipe', 1);
 
 -- --------------------------------------------------------
 
@@ -120,43 +174,11 @@ CREATE TABLE `transacciones` (
 --
 
 INSERT INTO `transacciones` (`id`, `marca_de_tiempo`, `importe_en_dolares`, `tasa_bcv`, `clientes_id`, `proveedores_id`, `usuarios_id`) VALUES
-(1, '2024-06-11 18:07:29', 24.95, 38.00, NULL, 1, 1),
-(2, '2024-06-12 03:59:48', 134.70, 38.00, NULL, 1, 1),
-(3, '2024-06-13 14:52:34', 345.00, 38.00, 1, NULL, 1),
-(4, '2024-06-11 14:53:03', 213.00, 38.00, 2, NULL, 1),
-(5, '2024-06-13 14:53:49', 46.00, 38.00, 3, NULL, 1),
-(6, '2024-06-13 14:56:33', 24.95, 38.00, 1, NULL, 2),
-(10, '2024-06-18 14:50:00', 23.94, 37.00, 2, NULL, 1),
-(11, '2024-06-18 15:21:00', 7.98, 50.00, 1, NULL, 1),
-(12, '2024-06-14 15:21:00', 4.99, 23.00, 2, NULL, 1),
-(13, '2024-06-09 15:39:00', 17.45, 45.00, 1, NULL, 1),
-(14, '2024-06-18 17:00:00', 39.92, 36.42, 1, NULL, 1),
-(17, '2024-06-19 07:52:19', 25.44, 38.00, 3, NULL, 1),
-(24, '2024-06-20 02:05:00', 9.00, 36.39, 1, NULL, 1),
-(25, '2024-06-20 02:06:00', 11.48, 36.39, 3, NULL, 1),
-(26, '2024-06-20 02:10:00', 4.99, 36.39, 6, NULL, 1),
-(27, '2024-06-20 02:25:00', 13.50, 36.39, 1, NULL, 1),
-(28, '2024-06-20 02:27:00', 9.00, 36.39, 3, NULL, 1),
-(29, '2024-06-20 02:30:00', 9.00, 36.39, 6, NULL, 1),
-(31, '2024-06-20 02:44:00', 12.49, 36.39, 2, NULL, 1),
-(32, '2024-06-20 02:45:00', 12.48, 36.39, 6, NULL, 1),
-(33, '2024-06-20 02:46:00', 6.98, 36.39, 3, NULL, 1),
-(34, '2024-06-20 02:52:00', 9.00, 36.39, 1, NULL, 1),
-(37, '2024-06-20 12:20:50', 10.44, 36.39, 3, NULL, 1),
-(38, '2024-06-20 12:21:00', 4.05, 36.39, 1, NULL, 1),
-(39, '2024-06-20 17:08:00', 11.58, 36.38, 6, NULL, 1),
-(40, '2024-06-20 17:12:00', 63.09, 36.38, 1, NULL, 1),
-(41, '2024-06-21 00:26:00', 23.14, 36.38, 3, NULL, 1),
-(42, '2024-06-22 16:05:00', 5.22, 36.38, 1, NULL, 1),
-(43, '2024-06-24 03:00:29', 138.85, 38.00, NULL, 1, 1),
-(44, '2024-06-24 03:10:56', 92.57, 38.00, NULL, 3, 1),
-(45, '2024-06-24 03:13:10', 46.28, 36.39, NULL, 2, 1),
-(46, '2024-06-24 05:09:00', 10.44, 36.38, NULL, 1, 1),
-(47, '2024-07-01 17:47:00', 5.22, 36.45, 2, NULL, 1),
-(48, '2024-07-01 17:48:00', 12.15, 36.45, NULL, 1, 1),
-(49, '2024-07-02 14:25:00', 5.22, 36.46, 1, NULL, 1),
-(50, '2024-07-02 14:27:00', 5.22, 36.46, NULL, 2, 1),
-(51, '2024-07-02 14:42:00', 11.58, 36.46, 1, NULL, 1);
+(1, '2024-07-10 03:53:00', 487.20, 36.49, NULL, 1, 1),
+(2, '2024-07-10 03:58:00', 25.00, 36.49, 16, NULL, 1),
+(3, '2024-07-10 04:04:00', 6.96, 36.49, 1, NULL, 1),
+(4, '2024-07-10 04:05:00', 21.46, 36.49, 11, NULL, 1),
+(5, '2024-07-10 04:05:00', 44.14, 36.49, 17, NULL, 1);
 
 --
 -- Disparadores `transacciones`
@@ -221,66 +243,17 @@ CREATE TABLE `transacciones_tiene_productos` (
 --
 
 INSERT INTO `transacciones_tiene_productos` (`transacciones_id`, `productos_id`, `cantidad`) VALUES
-(1, 2, 5),
-(2, 5, 30),
-(6, 2, 5),
-(7, 2, 5),
-(8, 2, 2),
-(9, 1, 4),
-(10, 1, 6),
-(11, 1, 2),
-(12, 2, 1),
-(13, 3, 5),
-(14, 2, 8),
-(16, 4, 2),
-(16, 3, 1),
-(17, 1, 3),
-(17, 2, 2),
-(17, 3, 1),
-(18, 4, 2),
-(18, 3, 1),
-(19, 4, 2),
-(19, 2, 1),
-(19, 1, 3),
-(20, 4, 2),
-(22, 4, 2),
-(23, 4, 2),
-(24, 4, 2),
-(25, 3, 2),
-(25, 4, 1),
-(26, 2, 1),
-(27, 4, 3),
-(28, 4, 2),
-(29, 4, 2),
-(31, 4, 2),
-(31, 3, 1),
-(32, 1, 2),
-(32, 4, 1),
-(33, 3, 2),
-(34, 4, 2),
-(35, 3, 1),
-(35, 4, 2),
-(36, 4, 2),
-(37, 4, 2),
-(38, 3, 1),
-(39, 2, 2),
-(40, 4, 2),
-(40, 3, 3),
-(40, 2, 3),
-(40, 1, 5),
-(41, 1, 5),
-(42, 4, 1),
-(43, 1, 30),
-(44, 1, 5),
-(44, 1, 5),
-(44, 1, 10),
-(45, 1, 10),
-(46, 4, 2),
-(47, 4, 1),
-(48, 3, 3),
-(49, 4, 1),
-(50, 4, 1),
-(51, 2, 2);
+(1, 1, 60),
+(1, 2, 80),
+(2, 22, 2),
+(2, 19, 1),
+(2, 18, 1),
+(3, 2, 2),
+(4, 1, 4),
+(4, 4, 1),
+(5, 7, 4),
+(5, 6, 1),
+(5, 14, 1);
 
 --
 -- Disparadores `transacciones_tiene_productos`
@@ -337,7 +310,8 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`id`, `cedula`, `nombre`, `rol`, `hash_de_contrasena`, `pregunta_seguridad`, `respuesta_seguridad`, `status`) VALUES
 (1, '30597012', 'Ana Mota', 'administrador', '$2b$12$L83bWlRfyz9/KODyRWF1d.uksvrr4O9mX9q0p2Q7RT3xVVNHn55RS', '¿Cuál es tu postre favorito?', '$2y$10$wdKk9e/y5sSN2tTwMQ0ux.q9cwkhsfwTo4nO1Zt4dK9Dmv0Qn/.1S', 1),
-(2, '29877987', 'Samuel Rincon', 'empleado', '$2b$12$uih8uU8KTNDgoUSuFn5Ut.xI23DgmAAsjFC6UMxsFFU8XmIM4Vriy', '¿Cuál es tu postre favorito?', '$2b$12$TQyO444QlwweNif77I7i7./C1NpsX2CSpxRN0x/p1pBlZXWzbswEm', 1);
+(2, '29877987', 'Samuel Rincon', 'empleado', '$2b$12$v0/S73aOSgMLNMqY1joW6uIT2RtBO/NrfHEM9rd/zn4a9IpIAg2oS', '¿Cuál es tu postre favorito?', '$2b$12$rOpp6x4G2vQUFdrrtwO.DOabA4YrGjeUMoTqkAoordE70JBNqG1NG', 1),
+(7, '31575257', 'Carlota', 'empleado', '$2b$12$xHOz81NcccIhc7mJcINnVebaedJlgmEV.IkkltWVFxr64Xum7PYj2', '¿Cuál es tu postre favorito?', '$2b$12$l/0SyA3fsRKa7z2eyv3Cue9Sd3kyRhP2ivo/Sb53gX9e3xSA6oYTi', 1);
 
 --
 -- Índices para tablas volcadas
@@ -392,31 +366,31 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `clientes`
 --
 ALTER TABLE `clientes`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `productos`
 --
 ALTER TABLE `productos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedores`
 --
 ALTER TABLE `proveedores`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de la tabla `transacciones`
 --
 ALTER TABLE `transacciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=52;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restricciones para tablas volcadas

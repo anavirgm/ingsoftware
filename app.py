@@ -871,15 +871,15 @@ def transacciones():
 
     if fecha_inicio and fecha_fin:
         query = """
-        SELECT t.id, t.marca_de_tiempo, t.importe_en_dolares, t.tasa_bcv, 
-               t.clientes_id, t.proveedores_id, t.usuarios_id, 
-               c.nombre AS cliente, prov.nombre AS proveedor, u.nombre AS usuario
-        FROM transacciones t
-        LEFT JOIN clientes c ON t.clientes_id = c.id
-        LEFT JOIN proveedores prov ON t.proveedores_id = prov.id
-        LEFT JOIN usuarios u ON t.usuarios_id = u.id
-        WHERE t.marca_de_tiempo BETWEEN %s AND %s
-        ORDER BY t.marca_de_tiempo DESC;
+    SELECT t.id, t.marca_de_tiempo, t.importe_en_dolares, t.tasa_bcv, 
+           t.clientes_id, t.proveedores_id, t.usuarios_id, 
+           c.nombre AS cliente, prov.nombre AS proveedor, u.nombre AS usuario
+    FROM transacciones t
+    LEFT JOIN clientes c ON t.clientes_id = c.id
+    LEFT JOIN proveedores prov ON t.proveedores_id = prov.id
+    LEFT JOIN usuarios u ON t.usuarios_id = u.id
+    WHERE t.marca_de_tiempo BETWEEN %s AND %s
+    ORDER BY t.marca_de_tiempo DESC;
         """
         cursor.execute(query, (fecha_inicio, fecha_fin))
     else:
@@ -893,6 +893,10 @@ def transacciones():
         LEFT JOIN usuarios u ON t.usuarios_id = u.id
         ORDER BY t.marca_de_tiempo DESC;
         """
+
+        print("Query:", query)  # Para debug, imprime la consulta SQL
+        print("Params:", (fecha_inicio, fecha_fin))  # Para debug, imprime los parámetros
+
         cursor.execute(query)
 
     transacciones = cursor.fetchall()

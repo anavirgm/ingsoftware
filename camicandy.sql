@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 10-07-2024 a las 07:04:49
+-- Tiempo de generación: 16-07-2024 a las 18:46:19
 -- Versión del servidor: 11.2.0-MariaDB
 -- Versión de PHP: 8.2.4
 
@@ -335,7 +335,8 @@ CREATE TABLE `usuarios` (
 
 INSERT INTO `usuarios` (`id`, `cedula`, `nombre`, `rol`, `hash_de_contrasena`, `pregunta_seguridad`, `respuesta_seguridad`, `status`) VALUES
 (1, '30597012', 'Ana Mota', 'administrador', '$2b$12$L83bWlRfyz9/KODyRWF1d.uksvrr4O9mX9q0p2Q7RT3xVVNHn55RS', '¿Cuál es tu postre favorito?', '$2y$10$wdKk9e/y5sSN2tTwMQ0ux.q9cwkhsfwTo4nO1Zt4dK9Dmv0Qn/.1S', 1),
-(2, '29877987', 'Samuel Rincon', 'empleado', '$2b$12$v0/S73aOSgMLNMqY1joW6uIT2RtBO/NrfHEM9rd/zn4a9IpIAg2oS', '¿Cuál es tu postre favorito?', '$2b$12$rOpp6x4G2vQUFdrrtwO.DOabA4YrGjeUMoTqkAoordE70JBNqG1NG', 1);
+(2, '29877987', 'Samuel Rincon', 'empleado', '$2b$12$v0/S73aOSgMLNMqY1joW6uIT2RtBO/NrfHEM9rd/zn4a9IpIAg2oS', '¿Cuál es tu postre favorito?', '$2b$12$rOpp6x4G2vQUFdrrtwO.DOabA4YrGjeUMoTqkAoordE70JBNqG1NG', 1),
+(3, '31575257', 'Carlota Luzardo', 'empleado', '$2y$10$75I7/wtBuUdpA2vNKFSc0OzFkXRzBesHy.6D28nZo43z6bs3wiR.y', '¿Cuál es tu postre favorito?', '$2y$10$opToWSz1JgGyh8Hx/g9tdegPvj5N4IkT61Swx5TUv.WvTaMrBLq7O', 0);
 
 --
 -- Índices para tablas volcadas
@@ -414,7 +415,7 @@ ALTER TABLE `transacciones`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- Restricciones para tablas volcadas

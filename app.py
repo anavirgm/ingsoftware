@@ -408,6 +408,7 @@ def clientes():
         telefono = request.form["telefono"]
         cedula = request.form["cedula"]
 
+
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
 
         # Verificar si la cédula ya existe con cualquier estado

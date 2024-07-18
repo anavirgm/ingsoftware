@@ -1706,8 +1706,10 @@ def respaldar_base():
         text=True,
     ).stdout
 
-    # with open(NOMBRE, mode="w") as f:
-    #    f.write(base)
+    with open(NOMBRE, mode="w") as f:
+        f.write(base)
+
+    flash('Archivo de respaldo descargado exitosamente', 'success')
 
     return send_file(NOMBRE, as_attachment=True)
 

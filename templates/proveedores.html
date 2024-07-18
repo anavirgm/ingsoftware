@@ -201,7 +201,7 @@
 
     function validarFormularioRIF() {
       const rif = document.getElementById("rif").value.trim();
-      const rifRegex = /^[VEJPG]-\d{7}$/;
+      const rifRegex = /^[VEJPG]-\d{8s}$/;
       if (!rifRegex.test(rif)) {
         mostrarAlertaEliminar('El RIF debe tener el formato correcto (Ej. J-12345678).');
         return false;
@@ -211,7 +211,7 @@
 
     function validarFormularioRIFActualizar() {
       const rif = document.getElementById("rif_actualizar").value.trim();
-      const rifRegex = /^[VEJPG]-\d{7}$/;
+      const rifRegex = /^[VEJPG]-\d{8}$/;
       if (!rifRegex.test(rif)) {
         mostrarAlertaEliminar('El RIF debe tener el formato correcto (Ej. J-12345678).');
         return false;

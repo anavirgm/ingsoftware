@@ -8,32 +8,25 @@ head %} {{ super() }}
   <div class="container">
     <div class="backup">
       <h2>Recovery Data</h2>
-      <form action="{{ url_for('respaldar_base') }}" method="post">
-        <button type="submit" class="btn-primary">BACKUP</button>
+      <form id="backup-form" action="{{ url_for('respaldar_base') }}" method="post">
+          <button type="submit" class="btn-primary">BACKUP</button>
       </form>
       <br />
       <form action="{{ url_for('recuperar_base') }}" method="post" enctype="multipart/form-data">
-        <input type="file" name="file" accept=".sql" />
-        <button type="submit" class="btn-primary">RESTORE DATABASE</button>
+          <input type="file" name="file" accept=".sql" />
+          <button type="submit" class="btn-primary">RESTORE DATABASE</button>
       </form>
-      {% with messages = get_flashed_messages(with_categories=true) %} {% if
-        messages %}
-        <div class="flash-messages">
-          {% for category, message in messages %}
-          <div class="flash-message {{ category }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-        {% endif %} {% endwith %}
-    
-        
-        {% if error_messages %}
-        <div class="error-messages">
-          {% for message in error_messages %}
-          <div class="error-message">{{ message }}</div>
-          {% endfor %}
-        </div>
-        {% endif %}
-        </div>
+  
+      {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+              <div class="flash-messages">
+                  {% for category, message in messages %}
+                      <div class="flash-message {{ category }}">{{ message }}</div>
+                  {% endfor %}
+              </div>
+          {% endif %}
+      {% endwith %}
+  </div>
     <div class="gestion-empleados">
       <h2>Gestión de Empleados</h2>
       <h3>Agregar Nuevo Empleado</h3>
@@ -434,6 +427,12 @@ function validarPegadoLetras(event) {
     mostrarAlertaEliminar('Solo se permiten letras en este campo.');
   }
 }
+
+document.getElementById("backup-form").addEventListener("submit", function() {
+        setTimeout(function() {
+            location.reload(); // Recargar la página después de 1 segundo
+        }, 1000);
+    });
   </script>
   {% endblock %}
 </div>

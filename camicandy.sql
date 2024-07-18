@@ -100,7 +100,7 @@ CREATE TABLE `proveedores` (
 
 LOCK TABLES `proveedores` WRITE;
 /*!40000 ALTER TABLE `proveedores` DISABLE KEYS */;
-INSERT INTO `proveedores` VALUES (1,'Helados Tio Rico','J-88888888','Caracas',1),(2,'Helados La Argentina','J-99999999','Av. 5 de Julio',1),(3,'Helados Carabobo','J-87654324','Carabobo',1),(4,'Distribuidora Helados del Este','J-76543210','Av. Libertador',1),(5,'Helados Hermanos Gómez','J-23456789','Maracay',1),(6,'Helados El Criollo','J-13579246','Valencia',1),(7,'Frío Gelato C.A.','J-98765432','Maracaibo',1),(8,'Helados El Potro','J-24680135','Barquisimeto',1),(9,'Helados del Zulia','J-67584930','San Francisco',1),(10,'La Heladería Artesanal','J-19283746','Puerto La Cruz',1),(11,'Helados Ricos y Sabrosos','J-57382910','Mérida',1),(12,'Distribuidora de Helados Guayana','J-38475629','Ciudad Guayana',1),(13,'Helados Frescos y Naturales','J-10293847','Punto Fijo',1),(14,'El Heladero Venezolano','J-29384756','Los Teques',1),(15,'Helados del Cacao','J-47582930','Cumaná',1),(16,'Fábrica de Helados Santa Rita','J-38592017','Santa Rita',1),(17,'Helados del Táchira','J-28374659','San Cristóbal',1),(18,'Helados Sabores del Llano','J-50394827','Barinas',1),(19,'La Heladería de la Familia','J-83746592','Guacara',1),(20,'Helados Caseros Don José','J-12938475','La Victoria',1),(21,'Distribuidora Helados Maracay','J-37485920','Maracay',1),(22,'Helados Arcoíris C.A.','J-59483720','Valencia',1),(23,'Helados del Pueblo','J-47382915','San Felipe',1);
+INSERT INTO `proveedores` VALUES (1,'Helados Tio Rico','J-888888888','Caracas',1),(2,'Helados La Argentina','J-999999999','Av. 5 de Julio',1),(3,'Helados Carabobo','J-876543245','Carabobo',1),(4,'Distribuidora Helados del Este','J-765432101','Av. Libertador',1),(5,'Helados Hermanos Gómez','J-234567891','Maracay',1),(6,'Helados El Criollo','J-135792467','Valencia',1),(7,'Frío Gelato C.A.','J-987654321','Maracaibo',1),(8,'Helados El Potro','J-246801356','Barquisimeto',1),(9,'Helados del Zulia','J-675849301','San Francisco',1),(10,'La Heladería Artesanal','J-192837467','Puerto La Cruz',1),(11,'Helados Ricos y Sabrosos','J-573829101','Mérida',1),(12,'Distribuidora de Helados Guayana','J-384756291','Ciudad Guayana',1),(13,'Helados Frescos y Naturales','J-102938478','Punto Fijo',1),(14,'El Heladero Venezolano','J-293847567','Los Teques',1),(15,'Helados del Cacao','J-475829301','Cumaná',1),(16,'Fábrica de Helados Santa Rita','J-385920178','Santa Rita',1),(17,'Helados del Táchira','J-283746591','San Cristóbal',1),(18,'Helados Sabores del Llano','J-503948278','Barinas',1),(19,'La Heladería de la Familia','J-837465921','Guacara',1),(20,'Helados Caseros Don José','J-129384756','La Victoria',1),(21,'Distribuidora Helados Maracay','J-374859201','Maracay',1),(22,'Helados Arcoíris C.A.','J-594837201','Valencia',1),(23,'Helados del Pueblo','J-473829157','San Felipe',1);
 /*!40000 ALTER TABLE `proveedores` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -297,7 +297,7 @@ CREATE TABLE `usuarios` (
   PRIMARY KEY (`id`),
   UNIQUE KEY `idusuarios_UNIQUE` (`id`),
   UNIQUE KEY `cedula_UNIQUE` (`cedula`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -306,7 +306,7 @@ CREATE TABLE `usuarios` (
 
 LOCK TABLES `usuarios` WRITE;
 /*!40000 ALTER TABLE `usuarios` DISABLE KEYS */;
-INSERT INTO `usuarios` VALUES (1,'30597012','Ana Mota','administrador','$2b$12$L83bWlRfyz9/KODyRWF1d.uksvrr4O9mX9q0p2Q7RT3xVVNHn55RS','¿Cuál es tu postre favorito?','$2y$10$wdKk9e/y5sSN2tTwMQ0ux.q9cwkhsfwTo4nO1Zt4dK9Dmv0Qn/.1S',1),(2,'29877987','Samuel Rincon','empleado','$2b$12$v0/S73aOSgMLNMqY1joW6uIT2RtBO/NrfHEM9rd/zn4a9IpIAg2oS','¿Cuál es tu postre favorito?','$2b$12$rOpp6x4G2vQUFdrrtwO.DOabA4YrGjeUMoTqkAoordE70JBNqG1NG',1),(3,'31575257','Juan Urdaneta','empleado','$2b$12$/c1gm3lEVMZp1bypsdLyK.5oDXgsXGcZQ2SAL2K6wHxzE17N/m.bu','¿Cuál es tu postre favorito?','$2b$12$eQpp7thlc.If7LruajoyJO9i8v8tn2jTomQLw7yw7/gJ/lCUz0uym',0);
+INSERT INTO `usuarios` VALUES (1,'30597012','Ana Mota','administrador','$2b$12$L83bWlRfyz9/KODyRWF1d.uksvrr4O9mX9q0p2Q7RT3xVVNHn55RS','¿Cuál es tu postre favorito?','$2y$10$wdKk9e/y5sSN2tTwMQ0ux.q9cwkhsfwTo4nO1Zt4dK9Dmv0Qn/.1S',1),(2,'29877987','Samuel Rincon','empleado','$2b$12$v0/S73aOSgMLNMqY1joW6uIT2RtBO/NrfHEM9rd/zn4a9IpIAg2oS','¿Cuál es tu postre favorito?','$2b$12$rOpp6x4G2vQUFdrrtwO.DOabA4YrGjeUMoTqkAoordE70JBNqG1NG',1),(3,'31575257','Juan Urdaneta','empleado','$2b$12$/c1gm3lEVMZp1bypsdLyK.5oDXgsXGcZQ2SAL2K6wHxzE17N/m.bu','¿Cuál es tu postre favorito?','$2b$12$eQpp7thlc.If7LruajoyJO9i8v8tn2jTomQLw7yw7/gJ/lCUz0uym',0),(4,'30643276','Antonio Villalobos','empleado','$2y$10$r692ikpR3UZAHUEDcCVXc.kvD53PQsmq7M1XSk6wBQ59W7/7RunfW','¿Cuál es tu postre favorito?','$2y$10$bgrPIaeQmR0KbK6L1Etwnucxt.n7mRzRNKqQnD28SWQipanUVlKFy',0);
 /*!40000 ALTER TABLE `usuarios` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -319,4 +319,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-07-18 13:31:55
+-- Dump completed on 2024-07-18 13:48:37

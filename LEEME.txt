@@ -34,3 +34,15 @@ py app.py
 
 8. Diríjase a la dirección http://localhost:5000/ en su navegador para
 acceder a la aplicación web.
+
+9. Datos de acceso al sistema como administrador:
+	cédula: 30597012
+	contraseña: 1234
+	pregunta de seguridad: ¿Cuál es su postre favorito?
+	respuesta de seguridad: quesillo
+
+10. Datos de acceso al sistema como empleado:
+	cédula: 29877987
+	contraseña: 1234
+	pregunta de seguridad: ¿Cuál es su postre favorito?
+	respuesta de seguridad: quesillo

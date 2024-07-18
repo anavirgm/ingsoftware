@@ -35,7 +35,7 @@ head %} {{ super() }}
         <input type="text" id="nombre" name="nombre" required onkeydown="return validarNombre(event)" onpaste="validarPegadoLetras(event)"/><br />
 
         <label for="cedula">Cédula:</label>
-        <input type="text" id="cedula" name="cedula" required onkeypress="return validarNumero(event)" onpaste="validarPegadoNumeros(event)"/><br />
+        <input type="text" id="cedula" name="cedula" maxlength="8" required onkeypress="return validarNumero(event)" onpaste="validarPegadoNumeros(event)"/><br />
 
         <label for="rol">Rol:</label>
         <select id="rol" name="rol" required>
@@ -161,7 +161,7 @@ head %} {{ super() }}
         onkeydown="return validarNombre(event)" onpaste="validarPegadoLetras(event)"/><br />
 
       <label for="cedula_actualizar">Cédula:</label>
-      <input type="text" id="cedula_actualizar" name="cedula_actualizar" required
+      <input type="text" id="cedula_actualizar" name="cedula_actualizar" maxlength="8" required
         onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)"/><br />
 
       <label for="rol_actualizar">Rol:</label>

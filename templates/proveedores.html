@@ -29,7 +29,7 @@
       <div class="container_clientes_buscar">
         <input
           type="text"
-          placeholder="Buscar"
+          placeholder="Buscar por nombre, direccion o rif"
           oninput="filtrarProveedores(this.value)"
         />
         <button onclick="mostrarFormulario()">Añadir proveedor</button>
@@ -146,7 +146,7 @@
         <label for="direccion">Dirección:</label>
         <input type="text" id="direccion" name="direccion" value="{{ request.form.direccion or '' }}" required /><br />
         <label for="rif">RIF:</label>
-        <input type="text" id="rif" name="rif" value="{{ request.form.rif or '' }}" required placeholder="Ej. J-12345678"
+        <input type="text" id="rif" name="rif" value="{{ request.form.rif or '' }}" maxlength="11" required placeholder="Ej. J-123456789"
           oninput="formatearRIF(this)" /><br />
         <input type="submit" value="Agregar" />
       </form>
@@ -165,7 +165,7 @@
         <label for="direccion_actualizar">Dirección:</label>
         <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
         <label for="rif_actualizar">RIF:</label>
-        <input type="text" id="rif_actualizar" name="rif_actualizar" required placeholder="Ej. J-12345678" /><br />
+        <input type="text" id="rif_actualizar" name="rif_actualizar" maxlength="11" required placeholder="Ej. J-123456789" /><br />
         <button type="submit">Actualizar</button>
       </form>
     </div>
@@ -174,7 +174,7 @@
   <div id="modal-seleccion-multiple" class="modal" style="display: none">
     <div class="modal-content">
       <span class="close" onclick="cerrarModalSeleccionMultiple()">&times;</span>
-      <p>Seleccione solo un cliente para actualizar.</p>
+      <p>Seleccione solo un Proveedor para actualizar.</p>
     </div>
   </div>
   
@@ -201,9 +201,9 @@
 
     function validarFormularioRIF() {
       const rif = document.getElementById("rif").value.trim();
-      const rifRegex = /^[VEJPG]-\d{8s}$/;
+      const rifRegex = /^[VEJPG]-\d{9}$/;
       if (!rifRegex.test(rif)) {
-        mostrarAlertaEliminar('El RIF debe tener el formato correcto (Ej. J-12345678).');
+        mostrarAlertaEliminar('El RIF debe tener el formato correcto (Ej. J-123456789).');
         return false;
       }
       return true;
@@ -211,20 +211,20 @@
 
     function validarFormularioRIFActualizar() {
       const rif = document.getElementById("rif_actualizar").value.trim();
-      const rifRegex = /^[VEJPG]-\d{8}$/;
+      const rifRegex = /^[VEJPG]-\d{9}$/;
       if (!rifRegex.test(rif)) {
-        mostrarAlertaEliminar('El RIF debe tener el formato correcto (Ej. J-12345678).');
+        mostrarAlertaEliminar('El RIF debe tener el formato correcto (Ej. J-123456789).');
         return false;
       }
       return true;
     }
 
     function formatearRIF(input) {
-      let value = input.value.replace(/[^VEJPG0-7]/g, '').toUpperCase();
+      let value = input.value.replace(/[^VEJPG0-9]/g, '').toUpperCase();
       if (value.length > 0 && !/[VEJPG]/.test(value[0])) {
         value = 'J' + value; // Prefijo por defecto si no está presente
       }
-      input.value = value.replace(/([VEJPG])(\d{1,7})/, '$1-$2');
+      input.value = value.replace(/([VEJPG])(\d{1,9})/, '$1-$2');
     }
 
     document.getElementById("select-all").addEventListener("click", function () {

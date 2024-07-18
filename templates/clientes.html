@@ -23,7 +23,7 @@
         type="text"
         id="searchInput"
         onkeyup="searchTable()"
-        placeholder="Buscar por ID, nombre o cédula..."
+        placeholder="Buscar por ID, nombre, cédula, direccion o telefono"
       />
 
       <button onclick="mostrarFormulario()">Añadir clientes</button>
@@ -142,10 +142,10 @@
       <input type="text" id="direccion" name="direccion" value="{{ request.form.direccion or '' }}" required /><br />
 
       <label for="telefono">Teléfono:</label>
-      <input type="text" id="telefono" name="telefono" value="{{ request.form.telefono or '' }}" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
+      <input type="text" id="telefono" name="telefono" value="{{ request.form.telefono or '' }}" placeholder="Ej. 04121234567" maxlength="11" onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
 
       <label for="cedula">Cédula:</label>
-      <input type="text" id="cedula" name="cedula" value="{{ request.form.cedula or '' }}" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
+      <input type="text" id="cedula" name="cedula" value="{{ request.form.cedula or '' }}" maxlength="11" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
 
       {% if error_messages %}
       <div class="error-messages">
@@ -174,9 +174,9 @@
       <label for="direccion_actualizar">Dirección:</label>
       <input type="text" id="direccion_actualizar" name="direccion_actualizar" required /><br />
       <label for="telefono_actualizar">Teléfono:</label>
-      <input type="text" id="telefono_actualizar" name="telefono_actualizar" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
+      <input type="text" id="telefono_actualizar" name="telefono_actualizar" placeholder="Ej. 04121234567" maxlength="11" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
       <label for="cedula_actualizar">Cédula:</label>
-      <input type="text" id="cedula_actualizar" name="cedula_actualizar" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
+      <input type="text" id="cedula_actualizar" name="cedula_actualizar" maxlength="11" required onkeydown="return validarNumero(event)" onpaste="validarPegadoNumeros(event)" /><br />
 
       <button type="submit">Actualizar</button>
     </form>

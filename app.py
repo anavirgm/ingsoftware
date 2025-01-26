@@ -44,10 +44,28 @@ mysql = MySQL(app)
 bcrypt = Bcrypt(app)
 
 
+import requests
+
 def get_tasa_bcv():
-    return requests.get(
-        "https://pydolarvenezuela-api.vercel.app/api/v1/dollar/unit/bcv"
-    ).json()["price"]
+    try:
+        response = requests.get("https://pydolarve.org/api/v1/dollar?page=bcv")
+        response.raise_for_status()  # Verifica si hay errores HTTP
+        data = response.json()
+
+        # Navegar en la estructura JSON para obtener el precio del dólar
+        tasa_usd = data.get('monitors', {}).get('usd', {}).get('price')
+
+        if tasa_usd is None:
+            raise ValueError("No se encontró la tasa del dólar en la respuesta.")
+
+        return tasa_usd
+    except requests.exceptions.RequestException as e:
+        print(f"Error al conectar con la API: {e}")
+        return None
+    except ValueError as e:
+        print(f"Error en los datos de la API: {e}")
+        return None
+
 
 
 class PDF(FPDF):
